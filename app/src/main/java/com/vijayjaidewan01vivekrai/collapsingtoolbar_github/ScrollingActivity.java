@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
@@ -22,6 +23,8 @@ import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 
+import com.mancj.slideup.SlideUp;
+import com.mancj.slideup.SlideUpBuilder;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters.Card1Adapter;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters.CardAdapter;
 
@@ -37,11 +40,12 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
     private CoordinatorLayout coordinatorLayout;
     private AppBarLayout appBarLayout;
     private View layout;
-    private LinearLayout linearLayout;
+    private LinearLayout linearLayout,mainLinear;
     private RecyclerView recyclerView;
     private NestedScrollView nestedScrollView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private SwipeRefreshLayout swipeRefreshLayoutCoordinator;
+    private View loginView;
 
     int collapseValue = 2;
     int searchValue = 0;
@@ -52,6 +56,15 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scrolling);
+
+        loginView = findViewById(R.id.card_coordinator);
+        mainLinear = findViewById(R.id.main_linear);
+
+//        SlideUp slide = new SlideUpBuilder(loginView)
+//                                .withStartState(SlideUp.State.SHOWED)
+//                                .withStartGravity(Gravity.TOP)
+//                                .withSlideFromOtherView(mainLinear)
+//                                .build();
 
         linearLayout = findViewById(R.id.linear_layout);
         appBarLayout = findViewById(R.id.app_bar);
@@ -70,7 +83,6 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 
         if (collapseValue == 1) {
             recyclerView = findViewById(R.id.recyclerViewLinear);
-
 
             setSupportActionBar(mToolbar);
             getSupportActionBar().setTitle(R.string.title);
@@ -135,7 +147,6 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 
         //setRecyclerViewMargins();
         setAdapter(3);
-
 
 
         /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
