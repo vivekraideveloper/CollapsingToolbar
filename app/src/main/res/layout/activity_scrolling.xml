@@ -1,97 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.vijayjaidewan01vivekrai.collapsingtoolbar_github.ScrollingActivity"
-    android:orientation="vertical">
-
-    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/coordinator_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        android:visibility="visible">
-
-       <!-- <include layout="@layout/content_scrolling"></include>
--->
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        </android.support.v7.widget.RecyclerView>
-
-        <com.vijayjaidewan01vivekrai.collapsingtoolbar_github.RoundedImage
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:backgroundTint="@color/black"
-            app:layout_anchor="@id/app_bar"
-            app:layout_anchorGravity="bottom|center_horizontal"
-            app:layout_collapseMode="parallax"
-            app:layout_collapseParallaxMultiplier="0.2"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed" />
-
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/app_bar"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/app_bar_height"
-            android:theme="@style/AppTheme.AppBarOverlay"
-            android:animateLayoutChanges="true"
-            app:layout_scrollFlags="scroll|enterAlways">
-            <!--android:fitsSystemWindows="true"-->
-
-
-            <android.support.design.widget.CollapsingToolbarLayout
-                android:id="@+id/toolbar_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/ic_launcher_background"
-                android:fitsSystemWindows="true"
-                app:contentScrim="?attr/colorPrimary"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed"
-                app:toolbarId="@+id/toolbar">
-
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    app:layout_collapseMode="pin"
-                    app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-
-            </android.support.design.widget.CollapsingToolbarLayout>
-        </android.support.design.widget.AppBarLayout>
-
-    </android.support.design.widget.CoordinatorLayout>
+    tools:context="com.vijayjaidewan01vivekrai.collapsingtoolbar_github.ScrollingActivity">
 
     <LinearLayout
-        android:id="@+id/linear_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include
-            android:id="@+id/tool_bar"
-            layout="@layout/tool_bar"></include>
+        <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/coordinator_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            android:visibility="visible">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerViewLinear"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        </android.support.v7.widget.RecyclerView>
+            <!-- <include layout="@layout/content_scrolling"></include>
 
 
-        <!--<include
-            android:id="@+id/layout_content"
-            layout="@layout/content_scrolling"></include>-->
+     -->
+
+
+            <com.vijayjaidewan01vivekrai.collapsingtoolbar_github.RoundedImage
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:backgroundTint="@color/black"
+                app:layout_anchor="@id/app_bar"
+                app:layout_anchorGravity="bottom|center_horizontal"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.2"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed" />
+
+            <android.support.design.widget.AppBarLayout
+                android:id="@+id/app_bar"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/app_bar_height"
+                android:animateLayoutChanges="true"
+                android:theme="@style/AppTheme.AppBarOverlay"
+                app:layout_scrollFlags="scroll|enterAlways">
+                <!--android:fitsSystemWindows="true"-->
+
+
+                <android.support.design.widget.CollapsingToolbarLayout
+                    android:id="@+id/toolbar_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/ic_launcher_background"
+                    android:fitsSystemWindows="true"
+                    app:contentScrim="?attr/colorPrimary"
+                    app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                    app:toolbarId="@+id/toolbar">
+
+                    <android.support.v7.widget.Toolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="?attr/actionBarSize"
+                        app:layout_collapseMode="pin"
+                        app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+
+                </android.support.design.widget.CollapsingToolbarLayout>
+            </android.support.design.widget.AppBarLayout>
+
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipe_coordinator"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="60dp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"></android.support.v7.widget.RecyclerView>
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+
+        </android.support.design.widget.CoordinatorLayout>
+
+        <LinearLayout
+            android:id="@+id/linear_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/tool_bar"
+                layout="@layout/tool_bar"></include>
+
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipe"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerViewLinear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                </android.support.v7.widget.RecyclerView>
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+
+            <!--<include
+                android:id="@+id/layout_content"
+                layout="@layout/content_scrolling"></include>-->
+        </LinearLayout>
+
     </LinearLayout>
 
-</LinearLayout>
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/colorPrimary"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/nav_menu"></android.support.design.widget.NavigationView>
+
+</android.support.v4.widget.DrawerLayout>
+
