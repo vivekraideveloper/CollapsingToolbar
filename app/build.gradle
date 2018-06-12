@@ -35,7 +35,4 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:26.1.0'
     compile 'com.github.mzule.fantasyslide:library:1.0.5'
     implementation 'com.github.florent37:materialtextfield:1.0.7'
-    implementation 'com.github.mancj:SlideUp-Android:2.2.8'
-    //implementation 'tk.zielony:carbon:0.15.0.1'
-
 }
