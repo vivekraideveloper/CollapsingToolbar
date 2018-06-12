@@ -5,11 +5,14 @@ public class CardData {
     String heading;
     String sub;
     String desc;
+    int pos;
+
     //String image;
-    public CardData(String heading, String sub, String desc) {
+    public CardData(String heading, String sub, String desc,int pos) {
         this.heading = heading;
         this.sub = sub;
         this.desc = desc;
+        this.pos=pos;
         //this.image = image;
     }
 
@@ -28,4 +31,13 @@ public class CardData {
     public String getDesc() {
         return desc;
     }
+
+    public void setPos(int pos) {
+        this.pos = pos;
+    }
+
+    public int getPos() {
+        return pos;
+    }
+
 }
