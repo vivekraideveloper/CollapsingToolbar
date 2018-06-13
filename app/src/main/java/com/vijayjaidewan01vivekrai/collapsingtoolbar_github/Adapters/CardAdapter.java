@@ -13,10 +13,11 @@ import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Data;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private ArrayList<Data> cardData;
+    private List<CardData> cardData;
     private Context context;
     private int pos;
     private boolean flag = true; // to implement background of relative layout
@@ -24,7 +25,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private int TWO = 2;
     private int THREE = 3;
 
-    public CardAdapter(ArrayList<Data> cardData, Context context, int position) {
+    public CardAdapter(List<CardData> cardData, Context context, int position) {
         this.cardData = cardData;
         this.context = context;
         this.pos = position;

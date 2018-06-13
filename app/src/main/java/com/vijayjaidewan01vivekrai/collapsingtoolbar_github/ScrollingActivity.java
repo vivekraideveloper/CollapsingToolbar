@@ -114,7 +114,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
     }
 
     public void setAdapter() {
-        adapter = new Card1Adapter(cardDataList, ScrollingActivity.this);
+        adapter = new Card1Adapter((ArrayList<CardData>) cardDataList, ScrollingActivity.this);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }

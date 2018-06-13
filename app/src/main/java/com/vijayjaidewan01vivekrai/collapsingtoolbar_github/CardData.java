@@ -8,7 +8,7 @@ public class CardData {
     int pos;
 
     //String image;
-    public CardData(String heading, String sub, String desc,int pos) {
+    public CardData(String heading, String sub, String desc) {
         this.heading = heading;
         this.sub = sub;
         this.desc = desc;
