@@ -1,5 +1,6 @@
 package com.vijayjaidewan01vivekrai.collapsingtoolbar_github;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -7,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -23,6 +26,7 @@ import android.view.MenuItem;
 import android.view.ViewPropertyAnimator;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 
@@ -53,7 +57,10 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
     private NestedScrollView nestedScrollView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private SwipeRefreshLayout swipeRefreshLayoutCoordinator;
+    private View login;
+    EditText username,password;
 
+    int loginValue = 1;
     int collapseValue = 2;
     int searchValue = 0;
     List<CardData> cardDataList;
@@ -63,14 +70,6 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scrolling);
-        recyclerView=findViewById(R.id.recycler_view);
-        callhttp();
-
-//        recyclerView = (RecyclerView) findViewById(R.id.recyclerViewLinear);
-// set a GridLayoutManager with 3 number of columns
-//        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(),3);
-//        gridLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL); // set Horizontal Orientation
-//        recyclerView.setLayoutManager(gridLayoutManager); // set LayoutManager to RecyclerView
 
 
 
@@ -87,11 +86,21 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 
         cardDataList = new ArrayList<>();
 
-        // Setting the Collapsing Toolbar = 2 or Simple Toolbar = 1
+        Intent intent = getIntent();
+        loginValue = intent.getIntExtra("loginValue",1);
+        //Setting the login Fragment 1=show 0=hide
+        if(loginValue == 1) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            final LoginFragment loginFragment = new LoginFragment();
+            fragmentTransaction.replace(R.id.frame, loginFragment);
+            fragmentTransaction.setCustomAnimations(R.anim.trans_down,R.anim.trans_up);
+            fragmentTransaction.commit();
+        }
 
+        // Setting the Collapsing Toolbar = 2 or Simple Toolbar = 1
         if (collapseValue == 1) {
             recyclerView = findViewById(R.id.recyclerViewLinear);
-
 
             setSupportActionBar(mToolbar);
             getSupportActionBar().setTitle(R.string.title);
@@ -146,12 +155,12 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 
         // Setting the recycler view
         recyclerView.setHasFixedSize(true);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(),2);
-        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL); // set Horizontal Orientation
-        recyclerView.setLayoutManager(gridLayoutManager); // set LayoutManager to RecyclerView
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(),3);
+//        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL); // set Horizontal Orientation
+//        recyclerView.setLayoutManager(gridLayoutManager); // set LayoutManager to RecyclerView
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        for(int i=0;i<9;i++)
+        for(int i=0;i<10;i++)
         {
             CardData cardData = new CardData("Heading","Sub-Heading","Description",3);
             cardDataList.add(cardData);
@@ -277,40 +286,16 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                 RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
                 if(Math.abs(verticalOffset) == appBarLayout.getTotalScrollRange()){
-//                    //Log.d("appbar",""+recyclerView.getScaleY());
-//                    CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) swipeRefreshLayoutCoordinator.getLayoutParams(); // Redundant Code with line 119
-//                    layoutParams.setMargins(0,0,0,0);
-//                    swipeRefreshLayoutCoordinator.setLayoutParams(layoutParams);
-//                    //Animate the scrolling
-                    Animation a =new Animation() {
-                        @Override
-                        protected void applyTransformation(float interpolatedTime, Transformation t) {
-                            CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams)swipeRefreshLayoutCoordinator.getLayoutParams();
-                            layoutParams.topMargin= (int) (0*interpolatedTime);
-                            swipeRefreshLayoutCoordinator.setLayoutParams(layoutParams);
-                        }
-                    };
-                    a.setDuration(1000);
-                    swipeRefreshLayoutCoordinator.setAnimation(a);
-
+                    //Log.d("appbar",""+recyclerView.getScaleY());
+                    CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) swipeRefreshLayoutCoordinator.getLayoutParams(); // Redundant Code with line 119
+                    layoutParams.setMargins(0,0,0,0);
+                    swipeRefreshLayoutCoordinator.setLayoutParams(layoutParams);
+                    //Animate the scrolling
                 }
                 else if(Math.abs(verticalOffset) == 0){
-                                        Animation a =new Animation() {
-                        @Override
-                        protected void applyTransformation(float interpolatedTime, Transformation t) {
-                            CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams)swipeRefreshLayoutCoordinator.getLayoutParams();
-//                            layoutParams.setMargins(0, 150,0,0);
-                            layoutParams.topMargin=  (150);
-                            swipeRefreshLayoutCoordinator.setLayoutParams(layoutParams);
-                        }
-                    };
-                    a.setDuration(1000);
-                    swipeRefreshLayoutCoordinator.setAnimation(a);
-//
-//                   CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams)swipeRefreshLayoutCoordinator.getLayoutParams();
-//                   layoutParams.setMargins(0,150,0,0);
-//                    swipeRefreshLayoutCoordinator.setLayoutParams(layoutParams);
-
+                   CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams)swipeRefreshLayoutCoordinator.getLayoutParams();
+                    layoutParams.setMargins(0,150,0,0);
+                    swipeRefreshLayoutCoordinator.setLayoutParams(layoutParams);
 
                 }
             }

@@ -110,14 +110,14 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 return Integer.parseInt(null);
         }
     }
-    public class ViewHolder1 extends RecyclerView.ViewHolder{
+    public class ViewHolder1 extends RecyclerView.ViewHolder
+    {
 
         public TextView head, sub_head, desc;
         //public RelativeLayout relativeLayout;
 
         public ViewHolder1(View itemView) {
             super(itemView);
-
             head = (TextView) itemView.findViewById(R.id.tv_recycler_item_1);
             sub_head = (TextView) itemView.findViewById(R.id.tv_recycler_item_2);
             desc = (TextView) itemView.findViewById(R.id.tv_recycler_item_3);
