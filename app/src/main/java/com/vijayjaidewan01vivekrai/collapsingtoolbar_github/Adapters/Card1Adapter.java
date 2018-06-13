@@ -11,16 +11,17 @@ import android.widget.TextView;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.CardData;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Card1Adapter extends RecyclerView.Adapter<Card1Adapter.ViewHolder> {
 
-    private List<CardData> cardData;
+    private ArrayList<CardData> cardData;
     private Context context;
     //private int position;
     //private boolean flag = true; // to implement background of relative layout
 
-    public Card1Adapter(List<CardData> cardData, Context context) {
+    public Card1Adapter(ArrayList<CardData> cardData, Context context) {
         this.cardData = cardData;
         this.context = context;
         /*this.position = position;*/
