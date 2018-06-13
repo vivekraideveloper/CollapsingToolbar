@@ -8,6 +8,7 @@
     tools:context="com.vijayjaidewan01vivekrai.collapsingtoolbar_github.ScrollingActivity">
 
     <LinearLayout
+        android:id="@+id/linearlayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -21,10 +22,6 @@
             android:fitsSystemWindows="true"
             android:visibility="visible">
 
-            <!-- <include layout="@layout/content_scrolling"></include>
-
-
-     -->
 
 
             <com.vijayjaidewan01vivekrai.collapsingtoolbar_github.RoundedImage
