@@ -72,7 +72,6 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
         setContentView(R.layout.activity_scrolling);
 
 
-
         linearLayout = findViewById(R.id.linear_layout);
         appBarLayout = findViewById(R.id.app_bar);
         coordinatorLayout = findViewById(R.id.coordinator_layout);
