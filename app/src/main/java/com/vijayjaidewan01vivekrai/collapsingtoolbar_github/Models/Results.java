@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class Results {
     @SerializedName("view_type")
     String view_type;
-     @SerializedName("top_image")
+     @SerializedName("top_image")   //Check value for collapsing toolbar
     String top_image;
      @SerializedName("top_heading")
     String top_heading;
@@ -15,7 +15,7 @@ public class Results {
     String top_image_bg;
      @SerializedName("top_image_fg")
     String top_image_fg;
-     @SerializedName("is_back")
+     @SerializedName("is_back")     //Check value for navigation drawer
     String is_back;
      @SerializedName("back_url")
     String back_url;

@@ -9,7 +9,7 @@
     android:layout_marginStart="@dimen/card_margin_horizontal_big_activity"
     android:layout_marginTop="@dimen/card_margin_vertical_big_activity"
     android:background="#FFFFFF"
-    android:foreground="?attr/selectableItemBackground"
+    android:foreground="?android:attr/selectableItemBackground"
     card_view:cardCornerRadius="@dimen/card_recycler_corner_radius"
     card_view:cardElevation="@dimen/card_recycler_elevation"
     style="@style/Widget.AppCompat.Light.ActionBar">
@@ -23,7 +23,6 @@
             android:id="@+id/tv_recycler_item_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/rela_round"
             android:text="HEADING"
             android:textAlignment="gravity"
             android:textColor="@color/black"
@@ -36,7 +35,6 @@
             android:textAlignment="gravity"
             android:layout_below="@id/tv_recycler_item_1"
             android:layout_marginTop="@dimen/text_margin_very_small"
-            android:layout_toEndOf="@id/rela_round"
             android:text="Sub Heading"
             android:gravity="left"/>
 
@@ -47,7 +45,6 @@
             android:textAlignment="gravity"
             android:layout_below="@id/tv_recycler_item_2"
             android:layout_marginTop="@dimen/text_margin_very_small"
-            android:layout_toEndOf="@id/rela_round"
             android:text="Description"
             android:gravity="left"/>
 

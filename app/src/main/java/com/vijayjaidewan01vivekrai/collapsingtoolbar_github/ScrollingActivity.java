@@ -1,11 +1,9 @@
 package com.vijayjaidewan01vivekrai.collapsingtoolbar_github;
 
-import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -13,6 +11,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
@@ -28,24 +27,19 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewPropertyAnimator;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters.Card1Adapter;
+import com.squareup.picasso.Picasso;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters.CardAdapter;
+import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Results;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.TestResults;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiService;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -67,11 +61,11 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
     private View login;
     private NavigationView navigationView;
     EditText username,password;
-
+    int drawerValue = 1;
     int loginValue = 1;
     int collapseValue = 2;
     int searchValue = 0;
-    List<CardData> cardDataList;
+    //List<CardData> cardDataList;
     RecyclerView.Adapter adapter;
 
     @Override
@@ -79,13 +73,10 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scrolling);
 
-        String BASE_URL = "http://bydegreestest.agnitioworld.com/test/";
-        callHttp(BASE_URL);
-
         linearLayout = findViewById(R.id.linear_layout);
         appBarLayout = findViewById(R.id.app_bar);
         coordinatorLayout = findViewById(R.id.coordinator_layout);
-        nestedScrollView = findViewById(R.id.scrollView);
+        //nestedScrollView = findViewById(R.id.scrollView);
         swipeRefreshLayout = findViewById(R.id.swipe);
         swipeRefreshLayoutCoordinator = findViewById(R.id.swipe_coordinator);
         navigationView = findViewById(R.id.nav_view);
@@ -93,7 +84,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
         mToolbar = findViewById(R.id.tool_bar);
         //layout = findViewById(R.id.layout_content);
 
-        cardDataList = new ArrayList<>();
+        //cardDataList = new ArrayList<>();
 
 
         ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -101,15 +92,16 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
         if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED
                 || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
             // notify user you are online
-
-            setCollapse(collapseValue);
-
+            String BASE_URL = "http://bydegreestest.agnitioworld.com/test/";
+            callHttp(BASE_URL);
+        //    setCollapse(collapseValue);
+          //  setNavigation(drawerValue);
             // Setting the recycler view
-            recyclerView.setHasFixedSize(true);
+            //recyclerView.setHasFixedSize(true);
 //        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(),3);
 //        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL); // set Horizontal Orientation
 //        recyclerView.setLayoutManager(gridLayoutManager); // set LayoutManager to RecyclerView
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            //recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 //            for (int i = 0; i < 10; i++) {
 //                CardData cardData = new CardData("Heading", "Sub-Heading", "Description", 3);
@@ -118,8 +110,9 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 
             //setRecyclerViewMargins();
 //        setAdapter(3);
-            if (collapseValue == 2) {
-            } else if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
+
+        }
+        else if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
                     || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
                 // notify user you are not online
 
@@ -131,10 +124,6 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                 FragmentTransaction ft = fm.beginTransaction();
                 ft.replace(R.id.drawer_layout, new Offline_fragment());
                 ft.commit();
-
-            }
-
-
         }
     }
         private void callHttp (String BASE_URL){
@@ -145,7 +134,14 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                     if (response.isSuccessful()) {
                         if (response.body().getMsg().equals("success")) {
 
+                            drawerValue = Integer.parseInt(response.body().getResults().getIs_back());
+                            collapseValue = Integer.parseInt(response.body().getResults().getTop_image());
 
+                            Log.d("Collapse",""+collapseValue);
+                            Log.d("Drawer",""+drawerValue);
+
+                            setCollapse(2,response.body().getResults());
+                            setLogin();
                         /*if (response.body().getResults().getView_type().equals("4")){
                                 recyclerView.setHasFixedSize(true);
 
@@ -165,9 +161,9 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                         }
                     }
                 }
-
                 @Override
                 public void onFailure(Call<TestResults> call, Throwable t) {
+
                 }
             });
         }
@@ -233,8 +229,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
             return super.onOptionsItemSelected(item);
         }
 
-        public void setRecyclerViewMargins
-        ()                    // Setting the margins of Recycler View while the toolbar is collapsed to remove the empty space in between the toolbar and recycler view
+        public void setRecyclerViewMargins()                    // Setting the margins of Recycler View while the toolbar is collapsed to remove the empty space in between the toolbar and recycler view
         {
             //ppBar = findViewById(R.id.appBar);
             appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
@@ -263,7 +258,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
         }
 
 
-        private void setCollapse ( int collapseValue){
+        private void setCollapse (int collapseValue, Results results){
 
 
             if (collapseValue == 1) {
@@ -319,21 +314,25 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                     }
                 });
                 //layout.setVisibility(View.GONE);
+                RoundedImage roundedImage = findViewById(R.id.rounded_image);
+                Picasso.with(ScrollingActivity.this)
+                        .load(results.getTop_image_fg())
+                        .into(roundedImage);
+
+                //roundedImage.setImageBitmap(CardAdapter.getImage(results.getTop_image_fg()));
             }
 
             // Setting the recycler view
             recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-            for (int i = 0; i < 10; i++) {
+            /*for (int i = 0; i < 10; i++) {
                 CardData cardData = new CardData("Heading", "Sub-Heading", "Description");
                 cardDataList.add(cardData);
-            }
+            }*/
 
-            //setAdapter(3);
-
-            //setNavigation(drawerValue);
-
+//            setAdapter(3);
+            setNavigation(drawerValue);
 
         }
 
@@ -359,4 +358,12 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
             }
         }
 
+        private void setLogin()
+        {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            LoginFragment fragment = new LoginFragment();
+            fragmentTransaction.add(R.id.frame,fragment);
+            fragmentTransaction.commit();
+        }
     }
