@@ -44,7 +44,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ScrollingActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class ScrollingActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
@@ -73,10 +73,13 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scrolling);
 
+        String BASE_URL = "http://bydegreestest.agnitioworld.com/test/";
+        callHttp(BASE_URL);
+
         linearLayout = findViewById(R.id.linear_layout);
         appBarLayout = findViewById(R.id.app_bar);
         coordinatorLayout = findViewById(R.id.coordinator_layout);
-        //nestedScrollView = findViewById(R.id.scrollView);
+        nestedScrollView = findViewById(R.id.scrollView);
         swipeRefreshLayout = findViewById(R.id.swipe);
         swipeRefreshLayoutCoordinator = findViewById(R.id.swipe_coordinator);
         navigationView = findViewById(R.id.nav_view);
@@ -92,7 +95,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
         if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED
                 || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
             // notify user you are online
-            String BASE_URL = "http://bydegreestest.agnitioworld.com/test/";
+             BASE_URL = "http://bydegreestest.agnitioworld.com/test/";
             callHttp(BASE_URL);
         //    setCollapse(collapseValue);
           //  setNavigation(drawerValue);
@@ -116,15 +119,18 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                     || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
                 // notify user you are not online
 
-                View view = findViewById(android.R.id.content);
-                Snackbar snackbar = Snackbar.make(view, "Please ensure stable internet connectivity!", 7000).setAction("Action", null);
-                snackbar.show();
+            View view = findViewById(android.R.id.content);
+            Snackbar snackbar = Snackbar.make(view, "Please ensure stable internet connectivity!", 7000).setAction("Action", null);
+            snackbar.show();
 
-                android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.drawer_layout, new Offline_fragment());
-                ft.commit();
+            android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.drawer_layout, new Offline_fragment());
+            ft.commit();
+
         }
+
+
     }
         private void callHttp (String BASE_URL){
             ApiService apiService = ApiUtils.getAPIService(BASE_URL);
@@ -184,50 +190,50 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 //    }
 
 
-        //Search Bar controlled by searchValue = 0(Not Present), 1(Present)
-        @Override
-        public boolean onCreateOptionsMenu (Menu menu){
-            // Inflate the menu; this adds items to the action bar if it is present.
-            //getMenuInflater().inflate(R.menu.menu_scrolling, menu);
-            MenuInflater inflater = getMenuInflater();
+    //Search Bar controlled by searchValue = 0(Not Present), 1(Present)
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        //getMenuInflater().inflate(R.menu.menu_scrolling, menu);
+        MenuInflater inflater = getMenuInflater();
 
-            if (searchValue == 1) {
-                inflater.inflate(R.menu.search_layout, menu);
-                MenuItem item = menu.findItem(R.id.search_view);
-                SearchView searchView = (SearchView) item.getActionView();
-                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                    @Override
-                    public boolean onQueryTextSubmit(String s) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onQueryTextChange(String s) {
-                        return false;
-                    }
-                });
-            }
-
-            return true;
-        }
-
-        @Override
-        public boolean onOptionsItemSelected (MenuItem item){
-            // Handle action bar item clicks here. The action bar will
-            // automatically handle clicks on the Home/Up button, so long
-            // as you specify a parent activity in AndroidManifest.xml.
-            int drawerValue = 0;
-            if (drawerValue == 1) {
-                if (toggle.onOptionsItemSelected(item)) {
-                    return true;
+        if (searchValue == 1) {
+            inflater.inflate(R.menu.search_layout, menu);
+            MenuItem item = menu.findItem(R.id.search_view);
+            SearchView searchView = (SearchView) item.getActionView();
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    return false;
                 }
-            }
 
-            int id = item.getItemId();
-
-
-            return super.onOptionsItemSelected(item);
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    return false;
+                }
+            });
         }
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+
+        if (drawerValue == 1) {
+            if (toggle.onOptionsItemSelected(item)) {
+                return true;
+            }
+        }
+
+        int id = item.getItemId();
+
+
+        return super.onOptionsItemSelected(item);
+    }
 
         public void setRecyclerViewMargins()                    // Setting the margins of Recycler View while the toolbar is collapsed to remove the empty space in between the toolbar and recycler view
         {
@@ -252,64 +258,64 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
             });
         }
 
-        @Override
-        public boolean onNavigationItemSelected (@NonNull MenuItem item){
-            return false;
-        }
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        return false;
+    }
 
 
         private void setCollapse (int collapseValue, Results results){
 
 
-            if (collapseValue == 1) {
-                recyclerView = findViewById(R.id.recyclerViewLinear);
+        if (collapseValue == 0) {
+            recyclerView = findViewById(R.id.recyclerViewLinear);
 
 
-                setSupportActionBar(mToolbar);
-                getSupportActionBar().setTitle(R.string.title);
-                coordinatorLayout.setVisibility(View.GONE);
-                //linearLayout.setVisibility(View.VISIBLE);
-                //layout.setVisibility(View.VISIBLE);
+            setSupportActionBar(mToolbar);
+            getSupportActionBar().setTitle(R.string.title);
+            coordinatorLayout.setVisibility(View.GONE);
+            //linearLayout.setVisibility(View.VISIBLE);
+            //layout.setVisibility(View.VISIBLE);
 
 
-                swipeRefreshLayout.setProgressBackgroundColorSchemeColor(Color.WHITE);
-                swipeRefreshLayout.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
-                swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                swipeRefreshLayout.setRefreshing(false);
+            swipeRefreshLayout.setProgressBackgroundColorSchemeColor(Color.WHITE);
+            swipeRefreshLayout.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            swipeRefreshLayout.setRefreshing(false);
 
-                            }
-                        }, 3000);
+                        }
+                    }, 3000);
 
-                    }
-                });
-            }
-            if (collapseValue == 2) {
-                recyclerView = findViewById(R.id.recycler_view);
+                }
+            });
+        }
+        if (collapseValue == 1) {
+            recyclerView = findViewById(R.id.recycler_view);
 
-                setSupportActionBar(toolbar);
-                linearLayout.setVisibility(View.GONE);
-                appBarLayout.setExpanded(true);
-                getSupportActionBar().setTitle(R.string.title);
-                mToolbar.setVisibility(View.GONE);
+            setSupportActionBar(toolbar);
+            linearLayout.setVisibility(View.GONE);
+            appBarLayout.setExpanded(true);
+            getSupportActionBar().setTitle(R.string.title);
+            mToolbar.setVisibility(View.GONE);
 
-                setRecyclerViewMargins();
-                swipeRefreshLayoutCoordinator.setProgressBackgroundColorSchemeColor(Color.WHITE);
-                swipeRefreshLayoutCoordinator.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
-                swipeRefreshLayoutCoordinator.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                swipeRefreshLayoutCoordinator.setRefreshing(false);
+            setRecyclerViewMargins();
+            swipeRefreshLayoutCoordinator.setProgressBackgroundColorSchemeColor(Color.WHITE);
+            swipeRefreshLayoutCoordinator.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
+            swipeRefreshLayoutCoordinator.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            swipeRefreshLayoutCoordinator.setRefreshing(false);
 
-                            }
-                        }, 3000);
+                        }
+                    }, 3000);
 
                     }
                 });
@@ -334,29 +340,29 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 //            setAdapter(3);
             setNavigation(drawerValue);
 
+    }
+
+    private void setNavigation(int drawerValue) {
+        if (drawerValue == 1) {
+            drawerLayout = findViewById(R.id.drawer_layout);
+            toggle = new ActionBarDrawerToggle(ScrollingActivity.this, drawerLayout, R.string.open, R.string.close);
+            drawerLayout.addDrawerListener(toggle);
+            toggle.syncState();
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        } else {
+            drawerLayout = findViewById(R.id.drawer_layout);
+//            toggle = new ActionBarDrawerToggle(ScrollingActivity.this, drawerLayout, R.string.open, R.string.close);
+//            drawerLayout.addDrawerListener(toggle);
+//            toggle.syncState();
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+//            toolbar.setNavigationIcon(null);
+//            mToolbar.setNavigationIcon(null);
         }
-
-        private void setNavigation ( int drawerValue){
-            if (drawerValue == 1) {
-                drawerLayout = findViewById(R.id.drawer_layout);
-                toggle = new ActionBarDrawerToggle(ScrollingActivity.this, drawerLayout, R.string.open, R.string.close);
-                drawerLayout.addDrawerListener(toggle);
-                toggle.syncState();
-                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-            } else {
-                drawerLayout = findViewById(R.id.drawer_layout);
-                toggle = new ActionBarDrawerToggle(ScrollingActivity.this, drawerLayout, R.string.open, R.string.close);
-                drawerLayout.addDrawerListener(toggle);
-                toggle.syncState();
-                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-                toolbar.setNavigationIcon(null);
-                mToolbar.setNavigationIcon(null);
-            }
-        }
+    }
 
         private void setLogin()
         {
