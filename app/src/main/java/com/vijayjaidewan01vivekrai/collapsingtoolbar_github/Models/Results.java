@@ -5,33 +5,27 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 public class Results {
+    @SerializedName("grid_orientation")
+        String grid_orientation;
+    @SerializedName("grid_columns")
+        String grid_columns;
     @SerializedName("view_type")
-    String view_type;
-     @SerializedName("top_image")   //Check value for collapsing toolbar
-    String top_image;
-     @SerializedName("top_heading")
-    String top_heading;
-     @SerializedName("top_image_bg")
-    String top_image_bg;
-     @SerializedName("top_image_fg")
-    String top_image_fg;
-     @SerializedName("is_back")     //Check value for navigation drawer
-    String is_back;
-     @SerializedName("back_url")
-    String back_url;
-     @SerializedName("data")
-    ArrayList<Data> data;
+        String view_type;
+    @SerializedName("top_image_bg")
+        String top_image_bg;
+    @SerializedName("top_image_fg")
+        String top_image_fg;
+    @SerializedName("is_search")
+        String is_search;
+    @SerializedName("data")
+        ArrayList<Data> data;
+    @SerializedName("login_page")
+        Login login;
+    @SerializedName("toolbar")
+        ToolBar toolBar;
 
     public void setView_type(String view_type) {
         this.view_type = view_type;
-    }
-
-    public void setTop_image(String top_image) {
-        this.top_image = top_image;
-    }
-
-    public void setTop_heading(String top_heading) {
-        this.top_heading = top_heading;
     }
 
     public void setTop_image_bg(String top_image_bg) {
@@ -42,28 +36,41 @@ public class Results {
         this.top_image_fg = top_image_fg;
     }
 
-    public void setIs_back(String is_back) {
-        this.is_back = is_back;
-    }
-
-    public void setBack_url(String back_url) {
-        this.back_url = back_url;
-    }
-
     public void setData(ArrayList<Data> data) {
         this.data = data;
     }
 
+    public void setIs_search(String is_search) {
+        this.is_search = is_search;
+    }
+
+    public void setLogin(Login login) {
+        this.login = login;
+    }
+
+    public void setToolBar(ToolBar toolBar) {
+        this.toolBar = toolBar;
+    }
+
+    public void setGrid_orientation(String grid_orientation) {
+        this.grid_orientation = grid_orientation;
+    }
+
+    public void setGrid_columns(String grid_columns) {
+        this.grid_columns = grid_columns;
+    }
+
+
+    public String getGrid_orientation() {
+        return grid_orientation;
+    }
+
+    public String getGrid_columns() {
+        return grid_columns;
+    }
+
     public String getView_type() {
         return view_type;
-    }
-
-    public String getTop_image() {
-        return top_image;
-    }
-
-    public String getTop_heading() {
-        return top_heading;
     }
 
     public String getTop_image_bg() {
@@ -74,15 +81,19 @@ public class Results {
         return top_image_fg;
     }
 
-    public String getIs_back() {
-        return is_back;
-    }
-
-    public String getBack_url() {
-        return back_url;
-    }
-
     public ArrayList<Data> getData() {
         return data;
+    }
+
+    public String getIs_search() {
+        return is_search;
+    }
+
+    public Login getLogin() {
+        return login;
+    }
+
+    public ToolBar getToolBar() {
+        return toolBar;
     }
 }

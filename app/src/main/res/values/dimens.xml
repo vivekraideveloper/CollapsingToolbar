@@ -1,6 +1,5 @@
 <resources>
     <dimen name="app_bar_height">180dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="nav_header_vertical_spacing">16dp</dimen>
     <dimen name="nav_header_height">160dp</dimen>
@@ -34,7 +33,7 @@
     <dimen name="zero_horizontal_margin">0dp</dimen>
     <dimen name="zero_horizontal_margin_big_activity">0dp</dimen>
 
-    <dimen name="start_page_image_size">144dp</dimen>
+    <dimen name="start_page_image_size">100dp</dimen>
     <dimen name="share_view_round_margin">16dp</dimen>
 
     <dimen name="big_activity_margin_vertical">96dp</dimen>

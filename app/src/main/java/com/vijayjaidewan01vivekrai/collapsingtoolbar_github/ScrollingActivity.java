@@ -1,7 +1,9 @@
 package com.vijayjaidewan01vivekrai.collapsingtoolbar_github;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,6 +36,7 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters.CardAdapter;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Results;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.TestResults;
@@ -44,7 +48,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ScrollingActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class ScrollingActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
@@ -55,31 +59,24 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
     private View layout;
     private LinearLayout linearLayout;
     private RecyclerView recyclerView;
-    private NestedScrollView nestedScrollView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private SwipeRefreshLayout swipeRefreshLayoutCoordinator;
     private View login;
     private NavigationView navigationView;
     EditText username,password;
-    int drawerValue = 1;
-    int loginValue = 1;
-    int collapseValue = 2;
-    int searchValue = 0;
-    //List<CardData> cardDataList;
     RecyclerView.Adapter adapter;
+    int drawerValue = 1;
+    int collapseValue = 2;
+    int searchValue = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scrolling);
 
-        String BASE_URL = "http://bydegreestest.agnitioworld.com/test/";
-        callHttp(BASE_URL);
-
         linearLayout = findViewById(R.id.linear_layout);
         appBarLayout = findViewById(R.id.app_bar);
         coordinatorLayout = findViewById(R.id.coordinator_layout);
-        nestedScrollView = findViewById(R.id.scrollView);
         swipeRefreshLayout = findViewById(R.id.swipe);
         swipeRefreshLayoutCoordinator = findViewById(R.id.swipe_coordinator);
         navigationView = findViewById(R.id.nav_view);
@@ -89,84 +86,75 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 
         //cardDataList = new ArrayList<>();
 
-
         ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
         if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED
                 || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
             // notify user you are online
-             BASE_URL = "http://bydegreestest.agnitioworld.com/test/";
+            String BASE_URL = "http://bydegreestest.agnitioworld.com/test/";
             callHttp(BASE_URL);
-        //    setCollapse(collapseValue);
-          //  setNavigation(drawerValue);
-            // Setting the recycler view
-            //recyclerView.setHasFixedSize(true);
-//        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(),3);
-//        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL); // set Horizontal Orientation
-//        recyclerView.setLayoutManager(gridLayoutManager); // set LayoutManager to RecyclerView
-            //recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-//            for (int i = 0; i < 10; i++) {
-//                CardData cardData = new CardData("Heading", "Sub-Heading", "Description", 3);
-//                cardDataList.add(cardData);
-//            }
-
-            //setRecyclerViewMargins();
-//        setAdapter(3);
-
         }
         else if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
                     || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
                 // notify user you are not online
 
-            View view = findViewById(android.R.id.content);
-            Snackbar snackbar = Snackbar.make(view, "Please ensure stable internet connectivity!", 7000).setAction("Action", null);
-            snackbar.show();
+                View view = findViewById(android.R.id.content);
+                Snackbar snackbar = Snackbar.make(view, "Please ensure stable internet connectivity!", 7000).setAction("Action", null);
+                snackbar.show();
 
-            android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.drawer_layout, new Offline_fragment());
-            ft.commit();
-
+                FragmentManager fm = getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(R.id.drawer_layout, new Offline_fragment());
+                ft.commit();
         }
-
-
     }
         private void callHttp (String BASE_URL){
             ApiService apiService = ApiUtils.getAPIService(BASE_URL);
             apiService.results().enqueue(new Callback<TestResults>() {
+
                 @Override
                 public void onResponse(Call<TestResults> call, Response<TestResults> response) {
                     if (response.isSuccessful()) {
                         if (response.body().getMsg().equals("success")) {
 
-                            drawerValue = Integer.parseInt(response.body().getResults().getIs_back());
-                            collapseValue = Integer.parseInt(response.body().getResults().getTop_image());
+                            int drawerValue,collapseValue;
+                            drawerValue = Integer.parseInt(response.body().getResults().getToolBar().getIs_back());
+                            //collapseValue = Integer.parseInt(response.body().getResults().getToolBar().getTop_image());
 
-                            Log.d("Collapse",""+collapseValue);
+                            //Log.d("Collapse",""+collapseValue);
                             Log.d("Drawer",""+drawerValue);
 
-                            setCollapse(2,response.body().getResults());
-                            setLogin();
-                        /*if (response.body().getResults().getView_type().equals("4")){
-                                recyclerView.setHasFixedSize(true);
+                            Results results = response.body().getResults();
 
-                                GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(),2);
-                                gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL); // set Horizontal Orientation
-                                recyclerView.setLayoutManager(gridLayoutManager);
-                                adapter=new CardAdapter(response.body().getResults().getData(),ScrollingActivity.this,3);
-                                recyclerView.setAdapter(adapter);
-                                adapter.notifyDataSetChanged();
-                                // set LayoutManager to RecyclerView
-                                //        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+                            setCollapse(1,results);
+                            setNavigation(1);
 
-                            }*/
+                            int viewType = Integer.parseInt(response.body().getResults().getView_type());
+                            Log.d("View Type",""+ viewType);
+                            switch (viewType)
+                            {
+                                case 1:
+                                case 2:
+                                case 3:
+                                case 4:
+                                        adapter=new CardAdapter(response.body().getResults().getData(),ScrollingActivity.this,3);
+                                        recyclerView.setAdapter(adapter);
+                                        adapter.notifyDataSetChanged();
+                                        break;
+                                case 5: //add webview
+                                        break;
+                                case 6: setLogin();
+                                        break;
+                                default: Log.e("View Type","Wrong view Type value - "+viewType);
+                            }
+
                         } else {
                             Toast.makeText(ScrollingActivity.this, response.body().getMsg(), Toast.LENGTH_SHORT)
                                     .show();
                         }
                     }
                 }
+
                 @Override
                 public void onFailure(Call<TestResults> call, Throwable t) {
 
@@ -190,58 +178,55 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 //    }
 
 
-    //Search Bar controlled by searchValue = 0(Not Present), 1(Present)
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.menu_scrolling, menu);
-        MenuInflater inflater = getMenuInflater();
+        //Search Bar controlled by searchValue = 0(Not Present), 1(Present)
+        @Override
+        public boolean onCreateOptionsMenu (Menu menu){
+            // Inflate the menu; this adds items to the action bar if it is present.
+            //getMenuInflater().inflate(R.menu.menu_scrolling, menu);
+            MenuInflater inflater = getMenuInflater();
 
-        if (searchValue == 1) {
-            inflater.inflate(R.menu.search_layout, menu);
-            MenuItem item = menu.findItem(R.id.search_view);
-            SearchView searchView = (SearchView) item.getActionView();
-            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String s) {
-                    return false;
-                }
+            if (searchValue == 1) {
+                inflater.inflate(R.menu.search_layout, menu);
+                MenuItem item = menu.findItem(R.id.search_view);
+                SearchView searchView = (SearchView) item.getActionView();
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String s) {
+                        return false;
+                    }
 
-                @Override
-                public boolean onQueryTextChange(String s) {
-                    return false;
-                }
-            });
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        if (drawerValue == 1) {
-            if (toggle.onOptionsItemSelected(item)) {
-                return true;
+                    @Override
+                    public boolean onQueryTextChange(String s) {
+                        return false;
+                    }
+                });
             }
+
+            return true;
         }
 
-        int id = item.getItemId();
+        @Override
+        public boolean onOptionsItemSelected (MenuItem item){
+            // Handle action bar item clicks here. The action bar will
+            // automatically handle clicks on the Home/Up button, so long
+            // as you specify a parent activity in AndroidManifest.xml.
 
+            if (drawerValue == 1) {
+                if (toggle.onOptionsItemSelected(item)) {
+                    return true;
+                }
+            }
 
-        return super.onOptionsItemSelected(item);
-    }
+            int id = item.getItemId();
+
+            return super.onOptionsItemSelected(item);
+        }
 
         public void setRecyclerViewMargins()                    // Setting the margins of Recycler View while the toolbar is collapsed to remove the empty space in between the toolbar and recycler view
         {
-            //ppBar = findViewById(R.id.appBar);
             appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
                 @Override
                 public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
                     if (Math.abs(verticalOffset) == appBarLayout.getTotalScrollRange()) {
                         //Log.d("appbar",""+recyclerView.getScaleY());
                         CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) swipeRefreshLayoutCoordinator.getLayoutParams(); // Redundant Code with line 119
@@ -252,71 +237,66 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                         CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) swipeRefreshLayoutCoordinator.getLayoutParams();
                         layoutParams.setMargins(0, 150, 0, 0);
                         swipeRefreshLayoutCoordinator.setLayoutParams(layoutParams);
-
                     }
                 }
             });
         }
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        return false;
-    }
+        @Override
+        public boolean onNavigationItemSelected (@NonNull MenuItem item){
+            return false;
+        }
 
 
         private void setCollapse (int collapseValue, Results results){
 
+            if (collapseValue == 1) {
+                recyclerView = findViewById(R.id.recyclerViewLinear);
 
-        if (collapseValue == 0) {
-            recyclerView = findViewById(R.id.recyclerViewLinear);
+                setSupportActionBar(mToolbar);
+                //getSupportActionBar().setTitle(results.getTop_heading());
+                coordinatorLayout.setVisibility(View.GONE);
+                //linearLayout.setVisibility(View.VISIBLE);
+                //layout.setVisibility(View.VISIBLE);
 
+                swipeRefreshLayout.setProgressBackgroundColorSchemeColor(Color.WHITE);
+                swipeRefreshLayout.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
+                swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                swipeRefreshLayout.setRefreshing(false);
 
-            setSupportActionBar(mToolbar);
-            getSupportActionBar().setTitle(R.string.title);
-            coordinatorLayout.setVisibility(View.GONE);
-            //linearLayout.setVisibility(View.VISIBLE);
-            //layout.setVisibility(View.VISIBLE);
+                            }
+                        }, 3000);
 
+                    }
+                });
+            }
+            if (collapseValue == 2) {
+                recyclerView = findViewById(R.id.recycler_view);
 
-            swipeRefreshLayout.setProgressBackgroundColorSchemeColor(Color.WHITE);
-            swipeRefreshLayout.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
-            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            swipeRefreshLayout.setRefreshing(false);
+                setSupportActionBar(toolbar);
+                linearLayout.setVisibility(View.GONE);
+                appBarLayout.setExpanded(true);
+                //getSupportActionBar().setTitle(results.getTop_heading());
+                mToolbar.setVisibility(View.GONE);
 
-                        }
-                    }, 3000);
+                setRecyclerViewMargins();
+                swipeRefreshLayoutCoordinator.setProgressBackgroundColorSchemeColor(Color.WHITE);
+                swipeRefreshLayoutCoordinator.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
+                swipeRefreshLayoutCoordinator.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                swipeRefreshLayoutCoordinator.setRefreshing(false);
 
-                }
-            });
-        }
-        if (collapseValue == 1) {
-            recyclerView = findViewById(R.id.recycler_view);
-
-            setSupportActionBar(toolbar);
-            linearLayout.setVisibility(View.GONE);
-            appBarLayout.setExpanded(true);
-            getSupportActionBar().setTitle(R.string.title);
-            mToolbar.setVisibility(View.GONE);
-
-            setRecyclerViewMargins();
-            swipeRefreshLayoutCoordinator.setProgressBackgroundColorSchemeColor(Color.WHITE);
-            swipeRefreshLayoutCoordinator.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
-            swipeRefreshLayoutCoordinator.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            swipeRefreshLayoutCoordinator.setRefreshing(false);
-
-                        }
-                    }, 3000);
-
+                            }
+                        }, 3000);
                     }
                 });
                 //layout.setVisibility(View.GONE);
@@ -324,45 +304,65 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                 Picasso.with(ScrollingActivity.this)
                         .load(results.getTop_image_fg())
                         .into(roundedImage);
-
+                AppCompatImageView background = findViewById(R.id.backImage);
+                Picasso.with(ScrollingActivity.this)
+                        .load(results.getTop_image_bg())
+                        .into(background);
                 //roundedImage.setImageBitmap(CardAdapter.getImage(results.getTop_image_fg()));
             }
 
+            int col = Integer.parseInt(results.getGrid_columns());
+            int orientation = Integer.parseInt(results.getGrid_orientation());
+
+            Log.d("Columns","" + col);
+            Log.d("Oreintation",""+orientation);
+
+            setRecyclerView(col,orientation);
+            //setNavigation(drawerValue);
+        }
+
+        private void setRecyclerView(int columns, int orientation)
+        {
             // Setting the recycler view
             recyclerView.setHasFixedSize(true);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-            /*for (int i = 0; i < 10; i++) {
-                CardData cardData = new CardData("Heading", "Sub-Heading", "Description");
-                cardDataList.add(cardData);
-            }*/
-
-//            setAdapter(3);
-            setNavigation(drawerValue);
-
-    }
-
-    private void setNavigation(int drawerValue) {
-        if (drawerValue == 1) {
-            drawerLayout = findViewById(R.id.drawer_layout);
-            toggle = new ActionBarDrawerToggle(ScrollingActivity.this, drawerLayout, R.string.open, R.string.close);
-            drawerLayout.addDrawerListener(toggle);
-            toggle.syncState();
-            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        } else {
-            drawerLayout = findViewById(R.id.drawer_layout);
-//            toggle = new ActionBarDrawerToggle(ScrollingActivity.this, drawerLayout, R.string.open, R.string.close);
-//            drawerLayout.addDrawerListener(toggle);
-//            toggle.syncState();
-            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-//            toolbar.setNavigationIcon(null);
-//            mToolbar.setNavigationIcon(null);
+            if(columns == 0)
+                recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            else{
+                switch (orientation)
+                {
+                    case 1: orientation = LinearLayoutManager.VERTICAL;
+                            break;
+                    case 2: orientation = LinearLayoutManager.HORIZONTAL;
+                            break;
+                    default: Log.e("Orientation","Wrong orientation value provided.  -  " + orientation);
+                }
+                GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(),columns);
+                gridLayoutManager.setOrientation(orientation); // set Horizontal Orientation
+                recyclerView.setLayoutManager(gridLayoutManager); // set LayoutManager to RecyclerView
+            }
         }
-    }
+
+        private void setNavigation (int drawerValue){
+            if (drawerValue == 1) {
+                drawerLayout = findViewById(R.id.drawer_layout);
+                toggle = new ActionBarDrawerToggle(ScrollingActivity.this, drawerLayout, R.string.open, R.string.close);
+                drawerLayout.addDrawerListener(toggle);
+                toggle.syncState();
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+            } else {
+                drawerLayout = findViewById(R.id.drawer_layout);
+                toggle = new ActionBarDrawerToggle(ScrollingActivity.this, drawerLayout, R.string.open, R.string.close);
+                drawerLayout.addDrawerListener(toggle);
+                toggle.syncState();
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+                toolbar.setNavigationIcon(null);
+                mToolbar.setNavigationIcon(null);
+            }
+        }
 
         private void setLogin()
         {
@@ -371,5 +371,33 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
             LoginFragment fragment = new LoginFragment();
             fragmentTransaction.add(R.id.frame,fragment);
             fragmentTransaction.commit();
+            setNavigation(0);
         }
     }
+
+
+    /*if (response.body().getResults().getView_type().equals("4")){
+                                recyclerView.setHasFixedSize(true);
+
+                                GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(),2);
+                                gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL); // set Horizontal Orientation
+                                recyclerView.setLayoutManager(gridLayoutManager);
+                                // set LayoutManager to RecyclerView
+                                //        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+                            }*/
+
+
+// Setting the recycler view
+//recyclerView.setHasFixedSize(true);
+
+//recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+//            for (int i = 0; i < 10; i++) {
+//                CardData cardData = new CardData("Heading", "Sub-Heading", "Description", 3);
+//                cardDataList.add(cardData);
+//            }
+
+//setRecyclerViewMargins();
+//        setAdapter(3);
+
