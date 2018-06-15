@@ -3,6 +3,7 @@ package com.vijayjaidewan01vivekrai.collapsingtoolbar_github;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -40,6 +42,7 @@ import com.squareup.picasso.Target;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters.CardAdapter;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Results;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.TestResults;
+import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.ToolBar;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiService;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiUtils;
 
@@ -63,10 +66,11 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
     private SwipeRefreshLayout swipeRefreshLayoutCoordinator;
     private View login;
     private NavigationView navigationView;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
     EditText username,password;
     RecyclerView.Adapter adapter;
     int drawerValue = 1;
-    int collapseValue = 2;
+    int collapseValue = 1;
     int searchValue = 1;
 
     @Override
@@ -82,6 +86,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
         mToolbar = findViewById(R.id.tool_bar);
+        collapsingToolbarLayout = findViewById(R.id.toolbar_layout);
         //layout = findViewById(R.id.layout_content);
 
         //cardDataList = new ArrayList<>();
@@ -252,9 +257,14 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 
             if (collapseValue == 1) {
                 recyclerView = findViewById(R.id.recyclerViewLinear);
+                Toast.makeText(this, ""+results.getToolBar().getToolbar_bg(), Toast.LENGTH_SHORT).show();
 
                 setSupportActionBar(mToolbar);
+                getSupportActionBar().setTitle(results.getToolBar().getCollapsed_top_title());
+                mToolbar.setTitleTextColor(Color.parseColor(results.getToolBar().getCollapsed_top_title_color()));
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(results.getToolBar().getExtended_top_title_color())));
                 //getSupportActionBar().setTitle(results.getTop_heading());
+
                 coordinatorLayout.setVisibility(View.GONE);
                 //linearLayout.setVisibility(View.VISIBLE);
                 //layout.setVisibility(View.VISIBLE);
@@ -279,9 +289,12 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                 recyclerView = findViewById(R.id.recycler_view);
 
                 setSupportActionBar(toolbar);
+                getSupportActionBar().setTitle(results.getToolBar().getExtended_top_title());
+
+                collapsingToolbarLayout.setContentScrim(new ColorDrawable(Color.parseColor("#ff00ff")));
+
                 linearLayout.setVisibility(View.GONE);
                 appBarLayout.setExpanded(true);
-                //getSupportActionBar().setTitle(results.getTop_heading());
                 mToolbar.setVisibility(View.GONE);
 
                 setRecyclerViewMargins();

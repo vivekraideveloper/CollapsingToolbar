@@ -4,11 +4,11 @@ import com.google.gson.annotations.SerializedName;
 
 public class Data {
 
-    @SerializedName("text1")
+    @SerializedName("heading")
     String text1;
-    @SerializedName("text2")
+    @SerializedName("sub_heading")
     String text2;
-    @SerializedName("text3")
+    @SerializedName("description")
     String text3;
     @SerializedName("id")
     String id;
