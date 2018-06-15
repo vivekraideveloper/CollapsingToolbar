@@ -18,9 +18,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
 
     public static Retrofit retrofit=null;
-    public static Bitmap image = null;
+    public static String BASE_URL = "http://bydegreestest.agnitioworld.com/test/";
 
-    public static Retrofit getClient(String baseUrl){
+    public static Retrofit getClient(){
 
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -30,7 +30,7 @@ public class RetrofitClient {
 
         if (retrofit==null){
             retrofit = new Retrofit.Builder()
-                    .baseUrl(baseUrl)
+                    .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(httpClient.build())
                     .build();

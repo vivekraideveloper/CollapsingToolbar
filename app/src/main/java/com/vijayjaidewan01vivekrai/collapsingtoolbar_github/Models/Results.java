@@ -24,6 +24,13 @@ public class Results {
     @SerializedName("toolbar")
         ToolBar toolBar;
 
+    @SerializedName("nav_drawer")
+        NavDrawer navDrawer;
+
+    public void setNavDrawer(NavDrawer navDrawer) {
+        this.navDrawer = navDrawer;
+    }
+
     public void setView_type(String view_type) {
         this.view_type = view_type;
     }
@@ -96,4 +103,10 @@ public class Results {
     public ToolBar getToolBar() {
         return toolBar;
     }
+
+    public NavDrawer getNavDrawer() {
+        return navDrawer;
+    }
+
 }
+

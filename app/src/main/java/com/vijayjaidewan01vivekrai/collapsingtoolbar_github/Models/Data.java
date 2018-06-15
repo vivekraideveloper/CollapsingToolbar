@@ -10,6 +10,14 @@ public class Data {
     String text2;
     @SerializedName("description")
     String text3;
+    @SerializedName("text_header_color")
+    String text_header_color;
+    @SerializedName("tex_subheader_color")
+    String text_subheader_color;
+    @SerializedName("text_description_color")
+    String text_description_color;
+    @SerializedName("bg_color")
+    String bg_color;
     @SerializedName("id")
     String id;
     @SerializedName("image")
@@ -41,6 +49,23 @@ public class Data {
         this.url = url;
     }
 
+    public void setText_header_color(String text_header_color) {
+        this.text_header_color = text_header_color;
+    }
+
+    public void setText_subheader_color(String tex_subheader_color) {
+        this.text_subheader_color = tex_subheader_color;
+    }
+
+    public void setText_description_color(String text_description_color) {
+        this.text_description_color = text_description_color;
+    }
+
+    public void setBg_color(String bg_color) {
+        this.bg_color = bg_color;
+    }
+
+
     public String getText1() {
         return text1;
     }
@@ -63,5 +88,21 @@ public class Data {
 
     public String getUrl() {
         return url;
+    }
+
+    public String getText_header_color() {
+        return text_header_color;
+    }
+
+    public String getText_subheader_color() {
+        return text_subheader_color;
+    }
+
+    public String getText_description_color() {
+        return text_description_color;
+    }
+
+    public String getBg_color() {
+        return bg_color;
     }
 }

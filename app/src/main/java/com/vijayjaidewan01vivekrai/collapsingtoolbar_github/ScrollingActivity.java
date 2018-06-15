@@ -96,9 +96,10 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
         if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED
                 || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
             // notify user you are online
-            String BASE_URL = "http://bydegreestest.agnitioworld.com/test/";
+            String BASE_URL = "http://bydegreestest.agnitioworld.com/test/mobile_app.php";
             callHttp(BASE_URL);
         }
+
         else if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
                     || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
                 // notify user you are not online
@@ -114,8 +115,8 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
         }
     }
         private void callHttp (String BASE_URL){
-            ApiService apiService = ApiUtils.getAPIService(BASE_URL);
-            apiService.results().enqueue(new Callback<TestResults>() {
+            ApiService apiService = ApiUtils.getAPIService();
+            apiService.results(BASE_URL).enqueue(new Callback<TestResults>() {
 
                 @Override
                 public void onResponse(Call<TestResults> call, Response<TestResults> response) {
@@ -136,13 +137,13 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 
                             int viewType = Integer.parseInt(response.body().getResults().getView_type());
                             Log.d("View Type",""+ viewType);
-                            switch (viewType)
+                            switch (6)
                             {
                                 case 1:
                                 case 2:
                                 case 3:
-                                case 4:
-                                        adapter=new CardAdapter(response.body().getResults().getData(),ScrollingActivity.this,3);
+                                case 4: adapter=new CardAdapter(response.body().getResults().getData(),ScrollingActivity.this,3);
+                                        //Log.d("Text 1",response.body().getResults().getData().get(1).getText1());
                                         recyclerView.setAdapter(adapter);
                                         adapter.notifyDataSetChanged();
                                         break;
@@ -257,7 +258,6 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 
             if (collapseValue == 1) {
                 recyclerView = findViewById(R.id.recyclerViewLinear);
-                Toast.makeText(this, ""+results.getToolBar().getToolbar_bg(), Toast.LENGTH_SHORT).show();
 
                 setSupportActionBar(mToolbar);
                 getSupportActionBar().setTitle(results.getToolBar().getCollapsed_top_title());
@@ -328,9 +328,9 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
             int orientation = Integer.parseInt(results.getGrid_orientation());
 
             Log.d("Columns","" + col);
-            Log.d("Oreintation",""+orientation);
+            Log.d("Orientation",""+orientation);
 
-            setRecyclerView(col,orientation);
+            setRecyclerView(0,orientation);
             //setNavigation(drawerValue);
         }
 

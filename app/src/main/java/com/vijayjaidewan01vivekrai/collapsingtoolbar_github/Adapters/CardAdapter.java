@@ -3,9 +3,12 @@ package com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.AppCompatImageView;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.PointerIcon;
 import android.view.View;
@@ -66,73 +69,90 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//        int layout = 0;
-//        switch (pos) {
-//            case 1:
-//                layout = R.layout.card1; // Simple Text
-//                flag = false;
-//                break;
-//            case 3:
-//                layout = R.layout.card3;
-//                flag = true;
-//                break;
-//            case 4:
-//                layout = R.layout.card4;
-//                flag = true;
-//                break;
-//        }
-//        View v = LayoutInflater.from(parent.getContext())
-//                .inflate(layout, parent, false);
-//        return new ViewHolder(v);
-        switch (viewType){
-            case 1:{
-                View v=LayoutInflater.from(parent.getContext()).inflate(R.layout.card1,parent,false);
+        switch (viewType) {
+            case 1: {
+                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card1, parent, false);
                 return new ViewHolder1(v);
             }
-            case 2:{
-                View v=LayoutInflater.from(parent.getContext()).inflate(R.layout.card2,parent,false);
+            case 2: {
+                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card2, parent, false);
                 return new ViewHolder2(v);
             }
-            case 3:{
-                View v=LayoutInflater.from(parent.getContext()).inflate(R.layout.card3,parent,false);
+            case 3: {
+                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card3, parent, false);
                 return new ViewHolder3(v);
             }
-            case 4:{
-                View v=LayoutInflater.from(parent.getContext()).inflate(R.layout.card4,parent,false);
+            case 4: {
+                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card4, parent, false);
                 return new ViewHolder4(v);
             }
-            default:return null;
+            default:
+                return null;
         }
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if(holder instanceof ViewHolder1){
+        if (holder instanceof ViewHolder1) {
             ((ViewHolder1) holder).head.setText(cardData.get(position).getText1());
+//            ((ViewHolder1) holder).head.setTextColor(Color.parseColor(cardData.get(position).getText_header_color()));
+
             ((ViewHolder1) holder).sub_head.setText(cardData.get(position).getText2());
+//            ((ViewHolder1) holder).sub_head.setTextColor(Color.parseColor(cardData.get(position).getText_subheader_color()));
+
             ((ViewHolder1) holder).desc.setText(cardData.get(position).getText3());
-        }if(holder instanceof ViewHolder2){
+//            ((ViewHolder1) holder).desc.setTextColor(Color.parseColor(cardData.get(position).getText_description_color()));
+
+//            ((ViewHolder1) holder).card.setCardBackgroundColor(Color.parseColor(cardData.get(position).getBg_color()));
+        }
+        if (holder instanceof ViewHolder2) {
             ((ViewHolder2) holder).head.setText(cardData.get(position).getText1());
+//            ((ViewHolder2) holder).head.setTextColor(Color.parseColor(cardData.get(position).getText_header_color()));
+
             ((ViewHolder2) holder).sub_head.setText(cardData.get(position).getText2());
+//            ((ViewHolder2) holder).sub_head.setTextColor(Color.parseColor(cardData.get(position).getText_subheader_color()));
+
             ((ViewHolder2) holder).desc.setText(cardData.get(position).getText3());
+//            ((ViewHolder2) holder).desc.setTextColor(Color.parseColor(cardData.get(position).getText_description_color()));
+
+//            ((ViewHolder2) holder).card.setCardBackgroundColor(Color.parseColor(cardData.get(position).getBg_color()));
+
             Picasso.with(context)
                     .load(cardData.get(position).getImage())
                     .into(((ViewHolder2) holder).iconImage);
 
-            //((ViewHolder2)holder).iconImage.setImageBitmap(CardAdapter.getImage(cardData.get(position).getImage()));
-        }if(holder instanceof ViewHolder3){
+        }
+        if (holder instanceof ViewHolder3) {
             ((ViewHolder3) holder).head.setText(cardData.get(position).getText1());
+//            ((ViewHolder3) holder).head.setTextColor(Color.parseColor(cardData.get(position).getText_header_color()));
+
             ((ViewHolder3) holder).sub_head.setText(cardData.get(position).getText2());
+//            ((ViewHolder3) holder).sub_head.setTextColor(Color.parseColor(cardData.get(position).getText_subheader_color()));
+
             ((ViewHolder3) holder).desc.setText(cardData.get(position).getText3());
+//            ((ViewHolder3) holder).desc.setTextColor(Color.parseColor(cardData.get(position).getText_description_color()));
+
+//            ((ViewHolder3) holder).card.setCardBackgroundColor(Color.parseColor(cardData.get(position).getBg_color()));
+
             Picasso.with(context)
                     .load(cardData.get(position).getImage())
                     .into(((ViewHolder3) holder).iconImage);
             //((ViewHolder3)holder).iconImage.setImageBitmap(CardAdapter.getImage(cardData.get(position).getImage()));
         }
-        if(holder instanceof ViewHolder4){
+        if (holder instanceof ViewHolder4) {
             ((ViewHolder4) holder).head.setText(cardData.get(position).getText1());
+//            ((ViewHolder4) holder).head.setTextColor(Color.parseColor(cardData.get(position).getText_header_color()));
+
             ((ViewHolder4) holder).sub_head.setText(cardData.get(position).getText2());
+//            ((ViewHolder4) holder).sub_head.setTextColor(Color.parseColor(cardData.get(position).getText_subheader_color()));
+
             ((ViewHolder4) holder).desc.setText(cardData.get(position).getText3());
+//            ((ViewHolder4) holder).desc.setTextColor(Color.parseColor(cardData.get(position).getText_description_color()));
+
+//            ((ViewHolder4) holder).card.setCardBackgroundColor(Color.parseColor(cardData.get(position).getBg_color()));
+            Picasso.with(context)
+                    .load(cardData.get(position).getImage())
+                    .into(((ViewHolder4) holder).background);
             //((ViewHolder4)holder).iconImage.setImageBitmap(RetrofitClient.getImage(cardData.get(position).getImage()));
         }
 
@@ -157,10 +177,11 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 return Integer.parseInt(null);
         }
     }
-    public class ViewHolder1 extends RecyclerView.ViewHolder
-    {
+
+    public class ViewHolder1 extends RecyclerView.ViewHolder {
 
         public TextView head, sub_head, desc;
+        public CardView card;
 
         public ViewHolder1(View itemView) {
             super(itemView);
@@ -168,12 +189,15 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             head = itemView.findViewById(R.id.tv_recycler_item_1);
             sub_head = itemView.findViewById(R.id.tv_recycler_item_2);
             desc = itemView.findViewById(R.id.tv_recycler_item_3);
+            card = itemView.findViewById(R.id.card_1);
         }
     }
-    public class ViewHolder2 extends RecyclerView.ViewHolder{
+
+    public class ViewHolder2 extends RecyclerView.ViewHolder {
 
         public TextView head, sub_head, desc;
         public AppCompatImageView iconImage;
+        public CardView card;
 
         public ViewHolder2(View itemView) {
             super(itemView);
@@ -182,64 +206,41 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             sub_head = itemView.findViewById(R.id.tv_recycler_item_2);
             desc = itemView.findViewById(R.id.tv_recycler_item_3);
             iconImage = itemView.findViewById(R.id.icon_image);
+            card = itemView.findViewById(R.id.card_2);
         }
     }
-    public class ViewHolder3 extends RecyclerView.ViewHolder{
+
+    public class ViewHolder3 extends RecyclerView.ViewHolder {
 
         public TextView head, sub_head, desc;
         public AppCompatImageView iconImage;
+        public CardView card;
 
         public ViewHolder3(View itemView) {
             super(itemView);
 
-            head = (TextView) itemView.findViewById(R.id.tv_recycler_item_1);
-            sub_head = (TextView) itemView.findViewById(R.id.tv_recycler_item_2);
-            desc = (TextView) itemView.findViewById(R.id.tv_recycler_item_3);
+            head = itemView.findViewById(R.id.tv_recycler_item_1);
+            sub_head = itemView.findViewById(R.id.tv_recycler_item_2);
+            desc = itemView.findViewById(R.id.tv_recycler_item_3);
             iconImage = itemView.findViewById(R.id.icon_image);
+            card = itemView.findViewById(R.id.card_3);
         }
     }
 
     public class ViewHolder4 extends RecyclerView.ViewHolder {
 
         public TextView head, sub_head, desc;
-        //public RelativeLayout relativeLayout;
+        public AppCompatImageView background;
+        public CardView card;
 
         public ViewHolder4(View itemView) {
             super(itemView);
 
-            head = (TextView) itemView.findViewById(R.id.tv_recycler_item_1);
-            sub_head = (TextView) itemView.findViewById(R.id.tv_recycler_item_2);
-            desc = (TextView) itemView.findViewById(R.id.tv_recycler_item_3);
-            //relativeLayout = (RelativeLayout)itemView.findViewById(R.id.rela_round);
+            head = itemView.findViewById(R.id.tv_recycler_item_1);
+            sub_head = itemView.findViewById(R.id.tv_recycler_item_2);
+            desc = itemView.findViewById(R.id.tv_recycler_item_3);
+            background = itemView.findViewById(R.id.background);
+            card = itemView.findViewById(R.id.card_4);
         }
     }
-
-    /*public static Bitmap getImage(String url)
-    {
-        ApiService service = ApiUtils.getAPIService(url);
-
-        Call<ResponseBody> call = service.getImage();
-
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if(response.isSuccessful())
-                {
-                    image = BitmapFactory.decodeStream(response.body().byteStream());
-                }
-                else
-                {
-                    //set default image
-                    //image = BitmapFactory.decodeResource()
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-            }
-        });
-        return image;
-    }*/
 }
-
