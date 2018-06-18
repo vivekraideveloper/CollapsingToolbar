@@ -3,6 +3,7 @@ package com.vijayjaidewan01vivekrai.collapsingtoolbar_github;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
@@ -37,14 +38,19 @@ import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SquaringDrawable;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters.CardAdapter;
+import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Login;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Results;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.TestResults;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.ToolBar;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiService;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiUtils;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -132,7 +138,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 
                             Results results = response.body().getResults();
 
-                            setCollapse(1,results);
+                            setCollapse(2,results);
                             setNavigation(1);
 
                             int viewType = Integer.parseInt(response.body().getResults().getView_type());
@@ -143,13 +149,12 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                                 case 2:
                                 case 3:
                                 case 4: adapter=new CardAdapter(response.body().getResults().getData(),ScrollingActivity.this,3);
-                                        //Log.d("Text 1",response.body().getResults().getData().get(1).getText1());
                                         recyclerView.setAdapter(adapter);
                                         adapter.notifyDataSetChanged();
                                         break;
                                 case 5: //add webview
                                         break;
-                                case 6: setLogin();
+                                case 6: setLogin(response.body().getResults().getLogin());
                                         break;
                                 default: Log.e("View Type","Wrong view Type value - "+viewType);
                             }
@@ -228,7 +233,8 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
             return super.onOptionsItemSelected(item);
         }
 
-        public void setRecyclerViewMargins()                    // Setting the margins of Recycler View while the toolbar is collapsed to remove the empty space in between the toolbar and recycler view
+    // Setting the margins of Recycler View while the toolbar is collapsed to remove the empty space in between the toolbar and recycler view
+        public void setRecyclerViewMargins()
         {
             appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
                 @Override
@@ -254,7 +260,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
         }
 
 
-        private void setCollapse (int collapseValue, Results results){
+        private void setCollapse (int collapseValue, final Results results){
 
             if (collapseValue == 1) {
                 recyclerView = findViewById(R.id.recyclerViewLinear);
@@ -307,19 +313,20 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                             @Override
                             public void run() {
                                 swipeRefreshLayoutCoordinator.setRefreshing(false);
-
+                                //callHttp(results.get);
                             }
                         }, 3000);
                     }
                 });
                 //layout.setVisibility(View.GONE);
                 RoundedImage roundedImage = findViewById(R.id.rounded_image);
-                Picasso.with(ScrollingActivity.this)
-                        .load(results.getTop_image_fg())
+                Picasso.with(this)
+                        .load(results.getToolBar().getTop_image_fg())
                         .into(roundedImage);
+
                 AppCompatImageView background = findViewById(R.id.backImage);
-                Picasso.with(ScrollingActivity.this)
-                        .load(results.getTop_image_bg())
+                Glide.with(ScrollingActivity.this)
+                        .load(results.getToolBar().getTop_image_bg())
                         .into(background);
                 //roundedImage.setImageBitmap(CardAdapter.getImage(results.getTop_image_fg()));
             }
@@ -330,7 +337,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
             Log.d("Columns","" + col);
             Log.d("Orientation",""+orientation);
 
-            setRecyclerView(0,orientation);
+            setRecyclerView(2,orientation);
             //setNavigation(drawerValue);
         }
 
@@ -377,15 +384,34 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
             }
         }
 
-        private void setLogin()
+        private void setLogin(Login login)
         {
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             LoginFragment fragment = new LoginFragment();
             fragmentTransaction.add(R.id.frame,fragment);
+            Bundle bundle = new Bundle();
+
+            bundle.putString("Activity_bg_color",login.getActivity_bg_color());
+            bundle.putString("Background_image",login.getBackground_image());
+            bundle.putString("Button_bg_color",login.getButton_bg_color());
+            bundle.putString("Button_text",login.getButton_text());
+            bundle.putString("Button_text_color",login.getButton_text_color());
+            bundle.putString("Card_bg_color",login.getCard_bg_color());
+            bundle.putString("Edit_text_bg",login.getEdit_text_bg());
+            bundle.putString("Input_box1",login.getInput_box1());
+            bundle.putString("Input_box2",login.getInput_box2());
+            bundle.putString("Login_url",login.getLogin_url());
+            bundle.putString("Profile_image",login.getProfile_image());
+            bundle.putString("Alpha",login.getAlpha());
+
+            fragment.setArguments(bundle);
             fragmentTransaction.commit();
+
             setNavigation(0);
         }
+
+
     }
 
 

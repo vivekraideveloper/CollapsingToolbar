@@ -11,10 +11,6 @@ public class Results {
         String grid_columns;
     @SerializedName("view_type")
         String view_type;
-    @SerializedName("top_image_bg")
-        String top_image_bg;
-    @SerializedName("top_image_fg")
-        String top_image_fg;
     @SerializedName("is_search")
         String is_search;
     @SerializedName("data")
@@ -23,7 +19,8 @@ public class Results {
         Login login;
     @SerializedName("toolbar")
         ToolBar toolBar;
-
+    @SerializedName("url")
+        String url;
     @SerializedName("nav_drawer")
         NavDrawer navDrawer;
 
@@ -35,13 +32,6 @@ public class Results {
         this.view_type = view_type;
     }
 
-    public void setTop_image_bg(String top_image_bg) {
-        this.top_image_bg = top_image_bg;
-    }
-
-    public void setTop_image_fg(String top_image_fg) {
-        this.top_image_fg = top_image_fg;
-    }
 
     public void setData(ArrayList<Data> data) {
         this.data = data;
@@ -67,6 +57,9 @@ public class Results {
         this.grid_columns = grid_columns;
     }
 
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public String getGrid_orientation() {
         return grid_orientation;
@@ -78,14 +71,6 @@ public class Results {
 
     public String getView_type() {
         return view_type;
-    }
-
-    public String getTop_image_bg() {
-        return top_image_bg;
-    }
-
-    public String getTop_image_fg() {
-        return top_image_fg;
     }
 
     public ArrayList<Data> getData() {
@@ -108,5 +93,8 @@ public class Results {
         return navDrawer;
     }
 
+    public String getUrl() {
+        return url;
+    }
 }
 

@@ -20,6 +20,10 @@ public class ToolBar {
         String is_back;
     @SerializedName("back_url")
         String back_url;
+    @SerializedName("top_image_bg")
+        String top_image_bg;
+    @SerializedName("top_image_fg")
+        String top_image_fg;
 
     public void setTop_image(String top_image) {
         this.top_image = top_image;
@@ -53,6 +57,14 @@ public class ToolBar {
         this.back_url = back_url;
     }
 
+    public void setTop_image_bg(String top_image_bg) {
+        this.top_image_bg = top_image_bg;
+    }
+
+    public void setTop_image_fg(String top_image_fg) {
+        this.top_image_fg = top_image_fg;
+    }
+
     public String getTop_image() {
 
         return top_image;
@@ -80,6 +92,14 @@ public class ToolBar {
 
     public String getIs_back() {
         return is_back;
+    }
+
+    public String getTop_image_bg() {
+        return top_image_bg;
+    }
+
+    public String getTop_image_fg() {
+        return top_image_fg;
     }
 
     public String getBack_url() {

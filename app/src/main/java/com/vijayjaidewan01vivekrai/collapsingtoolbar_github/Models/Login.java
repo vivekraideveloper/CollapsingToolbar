@@ -26,6 +26,8 @@ public class Login {
         String input_box2;
     @SerializedName("login_url")
         String login_url;
+    @SerializedName("alpha")
+        String alpha;
 
     public String getActivity_bg_color() {
         return activity_bg_color;
@@ -113,5 +115,13 @@ public class Login {
 
     public void setLogin_url(String login_url) {
         this.login_url = login_url;
+    }
+
+    public String getAlpha() {
+        return alpha;
+    }
+
+    public void setAlpha(String alpha) {
+        this.alpha = alpha;
     }
 }

@@ -1,6 +1,7 @@
 package com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -9,6 +10,7 @@ import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.PointerIcon;
 import android.view.View;
@@ -16,22 +18,13 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.Resource;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Data;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiService;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiUtils;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.RetrofitClient;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.R;
 
 import java.util.ArrayList;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
 public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<Data> cardData;
@@ -117,7 +110,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 //            ((ViewHolder2) holder).card.setCardBackgroundColor(Color.parseColor(cardData.get(position).getBg_color()));
 
-            Picasso.with(context)
+            Glide.with(context)
                     .load(cardData.get(position).getImage())
                     .into(((ViewHolder2) holder).iconImage);
 
@@ -134,7 +127,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 //            ((ViewHolder3) holder).card.setCardBackgroundColor(Color.parseColor(cardData.get(position).getBg_color()));
 
-            Picasso.with(context)
+            Glide.with(context)
                     .load(cardData.get(position).getImage())
                     .into(((ViewHolder3) holder).iconImage);
             //((ViewHolder3)holder).iconImage.setImageBitmap(CardAdapter.getImage(cardData.get(position).getImage()));
@@ -150,7 +143,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //            ((ViewHolder4) holder).desc.setTextColor(Color.parseColor(cardData.get(position).getText_description_color()));
 
 //            ((ViewHolder4) holder).card.setCardBackgroundColor(Color.parseColor(cardData.get(position).getBg_color()));
-            Picasso.with(context)
+            Glide.with(context)
                     .load(cardData.get(position).getImage())
                     .into(((ViewHolder4) holder).background);
             //((ViewHolder4)holder).iconImage.setImageBitmap(RetrofitClient.getImage(cardData.get(position).getImage()));
@@ -215,10 +208,12 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public TextView head, sub_head, desc;
         public AppCompatImageView iconImage;
         public CardView card;
+        public Resources r;
 
         public ViewHolder3(View itemView) {
             super(itemView);
 
+            r = itemView.getResources();
             head = itemView.findViewById(R.id.tv_recycler_item_1);
             sub_head = itemView.findViewById(R.id.tv_recycler_item_2);
             desc = itemView.findViewById(R.id.tv_recycler_item_3);
@@ -232,10 +227,12 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public TextView head, sub_head, desc;
         public AppCompatImageView background;
         public CardView card;
+        public Resources r;
 
         public ViewHolder4(View itemView) {
             super(itemView);
 
+            r = itemView.getResources();
             head = itemView.findViewById(R.id.tv_recycler_item_1);
             sub_head = itemView.findViewById(R.id.tv_recycler_item_2);
             desc = itemView.findViewById(R.id.tv_recycler_item_3);
