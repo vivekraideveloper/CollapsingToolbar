@@ -2,7 +2,9 @@ package com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Login {
+import java.io.Serializable;
+
+public class Login implements Serializable{
 
     @SerializedName("activity_bg_color")
         String activity_bg_color;

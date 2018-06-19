@@ -174,7 +174,6 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public class ViewHolder1 extends RecyclerView.ViewHolder {
 
         public TextView head, sub_head, desc;
-        public CardView card;
 
         public ViewHolder1(View itemView) {
             super(itemView);
@@ -182,7 +181,6 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             head = itemView.findViewById(R.id.tv_recycler_item_1);
             sub_head = itemView.findViewById(R.id.tv_recycler_item_2);
             desc = itemView.findViewById(R.id.tv_recycler_item_3);
-            card = itemView.findViewById(R.id.card_1);
         }
     }
 
@@ -199,7 +197,6 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             sub_head = itemView.findViewById(R.id.tv_recycler_item_2);
             desc = itemView.findViewById(R.id.tv_recycler_item_3);
             iconImage = itemView.findViewById(R.id.icon_image);
-            card = itemView.findViewById(R.id.card_2);
         }
     }
 
