@@ -23,6 +23,7 @@ import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiServ
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiUtils;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -111,11 +112,14 @@ public class LoginFragment extends Fragment {
             ApiService apiService = ApiUtils.getAPIService();
 
             //apiService.results(url).enqueue();
-            User user = new User();
-            user.setInput_box1(username);
-            user.setInput_box2(password);
-            Call<TestResults> call = apiService.getUser(user);
-
+//            User user = new User();
+//            user.setInput_box1(username);
+//            user.setInput_box2(password);
+            HashMap<String,String> map=new HashMap<>();
+            map.put("input_box1",username);
+            map.put("input_box2",password);
+//            Call<TestResults> call = apiService.getUser(new User(username,password));
+            Call<TestResults> call=apiService.getUser(map);
             call.enqueue(new Callback<TestResults>() {
                 @Override
                 public void onResponse(Call<TestResults> call, Response<TestResults> response) {
