@@ -25,7 +25,7 @@ public class LoginFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        final View view = inflater.inflate(R.layout.login_fragment,container,false);
+        final View view = inflater.inflate(R.layout.login_fragment,container,false);z
 
         login = view.findViewById(R.id.login_button);
         login.setOnClickListener(new View.OnClickListener() {
