@@ -7,7 +7,6 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.CardView;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +16,8 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Login;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.TestResults;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.User;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiService;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiUtils;
 
@@ -29,7 +28,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LoginFragment extends Fragment {
+public class LoginFragment extends Fragment implements ScrollingActivity.SetLayout {
 
     CardView card;
     TextInputEditText username, password;
@@ -37,6 +36,7 @@ public class LoginFragment extends Fragment {
     RelativeLayout relativeLayout;
     AppCompatImageView imageView,backImage;
     String url;
+    Login login;
 
     @Nullable
     @Override
@@ -50,25 +50,27 @@ public class LoginFragment extends Fragment {
         relativeLayout = view.findViewById(R.id.card_coordinator);
         imageView = view.findViewById(R.id.appLogo);
         button = view.findViewById(R.id.login_button);
-        backImage = view.findViewById(R.id.back_image);
+        backImage = view.findViewById(R.id.loginBackImage);
+        login = (Login)getArguments().getSerializable("Login");
 
-        username.setHint(getArguments().getString("Input_box1"));
-        password.setHint(getArguments().getString("Input_box2"));
+
+        username.setHint(login.getInput_box1());
+        password.setHint(login.getInput_box2());
 //            fragment.card.setCardBackgroundColor(Color.parseColor(login.getCard_bg_color()));
         Glide.with(this)
-                .load(getArguments().getString("Profile_image"))
+                .load(login.getProfile_image())
                 .into(imageView);
         Glide.with(this)
-                .load(getArguments().getString("Background_image"))
+                .load(login.getBackground_image())
                 .into(backImage);
 //            fragment.password.setHighlightColor(Color.parseColor(login.getEdit_text_bg()));
 //            fragment.username.setHighlightColor(Color.parseColor(login.getEdit_text_bg()));
 //            fragment.relativeLayout.setBackgroundColor(Color.parseColor(login.getActivity_bg_color()));
 //            fragment.button.setBackgroundColor(Color.parseColor(login.getButton_bg_color()));
 //            fragment.button.setTextColor(Color.parseColor(login.getButton_text_color()));
-        button.setText(getArguments().getString("Button_text"));
-//        card.setAlpha(Float.parseFloat(getArguments().getString("Alpha")));
-
+        button.setText(login.getButton_text());
+        card.setAlpha(Float.parseFloat(login.getAlpha()));
+        url = login.getLogin_url();
 //        url = getArguments().getString("Login_url");
         //url = "http://bydegreestest.agnitioworld.com/test"
         ScrollingActivity instance = new ScrollingActivity();
@@ -77,17 +79,14 @@ public class LoginFragment extends Fragment {
             public void onClick(View v) {
 
                 String name = username.getText().toString();
-                Log.i("name", name);
                 String pass = password.getText().toString();
-                Log.i("pass", pass);
-
 
                 //check the parameters to login
                 if(!name.isEmpty() && !pass.isEmpty())
                 {
-                    relativeLayout.animate().translationYBy(-2000f).setDuration(300).alphaBy(1f);
                     UserLoginTask task = new UserLoginTask("abc","pass");
                     task.execute();
+                    relativeLayout.animate().translationYBy(-2000f).setDuration(300).alphaBy(1f);
                     //startActivity(intent);
                 }
 
@@ -96,7 +95,12 @@ public class LoginFragment extends Fragment {
         return view;
     }
 
-    class UserLoginTask extends AsyncTask<Void, Void, String >
+    @Override
+    public void setUrl(String url) {
+        ((ScrollingActivity)getActivity()).callHttp(url);
+    }
+
+    class UserLoginTask extends AsyncTask<Void, Void, Boolean >
     {
         private final String username;
         private final String password;
@@ -107,7 +111,7 @@ public class LoginFragment extends Fragment {
         }
 
         @Override
-        protected String doInBackground(Void... voids) {
+        protected Boolean doInBackground(Void... voids) {
 
             ApiService apiService = ApiUtils.getAPIService();
 
@@ -119,21 +123,31 @@ public class LoginFragment extends Fragment {
             map.put("input_box1",username);
             map.put("input_box2",password);
 //            Call<TestResults> call = apiService.getUser(new User(username,password));
-            Call<TestResults> call=apiService.getUser(map);
+            Call<TestResults> call=apiService.getUser(url, map);
             call.enqueue(new Callback<TestResults>() {
                 @Override
                 public void onResponse(Call<TestResults> call, Response<TestResults> response) {
                     Log.i("IN response","yes");
                     Toast.makeText(getContext(),response.body().getCode(),Toast.LENGTH_LONG).show();
+                    setUrl(response.body().getResults().getUrl());
                 }
 
                 @Override
                 public void onFailure(Call<TestResults> call, Throwable t) {
-
                 }
             });
 
-            return null;
+//            try {
+//                Response<TestResults> response = call.execute();
+//                if(response.isSuccessful())
+//                {
+//                    Toast.makeText(getContext(),response.body().getCode(),Toast.LENGTH_LONG).show();
+//                    return true;
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+            return false;
         }
     }
 }

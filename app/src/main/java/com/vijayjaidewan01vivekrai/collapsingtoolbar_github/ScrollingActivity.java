@@ -107,71 +107,73 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
         }
 
         else if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
-                    || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
-                // notify user you are not online
+                || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
+            // notify user you are not online
 
-                View view = findViewById(android.R.id.content);
-                Snackbar snackbar = Snackbar.make(view, "Please ensure stable internet connectivity!", 7000).setAction("Action", null);
-                snackbar.show();
+            View view = findViewById(android.R.id.content);
+            Snackbar snackbar = Snackbar.make(view, "Please ensure stable internet connectivity!", 7000).setAction("Action", null);
+            snackbar.show();
 
-                FragmentManager fm = getSupportFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.drawer_layout, new Offline_fragment());
-                ft.commit();
+            FragmentManager fm = getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.drawer_layout, new Offline_fragment());
+            ft.commit();
         }
     }
-        private void callHttp (String BASE_URL){
-            ApiService apiService = ApiUtils.getAPIService();
-            apiService.results(BASE_URL).enqueue(new Callback<TestResults>() {
 
-                @Override
-                public void onResponse(Call<TestResults> call, Response<TestResults> response) {
-                    if (response.isSuccessful()) {
-                        if (response.body().getMsg().equals("success")) {
 
-                            int drawerValue,collapseValue;
-                            drawerValue = Integer.parseInt(response.body().getResults().getToolBar().getIs_back());
-                            //collapseValue = Integer.parseInt(response.body().getResults().getToolBar().getTop_image());
+    public void callHttp (String BASE_URL){
+        ApiService apiService = ApiUtils.getAPIService();
+        apiService.results(BASE_URL).enqueue(new Callback<TestResults>() {
 
-                            //Log.d("Collapse",""+collapseValue);
-                            Log.d("Drawer",""+drawerValue);
+            @Override
+            public void onResponse(Call<TestResults> call, Response<TestResults> response) {
+                if (response.isSuccessful()) {
+                    if (response.body().getMsg().equals("success")) {
 
-                            Results results = response.body().getResults();
+                        int drawerValue,collapseValue;
+                        drawerValue = Integer.parseInt(response.body().getResults().getToolBar().getIs_back());
+                        //collapseValue = Integer.parseInt(response.body().getResults().getToolBar().getTop_image());
 
-                            setCollapse(2,results);
-                            setNavigation(1);
+                        //Log.d("Collapse",""+collapseValue);
+                        Log.d("Drawer",""+drawerValue);
 
-                            int viewType = Integer.parseInt(response.body().getResults().getView_type());
-                            Log.d("View Type",""+ viewType);
-                            switch (6)
-                            {
-                                case 1:
-                                case 2:
-                                case 3:
-                                case 4: adapter=new CardAdapter(response.body().getResults().getData(),ScrollingActivity.this,3);
-                                        recyclerView.setAdapter(adapter);
-                                        adapter.notifyDataSetChanged();
-                                        break;
-                                case 5: //add webview
-                                        break;
-                                case 6: setLogin(response.body().getResults().getLogin());
-                                        break;
-                                default: Log.e("View Type","Wrong view Type value - "+viewType);
-                            }
+                        Results results = response.body().getResults();
 
-                        } else {
-                            Toast.makeText(ScrollingActivity.this, response.body().getMsg(), Toast.LENGTH_SHORT)
-                                    .show();
+                        setCollapse(2,results);
+                        setNavigation(1);
+
+                        int viewType = Integer.parseInt(response.body().getResults().getView_type());
+                        Log.d("View Type",""+ viewType);
+                        switch (3)
+                        {
+                            case 1:
+                            case 2:
+                            case 3:
+                            case 4: adapter=new CardAdapter(response.body().getResults().getData(),ScrollingActivity.this,3);
+                                recyclerView.setAdapter(adapter);
+                                adapter.notifyDataSetChanged();
+                                break;
+                            case 5: //add webview
+                                break;
+                            case 6: setLogin(response.body().getResults().getLogin());
+                                break;
+                            default: Log.e("View Type","Wrong view Type value - "+viewType);
                         }
+
+                    } else {
+                        Toast.makeText(ScrollingActivity.this, response.body().getMsg(), Toast.LENGTH_SHORT)
+                                .show();
                     }
                 }
+            }
 
-                @Override
-                public void onFailure(Call<TestResults> call, Throwable t) {
+            @Override
+            public void onFailure(Call<TestResults> call, Throwable t) {
 
-                }
-            });
-        }
+            }
+        });
+    }
 //
 //    public void setAdapter()
 //    {
@@ -189,230 +191,232 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 //    }
 
 
-        //Search Bar controlled by searchValue = 0(Not Present), 1(Present)
-        @Override
-        public boolean onCreateOptionsMenu (Menu menu){
-            // Inflate the menu; this adds items to the action bar if it is present.
-            //getMenuInflater().inflate(R.menu.menu_scrolling, menu);
-            MenuInflater inflater = getMenuInflater();
+    //Search Bar controlled by searchValue = 0(Not Present), 1(Present)
+    @Override
+    public boolean onCreateOptionsMenu (Menu menu){
+        // Inflate the menu; this adds items to the action bar if it is present.
+        //getMenuInflater().inflate(R.menu.menu_scrolling, menu);
+        MenuInflater inflater = getMenuInflater();
 
-            if (searchValue == 1) {
-                inflater.inflate(R.menu.search_layout, menu);
-                MenuItem item = menu.findItem(R.id.search_view);
-                SearchView searchView = (SearchView) item.getActionView();
-                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                    @Override
-                    public boolean onQueryTextSubmit(String s) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onQueryTextChange(String s) {
-                        return false;
-                    }
-                });
-            }
-
-            return true;
-        }
-
-        @Override
-        public boolean onOptionsItemSelected (MenuItem item){
-            // Handle action bar item clicks here. The action bar will
-            // automatically handle clicks on the Home/Up button, so long
-            // as you specify a parent activity in AndroidManifest.xml.
-
-            if (drawerValue == 1) {
-                if (toggle.onOptionsItemSelected(item)) {
-                    return true;
-                }
-            }
-
-            int id = item.getItemId();
-
-            return super.onOptionsItemSelected(item);
-        }
-
-    // Setting the margins of Recycler View while the toolbar is collapsed to remove the empty space in between the toolbar and recycler view
-        public void setRecyclerViewMargins()
-        {
-            appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+        if (searchValue == 1) {
+            inflater.inflate(R.menu.search_layout, menu);
+            MenuItem item = menu.findItem(R.id.search_view);
+            SearchView searchView = (SearchView) item.getActionView();
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
-                public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                    if (Math.abs(verticalOffset) == appBarLayout.getTotalScrollRange()) {
-                        //Log.d("appbar",""+recyclerView.getScaleY());
-                        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) swipeRefreshLayoutCoordinator.getLayoutParams(); // Redundant Code with line 119
-                        layoutParams.setMargins(0, 0, 0, 0);
-                        swipeRefreshLayoutCoordinator.setLayoutParams(layoutParams);
-                        //Animate the scrolling
-                    } else if (Math.abs(verticalOffset) == 0) {
-                        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) swipeRefreshLayoutCoordinator.getLayoutParams();
-                        layoutParams.setMargins(0, 150, 0, 0);
-                        swipeRefreshLayoutCoordinator.setLayoutParams(layoutParams);
-                    }
+                public boolean onQueryTextSubmit(String s) {
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    return false;
                 }
             });
         }
 
-        @Override
-        public boolean onNavigationItemSelected (@NonNull MenuItem item){
-            return false;
-        }
-
-
-        private void setCollapse (int collapseValue, final Results results){
-
-            if (collapseValue == 1) {
-                recyclerView = findViewById(R.id.recyclerViewLinear);
-
-                setSupportActionBar(mToolbar);
-                getSupportActionBar().setTitle(results.getToolBar().getCollapsed_top_title());
-                mToolbar.setTitleTextColor(Color.parseColor(results.getToolBar().getCollapsed_top_title_color()));
-                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(results.getToolBar().getExtended_top_title_color())));
-                //getSupportActionBar().setTitle(results.getTop_heading());
-
-                coordinatorLayout.setVisibility(View.GONE);
-                //linearLayout.setVisibility(View.VISIBLE);
-                //layout.setVisibility(View.VISIBLE);
-
-                swipeRefreshLayout.setProgressBackgroundColorSchemeColor(Color.WHITE);
-                swipeRefreshLayout.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
-                swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                swipeRefreshLayout.setRefreshing(false);
-
-                            }
-                        }, 3000);
-
-                    }
-                });
-            }
-            if (collapseValue == 2) {
-                recyclerView = findViewById(R.id.recycler_view);
-
-                setSupportActionBar(toolbar);
-                getSupportActionBar().setTitle(results.getToolBar().getExtended_top_title());
-
-                collapsingToolbarLayout.setContentScrim(new ColorDrawable(Color.parseColor("#ff00ff")));
-
-                linearLayout.setVisibility(View.GONE);
-                appBarLayout.setExpanded(true);
-                mToolbar.setVisibility(View.GONE);
-
-                setRecyclerViewMargins();
-                swipeRefreshLayoutCoordinator.setProgressBackgroundColorSchemeColor(Color.WHITE);
-                swipeRefreshLayoutCoordinator.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
-                swipeRefreshLayoutCoordinator.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                swipeRefreshLayoutCoordinator.setRefreshing(false);
-                                //callHttp(results.get);
-                            }
-                        }, 3000);
-                    }
-                });
-                //layout.setVisibility(View.GONE);
-                RoundedImage roundedImage = findViewById(R.id.rounded_image);
-                Picasso.with(this)
-                        .load(results.getToolBar().getTop_image_fg())
-                        .into(roundedImage);
-
-                AppCompatImageView background = findViewById(R.id.backImage);
-                Glide.with(ScrollingActivity.this)
-                        .load(results.getToolBar().getTop_image_bg())
-                        .into(background);
-                //roundedImage.setImageBitmap(CardAdapter.getImage(results.getTop_image_fg()));
-            }
-
-            int col = Integer.parseInt(results.getGrid_columns());
-            int orientation = Integer.parseInt(results.getGrid_orientation());
-
-            Log.d("Columns","" + col);
-            Log.d("Orientation",""+orientation);
-
-            setRecyclerView(2,orientation);
-            //setNavigation(drawerValue);
-        }
-
-        private void setRecyclerView(int columns, int orientation)
-        {
-            // Setting the recycler view
-            recyclerView.setHasFixedSize(true);
-            if(columns == 0)
-                recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            else{
-                switch (orientation)
-                {
-                    case 1: orientation = LinearLayoutManager.VERTICAL;
-                            break;
-                    case 2: orientation = LinearLayoutManager.HORIZONTAL;
-                            break;
-                    default: Log.e("Orientation","Wrong orientation value provided.  -  " + orientation);
-                }
-                GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(),columns);
-                gridLayoutManager.setOrientation(orientation); // set Horizontal Orientation
-                recyclerView.setLayoutManager(gridLayoutManager); // set LayoutManager to RecyclerView
-            }
-        }
-
-        private void setNavigation (int drawerValue){
-            if (drawerValue == 1) {
-                drawerLayout = findViewById(R.id.drawer_layout);
-                toggle = new ActionBarDrawerToggle(ScrollingActivity.this, drawerLayout, R.string.open, R.string.close);
-                drawerLayout.addDrawerListener(toggle);
-                toggle.syncState();
-                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-            } else {
-                drawerLayout = findViewById(R.id.drawer_layout);
-                toggle = new ActionBarDrawerToggle(ScrollingActivity.this, drawerLayout, R.string.open, R.string.close);
-                drawerLayout.addDrawerListener(toggle);
-                toggle.syncState();
-                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-                toolbar.setNavigationIcon(null);
-                mToolbar.setNavigationIcon(null);
-            }
-        }
-
-        private void setLogin(Login login)
-        {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            LoginFragment fragment = new LoginFragment();
-            fragmentTransaction.add(R.id.frame,fragment);
-            Bundle bundle = new Bundle();
-
-            bundle.putString("Activity_bg_color",login.getActivity_bg_color());
-            bundle.putString("Background_image",login.getBackground_image());
-            bundle.putString("Button_bg_color",login.getButton_bg_color());
-            bundle.putString("Button_text",login.getButton_text());
-            bundle.putString("Button_text_color",login.getButton_text_color());
-            bundle.putString("Card_bg_color",login.getCard_bg_color());
-            bundle.putString("Edit_text_bg",login.getEdit_text_bg());
-            bundle.putString("Input_box1",login.getInput_box1());
-            bundle.putString("Input_box2",login.getInput_box2());
-            bundle.putString("Login_url",login.getLogin_url());
-            bundle.putString("Profile_image",login.getProfile_image());
-            bundle.putString("Alpha",login.getAlpha());
-
-            fragment.setArguments(bundle);
-            fragmentTransaction.commit();
-
-            setNavigation(0);
-        }
-
-
+        return true;
     }
+
+    @Override
+    public boolean onOptionsItemSelected (MenuItem item){
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+
+        if (drawerValue == 1) {
+            if (toggle.onOptionsItemSelected(item)) {
+                return true;
+            }
+        }
+
+        int id = item.getItemId();
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    // Setting the margins of Recycler View while the toolbar is collapsed to remove the empty space in between the toolbar and recycler view
+    public void setRecyclerViewMargins()
+    {
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (Math.abs(verticalOffset) == appBarLayout.getTotalScrollRange()) {
+                    //Log.d("appbar",""+recyclerView.getScaleY());
+                    CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) swipeRefreshLayoutCoordinator.getLayoutParams(); // Redundant Code with line 119
+                    layoutParams.setMargins(0, 0, 0, 0);
+                    swipeRefreshLayoutCoordinator.setLayoutParams(layoutParams);
+                    //Animate the scrolling
+                } else if (Math.abs(verticalOffset) == 0) {
+                    CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) swipeRefreshLayoutCoordinator.getLayoutParams();
+                    layoutParams.setMargins(0, 150, 0, 0);
+                    swipeRefreshLayoutCoordinator.setLayoutParams(layoutParams);
+                }
+            }
+        });
+    }
+
+    @Override
+    public boolean onNavigationItemSelected (@NonNull MenuItem item){
+        return false;
+    }
+
+
+    private void setCollapse (int collapseValue, final Results results){
+
+        if (collapseValue == 1) {
+            recyclerView = findViewById(R.id.recyclerViewLinear);
+
+            setSupportActionBar(mToolbar);
+            getSupportActionBar().setTitle(results.getToolBar().getCollapsed_top_title());
+            mToolbar.setTitleTextColor(Color.parseColor(results.getToolBar().getCollapsed_top_title_color()));
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(results.getToolBar().getExtended_top_title_color())));
+            //getSupportActionBar().setTitle(results.getTop_heading());
+
+            coordinatorLayout.setVisibility(View.GONE);
+            //linearLayout.setVisibility(View.VISIBLE);
+            //layout.setVisibility(View.VISIBLE);
+
+            swipeRefreshLayout.setProgressBackgroundColorSchemeColor(Color.WHITE);
+            swipeRefreshLayout.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            swipeRefreshLayout.setRefreshing(false);
+
+                        }
+                    }, 3000);
+
+                }
+            });
+        }
+        if (collapseValue == 2) {
+            recyclerView = findViewById(R.id.recycler_view);
+
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setTitle(results.getToolBar().getExtended_top_title());
+
+            collapsingToolbarLayout.setContentScrim(new ColorDrawable(Color.parseColor("#ff00ff")));
+
+            linearLayout.setVisibility(View.GONE);
+            appBarLayout.setExpanded(true);
+            mToolbar.setVisibility(View.GONE);
+
+            setRecyclerViewMargins();
+            swipeRefreshLayoutCoordinator.setProgressBackgroundColorSchemeColor(Color.WHITE);
+            swipeRefreshLayoutCoordinator.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
+            swipeRefreshLayoutCoordinator.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            swipeRefreshLayoutCoordinator.setRefreshing(false);
+                            //callHttp(results.get);
+                        }
+                    }, 3000);
+                }
+            });
+            //layout.setVisibility(View.GONE);
+            RoundedImage roundedImage = findViewById(R.id.rounded_image);
+            Picasso.with(this)
+                    .load(results.getToolBar().getTop_image_fg())
+                    .into(roundedImage);
+
+            AppCompatImageView background = findViewById(R.id.backImage);
+            Glide.with(ScrollingActivity.this)
+                    .load(results.getToolBar().getTop_image_bg())
+                    .into(background);
+            //roundedImage.setImageBitmap(CardAdapter.getImage(results.getTop_image_fg()));
+        }
+
+        int col = Integer.parseInt(results.getGrid_columns());
+        int orientation = Integer.parseInt(results.getGrid_orientation());
+
+        Log.d("Columns","" + col);
+        Log.d("Orientation",""+orientation);
+
+        setRecyclerView(2,orientation);
+        //setNavigation(drawerValue);
+    }
+
+    private void setRecyclerView(int columns, int orientation)
+    {
+        // Setting the recycler view
+        recyclerView.setHasFixedSize(true);
+        if(columns == 0)
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        else{
+            switch (orientation)
+            {
+                case 1: orientation = LinearLayoutManager.VERTICAL;
+                    break;
+                case 2: orientation = LinearLayoutManager.HORIZONTAL;
+                    break;
+                default: Log.e("Orientation","Wrong orientation value provided.  -  " + orientation);
+            }
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(),columns);
+            gridLayoutManager.setOrientation(orientation); // set Horizontal Orientation
+            recyclerView.setLayoutManager(gridLayoutManager); // set LayoutManager to RecyclerView
+        }
+    }
+
+    private void setNavigation (int drawerValue){
+        if (drawerValue == 1) {
+            drawerLayout = findViewById(R.id.drawer_layout);
+            toggle = new ActionBarDrawerToggle(ScrollingActivity.this, drawerLayout, R.string.open, R.string.close);
+            drawerLayout.addDrawerListener(toggle);
+            toggle.syncState();
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        } else {
+            drawerLayout = findViewById(R.id.drawer_layout);
+            toggle = new ActionBarDrawerToggle(ScrollingActivity.this, drawerLayout, R.string.open, R.string.close);
+            drawerLayout.addDrawerListener(toggle);
+            toggle.syncState();
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+            toolbar.setNavigationIcon(null);
+            mToolbar.setNavigationIcon(null);
+        }
+    }
+
+    private void setLogin(Login login)
+    {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        LoginFragment fragment = new LoginFragment();
+        fragmentTransaction.add(R.id.frame,fragment);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("Login",login);
+//            bundle.putString("Activity_bg_color",login.getActivity_bg_color());
+//            bundle.putString("Background_image",login.getBackground_image());
+//            bundle.putString("Button_bg_color",login.getButton_bg_color());
+//            bundle.putString("Button_text",login.getButton_text());
+//            bundle.putString("Button_text_color",login.getButton_text_color());
+//            bundle.putString("Card_bg_color",login.getCard_bg_color());
+//            bundle.putString("Edit_text_bg",login.getEdit_text_bg());
+//            bundle.putString("Input_box1",login.getInput_box1());
+//            bundle.putString("Input_box2",login.getInput_box2());
+//            bundle.putString("Login_url",login.getLogin_url());
+//            bundle.putString("Profile_image",login.getProfile_image());
+//            bundle.putString("Alpha",login.getAlpha());
+
+        fragment.setArguments(bundle);
+        fragmentTransaction.commit();
+
+        setNavigation(0);
+    }
+
+    public interface SetLayout{
+        void setUrl(String url);
+    }
+}
 
 
     /*if (response.body().getResults().getView_type().equals("4")){

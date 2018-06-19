@@ -20,6 +20,6 @@ public interface ApiService {
     Call<TestResults> results(@Url String url);
 
     @FormUrlEncoded
-    @POST("login.php")
-    Call<TestResults> getUser(@FieldMap HashMap<String,String> map);
+    @POST
+    Call<TestResults> getUser(@Url String url, @FieldMap HashMap<String,String> map);
 }
