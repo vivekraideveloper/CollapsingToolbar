@@ -51,7 +51,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ScrollingActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class ScrollingActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, CardAdapter.OnItemClickListener{
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
@@ -72,6 +72,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
     int drawerValue = 1;
     int collapseValue = 1;
     int searchValue = 1;
+    private CardAdapter cardAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +81,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 
         linearLayout = findViewById(R.id.linear_layout);
         appBarLayout = findViewById(R.id.app_bar);
+        drawerLayout = findViewById(R.id.drawer_layout);
         coordinatorLayout = findViewById(R.id.coordinator_layout);
         swipeRefreshLayout = findViewById(R.id.swipe);
         swipeRefreshLayoutCoordinator = findViewById(R.id.swipe_coordinator);
@@ -122,8 +124,8 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                     if (response.isSuccessful()) {
                         if (response.body().getMsg().equals("success")) {
 
-                            int drawerValue,collapseValue;
-                            drawerValue = Integer.parseInt(response.body().getResults().getToolBar().getIs_back());
+//                            int drawerValue,collapseValue;
+//                            drawerValue = Integer.parseInt(response.body().getResults().getToolBar().getIs_back());
                             //collapseValue = Integer.parseInt(response.body().getResults().getToolBar().getTop_image());
 
                             //Log.d("Collapse",""+collapseValue);
@@ -131,8 +133,8 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 
                             Results results = response.body().getResults();
 
-                            setCollapse(1,results);
-                            setNavigation(1);
+                            setCollapse(2,results);
+                            setNavigation(drawerValue);
 
                             int viewType = Integer.parseInt(response.body().getResults().getView_type());
                             Log.d("View Type",""+ viewType);
@@ -142,9 +144,10 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                                 case 2:
                                 case 3:
                                 case 4:
-                                        adapter=new CardAdapter(response.body().getResults().getData(),ScrollingActivity.this,3);
-                                        recyclerView.setAdapter(adapter);
-                                        adapter.notifyDataSetChanged();
+                                        cardAdapter=new CardAdapter(response.body().getResults().getData(),ScrollingActivity.this,3);
+                                        recyclerView.setAdapter(cardAdapter);
+                                        cardAdapter.setOnItemClickListener(ScrollingActivity.this);
+                                        cardAdapter.notifyDataSetChanged();
                                         break;
                                 case 5: //add webview
                                         break;
@@ -315,11 +318,11 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                 //layout.setVisibility(View.GONE);
                 RoundedImage roundedImage = findViewById(R.id.rounded_image);
                 Picasso.with(ScrollingActivity.this)
-                        .load(results.getTop_image_fg())
+                        .load(results.getToolBar().getTop_image_fg())
                         .into(roundedImage);
                 AppCompatImageView background = findViewById(R.id.backImage);
                 Picasso.with(ScrollingActivity.this)
-                        .load(results.getTop_image_bg())
+                        .load(results.getToolBar().getTop_image_bg())
                         .into(background);
                 //roundedImage.setImageBitmap(CardAdapter.getImage(results.getTop_image_fg()));
             }
@@ -365,15 +368,29 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
             } else {
-                drawerLayout = findViewById(R.id.drawer_layout);
-                toggle = new ActionBarDrawerToggle(ScrollingActivity.this, drawerLayout, R.string.open, R.string.close);
-                drawerLayout.addDrawerListener(toggle);
-                toggle.syncState();
+//                drawerLayout = findViewById(R.id.drawer_layout);
+//                toggle = new ActionBarDrawerToggle(ScrollingActivity.this, drawerLayout, R.string.open, R.string.close);
+//                drawerLayout.addDrawerListener(toggle);
+//                toggle.syncState();
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-                toolbar.setNavigationIcon(null);
-                mToolbar.setNavigationIcon(null);
+//                toolbar.setNavigationIcon(null);
+//                mToolbar.setNavigationIcon(null);
+//
+
+                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(ScrollingActivity.this, "Nav Clicked", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(ScrollingActivity.this, "Nav Clicked", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         }
 
@@ -386,7 +403,12 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
             fragmentTransaction.commit();
             setNavigation(0);
         }
+
+    @Override
+    public void onItemClick(int position) {
+        Toast.makeText(this, "Item at positon "+ position+" clicked!", Toast.LENGTH_SHORT).show();
     }
+}
 
 
     /*if (response.body().getResults().getView_type().equals("4")){
