@@ -19,6 +19,14 @@ public class Results {
         Login login;
     @SerializedName("toolbar")
         ToolBar toolBar;
+    @SerializedName("url")
+        String url;
+    @SerializedName("nav_drawer")
+        NavDrawer navDrawer;
+
+    public void setNavDrawer(NavDrawer navDrawer) {
+        this.navDrawer = navDrawer;
+    }
 
     public void setView_type(String view_type) {
         this.view_type = view_type;
@@ -49,6 +57,9 @@ public class Results {
         this.grid_columns = grid_columns;
     }
 
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public String getGrid_orientation() {
         return grid_orientation;
@@ -77,4 +88,13 @@ public class Results {
     public ToolBar getToolBar() {
         return toolBar;
     }
+
+    public NavDrawer getNavDrawer() {
+        return navDrawer;
+    }
+
+    public String getUrl() {
+        return url;
+    }
 }
+

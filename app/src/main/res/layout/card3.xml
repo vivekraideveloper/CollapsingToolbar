@@ -18,11 +18,11 @@
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/icon_image"
-            android:layout_width="400dp"
+            android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_alignParentTop="true"
             android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
+            android:scaleType="fitXY"
             android:background="@drawable/ic_account_circle_black_24dp"/>
 
         <TextView

@@ -7,8 +7,8 @@ public class ApiUtils {
 
     private ApiUtils() {}
 
-    public static ApiService getAPIService(String url) {
-        return RetrofitClient.getClient(url).create(ApiService.class);
+    public static ApiService getAPIService() {
+        return RetrofitClient.getClient().create(ApiService.class);
     }
 
 
