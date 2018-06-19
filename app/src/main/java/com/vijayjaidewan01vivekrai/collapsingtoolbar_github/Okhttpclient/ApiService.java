@@ -16,6 +16,6 @@ public interface ApiService {
     @GET
     Call<TestResults> results(@Url String url);
 
-    @POST
-    Call<TestResults> getUser(@Url String url,@Body User user);
+    @POST("login.php")
+    Call<TestResults> getUser(@Body User user);
 }

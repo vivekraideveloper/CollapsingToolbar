@@ -68,8 +68,8 @@ public class LoginFragment extends Fragment {
         button.setText(getArguments().getString("Button_text"));
 //        card.setAlpha(Float.parseFloat(getArguments().getString("Alpha")));
 
-        url = getArguments().getString("Login_url");
-
+//        url = getArguments().getString("Login_url");
+        //url = "http://bydegreestest.agnitioworld.com/test"
         ScrollingActivity instance = new ScrollingActivity();
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,7 +85,7 @@ public class LoginFragment extends Fragment {
                 if(!name.isEmpty() && !pass.isEmpty())
                 {
                     relativeLayout.animate().translationYBy(-2000f).setDuration(300).alphaBy(1f);
-                    UserLoginTask task = new UserLoginTask("abc","pass",url);
+                    UserLoginTask task = new UserLoginTask("abc","pass");
                     task.execute();
                     //startActivity(intent);
                 }
@@ -99,12 +99,10 @@ public class LoginFragment extends Fragment {
     {
         private final String username;
         private final String password;
-        private final String url;
 
-        public UserLoginTask(String username, String password, String url) {
+        public UserLoginTask(String username, String password) {
             this.username = username;
             this.password = password;
-            this.url = url;
         }
 
         @Override
@@ -116,7 +114,7 @@ public class LoginFragment extends Fragment {
             User user = new User();
             user.setInput_box1(username);
             user.setInput_box2(password);
-            Call<TestResults> call = apiService.getUser(url, user);
+            Call<TestResults> call = apiService.getUser(user);
 
             call.enqueue(new Callback<TestResults>() {
                 @Override
