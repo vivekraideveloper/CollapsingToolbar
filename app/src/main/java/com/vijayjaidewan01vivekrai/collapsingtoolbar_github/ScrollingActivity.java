@@ -42,6 +42,8 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.SquaringDrawable;
 import com.squareup.picasso.Picasso;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters.CardAdapter;
@@ -54,13 +56,14 @@ import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiUtil
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ScrollingActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,OnClickSet{
+public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
@@ -76,7 +79,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
     private View login;
     private NavigationView navigationView;
     private CollapsingToolbarLayout collapsingToolbarLayout;
-    EditText username,password;
+    EditText username, password;
     CardAdapter adapter;
     int drawerValue = 2;
     int collapseValue = 1;
@@ -106,9 +109,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
             // notify user you are online
 
             callHttp(BASE_URL);
-        }
-
-        else if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
+        } else if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
                 || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
             // notify user you are not online
 
@@ -129,7 +130,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
     }
 
 
-    public void callHttp (String URL){
+    public void callHttp(String URL) {
         BASE_URL = URL;
         ApiService apiService = ApiUtils.getAPIService();
         apiService.results(URL).enqueue(new Callback<TestResults>() {
@@ -139,35 +140,38 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                 if (response.isSuccessful()) {
                     if (response.body().getMsg().equals("success")) {
 
-                        int drawerValue,collapseValue;
+                        int collapseValue;
                         drawerValue = Integer.parseInt(response.body().getResults().getToolBar().getIs_back());
+//                        drawerValue = 3;
                         collapseValue = Integer.parseInt(response.body().getResults().getToolBar().getTop_image());
 
-                        Log.d("Collapse",""+collapseValue);
-                        Log.d("Drawer",""+drawerValue);
+                        Log.d("Collapse", "" + collapseValue);
+                        Log.d("Drawer", "" + drawerValue);
 
                         Results results = response.body().getResults();
 
-                        setCollapse(collapseValue,results);
+                        setCollapse(collapseValue, results);
                         setNavigation(drawerValue);
 
                         int viewType = Integer.parseInt(response.body().getResults().getView_type());
-                        Log.d("View Type",""+ viewType);
-                        switch (viewType)
-                        {
+                        Log.d("View Type", "" + viewType);
+                        switch (viewType) {
                             case 1:
                             case 2:
                             case 3:
-                            case 4: adapter=new CardAdapter(response.body().getResults().getData(),ScrollingActivity.this,viewType);
+                            case 4:
+                                adapter = new CardAdapter(response.body().getResults().getData(), ScrollingActivity.this, viewType);
                                 recyclerView.setAdapter(adapter);
                                 adapter.notifyDataSetChanged();
                                 adapter.setClickListener(ScrollingActivity.this);
                                 break;
                             case 5: //add webview
                                 break;
-                            case 6: setLogin(response.body().getResults().getLogin());
+                            case 6:
+                                setLogin(response.body().getResults().getLogin());
                                 break;
-                            default: Log.e("View Type","Wrong view Type value - "+viewType);
+                            default:
+                                Log.e("View Type", "Wrong view Type value - " + viewType);
                         }
 
                     } else {
@@ -202,7 +206,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 
     //Search Bar controlled by searchValue = 0(Not Present), 1(Present)
     @Override
-    public boolean onCreateOptionsMenu (Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.menu_scrolling, menu);
         MenuInflater inflater = getMenuInflater();
@@ -228,12 +232,12 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
     }
 
     @Override
-    public boolean onOptionsItemSelected (MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
-        if (drawerValue == 1) {
+        if (drawerValue == 0) {
             if (toggle.onOptionsItemSelected(item)) {
                 return true;
             }
@@ -245,8 +249,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
     }
 
     // Setting the margins of Recycler View while the toolbar is collapsed to remove the empty space in between the toolbar and recycler view
-    public void setRecyclerViewMargins()
-    {
+    public void setRecyclerViewMargins() {
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
@@ -265,15 +268,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
         });
     }
 
-    @Override
-    public boolean onNavigationItemSelected (@NonNull MenuItem item){
-
-
-        return false;
-    }
-
-
-    private void setCollapse (int collapseValue, final Results results){
+    private void setCollapse(int collapseValue, final Results results) {
 
         if (collapseValue == 1) {
             recyclerView = findViewById(R.id.recyclerViewLinear);
@@ -310,7 +305,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle(results.getToolBar().getExtended_top_title());
 
-            collapsingToolbarLayout.setContentScrim(new ColorDrawable(Color.parseColor("#ff00ff")));
+//            collapsingToolbarLayout.setContentScrim(new ColorDrawable(Color.parseColor("#ff00ff")));
 
             linearLayout.setVisibility(View.GONE);
             appBarLayout.setExpanded(true);
@@ -333,81 +328,92 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
             });
             //layout.setVisibility(View.GONE);
             RoundedImage roundedImage = findViewById(R.id.rounded_image);
-            Picasso.with(this)
+            Glide.with(this)
                     .load(results.getToolBar().getTop_image_fg())
-                    .into(roundedImage);
+                    .asBitmap()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(new BitmapImageViewTarget(roundedImage){
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            super.setResource(resource);
+                        }
+                    });
 
             AppCompatImageView background = findViewById(R.id.backImage);
             Glide.with(ScrollingActivity.this)
                     .load(results.getToolBar().getTop_image_bg())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(background);
-            //roundedImage.setImageBitmap(CardAdapter.getImage(results.getTop_image_fg()));
         }
 
         int col = Integer.parseInt(results.getGrid_columns());
         int orientation = Integer.parseInt(results.getGrid_orientation());
 
-        Log.d("Columns","" + col);
-        Log.d("Orientation",""+orientation);
+        Log.d("Columns", "" + col);
+        Log.d("Orientation", "" + orientation);
 
-        setRecyclerView(col,orientation);
+        setRecyclerView(col, orientation);
         //setNavigation(drawerValue);
     }
 
-    private void setRecyclerView(int columns, int orientation)
-    {
+    private void setRecyclerView(int columns, int orientation) {
         // Setting the recycler view
         recyclerView.setHasFixedSize(true);
-        if(columns == 0)
+        if (columns == 0)
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        else{
-            switch (orientation)
-            {
-                case 1: orientation = LinearLayoutManager.VERTICAL;
+        else {
+            switch (orientation) {
+                case 1:
+                    orientation = LinearLayoutManager.VERTICAL;
                     break;
-                case 2: orientation = LinearLayoutManager.HORIZONTAL;
+                case 2:
+                    orientation = LinearLayoutManager.HORIZONTAL;
                     break;
-                default: Log.e("Orientation","Wrong orientation value provided.  -  " + orientation);
+                default:
+                    Log.e("Orientation", "Wrong orientation value provided.  -  " + orientation);
             }
-            GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(),columns);
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), columns);
             gridLayoutManager.setOrientation(orientation); // set Horizontal Orientation
             recyclerView.setLayoutManager(gridLayoutManager); // set LayoutManager to RecyclerView
         }
     }
 
-    private void setNavigation (int drawerValue){
-        if (drawerValue == 1) {
+    private void setNavigation(final int drawerValue) {
+        if (drawerValue == 0) {
             drawerLayout = findViewById(R.id.drawer_layout);
             toggle = new ActionBarDrawerToggle(ScrollingActivity.this, drawerLayout, R.string.open, R.string.close);
             drawerLayout.addDrawerListener(toggle);
             toggle.syncState();
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            SetNavDrawer navDrawer = new SetNavDrawer(navigationView,ScrollingActivity.this);
-            navDrawer.getJSON();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    SetNavDrawer navDrawer = new SetNavDrawer(navigationView, ScrollingActivity.this);
+                    navDrawer.getJSON();
+                    drawerLayout.closeDrawers();
+                    navDrawer.setClickListener(ScrollingActivity.this);
+
+                }
+            }, 250);
             //head.setBackground();
 
         } else {
             drawerLayout = findViewById(R.id.drawer_layout);
-            toggle = new ActionBarDrawerToggle(ScrollingActivity.this, drawerLayout, R.string.open, R.string.close);
-            drawerLayout.addDrawerListener(toggle);
-            toggle.syncState();
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-            toolbar.setNavigationIcon(null);
-            mToolbar.setNavigationIcon(null);
         }
     }
 
-    private void setLogin(Login login)
-    {
+    private void setLogin(Login login) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         LoginFragment fragment = new LoginFragment();
-        fragmentTransaction.add(R.id.frame,fragment);
+        fragmentTransaction.add(R.id.frame, fragment);
         Bundle bundle = new Bundle();
-        bundle.putSerializable("Login",login);
+        bundle.putSerializable("Login", login);
 //            bundle.putString("Activity_bg_color",login.getActivity_bg_color());
 //            bundle.putString("Background_image",login.getBackground_image());
 //            bundle.putString("Button_bg_color",login.getButton_bg_color());
@@ -430,10 +436,10 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
     @Override
     public void onClickFunction(String url) {
         callHttp(url);
-        Log.i("IN Scrolling",url);
+        Log.i("IN Scrolling", url);
     }
 
-    public interface SetLayout{
+    public interface SetLayout {
         void setUrl(String url);
     }
 }

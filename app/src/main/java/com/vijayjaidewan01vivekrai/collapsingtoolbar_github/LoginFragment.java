@@ -138,6 +138,8 @@ public class LoginFragment extends Fragment implements ScrollingActivity.SetLayo
 
                 @Override
                 public void onFailure(Call<TestResults> call, Throwable t) {
+                    Toast.makeText(getContext(),"Make sure you entered correct credentials",Toast.LENGTH_SHORT);
+                    Log.e("OnFailure",t.getLocalizedMessage());
                 }
             });
 
