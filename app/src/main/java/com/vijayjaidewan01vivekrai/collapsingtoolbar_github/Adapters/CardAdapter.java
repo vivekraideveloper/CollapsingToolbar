@@ -1,5 +1,6 @@
 package com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -23,9 +24,10 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.Resource;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Data;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.R;
+import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.ScrollingActivity;
 
 import java.util.ArrayList;
-public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     private ArrayList<Data> cardData;
     private Context context;
@@ -36,6 +38,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private int TWO = 2;
     private int THREE = 3;
     private int FOUR = 4;
+    ScrollingActivity scrollingActivity = new ScrollingActivity();
 
     public CardAdapter(ArrayList<Data> cardData, Context context, int position) {
         this.cardData = cardData;
@@ -130,6 +133,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             Glide.with(context)
                     .load(cardData.get(position).getImage())
                     .into(((ViewHolder3) holder).iconImage);
+
+
             //((ViewHolder3)holder).iconImage.setImageBitmap(CardAdapter.getImage(cardData.get(position).getImage()));
         }
         if (holder instanceof ViewHolder4) {
@@ -174,6 +179,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public class ViewHolder1 extends RecyclerView.ViewHolder {
 
         public TextView head, sub_head, desc;
+        CardView card;
 
         public ViewHolder1(View itemView) {
             super(itemView);
@@ -181,6 +187,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             head = itemView.findViewById(R.id.tv_recycler_item_1);
             sub_head = itemView.findViewById(R.id.tv_recycler_item_2);
             desc = itemView.findViewById(R.id.tv_recycler_item_3);
+            card = itemView.findViewById(R.id.card_1);
         }
     }
 
@@ -197,6 +204,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             sub_head = itemView.findViewById(R.id.tv_recycler_item_2);
             desc = itemView.findViewById(R.id.tv_recycler_item_3);
             iconImage = itemView.findViewById(R.id.icon_image);
+            card = itemView.findViewById(R.id.card_2);
         }
     }
 
@@ -210,7 +218,6 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public ViewHolder3(View itemView) {
             super(itemView);
 
-            r = itemView.getResources();
             head = itemView.findViewById(R.id.tv_recycler_item_1);
             sub_head = itemView.findViewById(R.id.tv_recycler_item_2);
             desc = itemView.findViewById(R.id.tv_recycler_item_3);
@@ -224,12 +231,10 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public TextView head, sub_head, desc;
         public AppCompatImageView background;
         public CardView card;
-        public Resources r;
 
         public ViewHolder4(View itemView) {
             super(itemView);
 
-            r = itemView.getResources();
             head = itemView.findViewById(R.id.tv_recycler_item_1);
             sub_head = itemView.findViewById(R.id.tv_recycler_item_2);
             desc = itemView.findViewById(R.id.tv_recycler_item_3);
