@@ -1,6 +1,9 @@
 package com.vijayjaidewan01vivekrai.collapsingtoolbar_github;
 
+import android.app.SearchManager;
+import android.app.SearchableInfo;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -10,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -33,6 +37,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
@@ -42,6 +47,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SquaringDrawable;
 import com.squareup.picasso.Picasso;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters.CardAdapter;
+import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Data;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Login;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Results;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.TestResults;
@@ -78,6 +84,9 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
     int drawerValue = 1;
     int collapseValue = 1;
     int searchValue = 1;
+    ArrayList<String> mArrayList;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +102,8 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
         toolbar = findViewById(R.id.toolbar);
         mToolbar = findViewById(R.id.tool_bar);
         collapsingToolbarLayout = findViewById(R.id.toolbar_layout);
+        mArrayList = new ArrayList<>();
+
         //layout = findViewById(R.id.layout_content);
 
         //cardDataList = new ArrayList<>();
@@ -122,6 +133,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
     }
 
 
+
     public void callHttp (String BASE_URL){
         ApiService apiService = ApiUtils.getAPIService();
         apiService.results(BASE_URL).enqueue(new Callback<TestResults>() {
@@ -139,6 +151,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                         Log.d("Drawer",""+drawerValue);
 
                         Results results = response.body().getResults();
+//                        filter(response.body().getResults().getData().get(posi).getText1());
 
                         setCollapse(2,results);
                         setNavigation(1);
@@ -150,8 +163,9 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                             case 1:
                             case 2:
                             case 3:
-                            case 4: adapter=new CardAdapter(response.body().getResults().getData(),ScrollingActivity.this,3);
+                            case 4: adapter=new CardAdapter(response.body().getResults().getData(), ScrollingActivity.this,3);
                                 recyclerView.setAdapter(adapter);
+
                                 adapter.notifyDataSetChanged();
                                 break;
                             case 5: //add webview
@@ -170,6 +184,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 
             @Override
             public void onFailure(Call<TestResults> call, Throwable t) {
+
 
             }
         });
@@ -199,17 +214,26 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
         MenuInflater inflater = getMenuInflater();
 
         if (searchValue == 1) {
+            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
             inflater.inflate(R.menu.search_layout, menu);
             MenuItem item = menu.findItem(R.id.search_view);
             SearchView searchView = (SearchView) item.getActionView();
+            searchView.setIconified(false);
+            SearchableInfo searchableInfo = searchManager.getSearchableInfo(getComponentName());
+            searchView.setSearchableInfo(searchableInfo);
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                public static final String TAG = "TAG";
+
                 @Override
                 public boolean onQueryTextSubmit(String s) {
+                    Log.d(TAG, "onQueryTextSubmit: called:");
+
                     return false;
                 }
 
                 @Override
                 public boolean onQueryTextChange(String s) {
+
                     return false;
                 }
             });

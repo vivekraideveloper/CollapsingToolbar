@@ -5,11 +5,7 @@
     android:layout_height="match_parent"
     tools:context="com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Offline_fragment">
 
-    <include
-        layout="@layout/tool_bar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></include>
+
 
 
     <ImageView

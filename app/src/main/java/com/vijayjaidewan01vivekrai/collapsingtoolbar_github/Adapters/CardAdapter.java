@@ -242,4 +242,5 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             card = itemView.findViewById(R.id.card_4);
         }
     }
+
 }
