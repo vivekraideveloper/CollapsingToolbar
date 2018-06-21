@@ -78,16 +78,20 @@ public class LoginFragment extends Fragment implements ScrollingActivity.SetLayo
             @Override
             public void onClick(View v) {
 
-                String name = username.getText().toString();
-                String pass = password.getText().toString();
+                String box1 = username.getText().toString();
+                String box2 = password.getText().toString();
 
                 //check the parameters to login
-                if(!name.isEmpty() && !pass.isEmpty())
+                if(!box1.isEmpty() && !box2.isEmpty())
                 {
-                    UserLoginTask task = new UserLoginTask("abc","pass");
+                    UserLoginTask task = new UserLoginTask(box1,box2);
                     task.execute();
                     relativeLayout.animate().translationYBy(-2000f).setDuration(300).alphaBy(1f);
                     //startActivity(intent);
+                }
+                else
+                {
+                    Toast.makeText(getContext(),"Fields cannot be empty",Toast.LENGTH_SHORT).show();
                 }
 
             }

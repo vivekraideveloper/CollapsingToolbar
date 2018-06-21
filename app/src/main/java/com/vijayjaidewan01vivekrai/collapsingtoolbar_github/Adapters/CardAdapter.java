@@ -2,6 +2,7 @@ package com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,46 +17,35 @@ import android.view.LayoutInflater;
 import android.view.PointerIcon;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filterable;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.Resource;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Data;
+import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.OnClickSet;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.R;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.ScrollingActivity;
 
 import java.util.ArrayList;
-public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<Data> cardData;
     private Context context;
     private int pos;
-    //private static Bitmap image;
-    //private boolean flag = true; // to implement background of relative layout
     private int ONE = 1;
     private int TWO = 2;
     private int THREE = 3;
     private int FOUR = 4;
-    ScrollingActivity scrollingActivity = new ScrollingActivity();
 
     public CardAdapter(ArrayList<Data> cardData, Context context, int position) {
         this.cardData = cardData;
         this.context = context;
         this.pos = position;
     }
-
-//    @Override
-//    public void onBindViewHolder(@NonNull final CardAdapter.ViewHolder holder, int position) {
-//
-//        final CardData data = cardData.get(position);
-//
-//        holder.head.setText(data.getHeading());
-//        holder.sub_head.setText(data.getSub());
-//        holder.desc.setText(data.getDesc());
-//
-//    }
 
     @Override
     public int getItemCount() {
@@ -88,7 +78,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof ViewHolder1) {
             ((ViewHolder1) holder).head.setText(cardData.get(position).getText1());
 //            ((ViewHolder1) holder).head.setTextColor(Color.parseColor(cardData.get(position).getText_header_color()));
@@ -117,6 +107,17 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     .load(cardData.get(position).getImage())
                     .into(((ViewHolder2) holder).iconImage);
 
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if(onClickSetListener != null)
+                        onClickSetListener.onClickFunction(cardData.get(position).getUrl());
+                    Toast.makeText(context,cardData.get(position).getUrl(),Toast.LENGTH_SHORT).show();
+                    Log.i("URL in adapter",cardData.get(position).getUrl());
+                }
+            });
+
         }
         if (holder instanceof ViewHolder3) {
             ((ViewHolder3) holder).head.setText(cardData.get(position).getText1());
@@ -133,6 +134,17 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             Glide.with(context)
                     .load(cardData.get(position).getImage())
                     .into(((ViewHolder3) holder).iconImage);
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(onClickSetListener != null)
+                        onClickSetListener.onClickFunction(cardData.get(position).getUrl());
+                    Toast.makeText(context,cardData.get(position).getUrl(),Toast.LENGTH_SHORT).show();
+                    Log.i("URL in adapter",cardData.get(position).getUrl());
+                    //context.sendBroadcast(i);
+                }
+            });
 
 
             //((ViewHolder3)holder).iconImage.setImageBitmap(CardAdapter.getImage(cardData.get(position).getImage()));
@@ -151,10 +163,37 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             Glide.with(context)
                     .load(cardData.get(position).getImage())
                     .into(((ViewHolder4) holder).background);
+
+            //View.OnClickListener listener = new ScrollingActivity();
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+//                    OnClickSet set =  new ScrollingActivity();
+                    if(onClickSetListener != null)
+                    onClickSetListener.onClickFunction(cardData.get(position).getUrl());
+                    Toast.makeText(context,cardData.get(position).getUrl(),Toast.LENGTH_SHORT).show();
+//                    Intent i=new Intent(context,ScrollingActivity.class);
+//                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    i.putExtra("URL",cardData.get(position).getUrl());
+//                    context.startActivity(i);
+//                    //Intent i = new Intent("");
+                    Log.i("URL in adapter",cardData.get(position).getUrl());
+                    //context.sendBroadcast(i);
+                }
+            });
+
             //((ViewHolder4)holder).iconImage.setImageBitmap(RetrofitClient.getImage(cardData.get(position).getImage()));
         }
 
     }
+
+    private OnClickSet onClickSetListener;
+    public void setClickListener(OnClickSet onClickSet){
+        this.onClickSetListener = onClickSet;
+    }
+
+
 
     @Override
     public int getItemViewType(int position) {
@@ -218,6 +257,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         public ViewHolder3(View itemView) {
             super(itemView);
 
+            r=itemView.getResources();
             head = itemView.findViewById(R.id.tv_recycler_item_1);
             sub_head = itemView.findViewById(R.id.tv_recycler_item_2);
             desc = itemView.findViewById(R.id.tv_recycler_item_3);
@@ -230,7 +270,6 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         public TextView head, sub_head, desc;
         public AppCompatImageView background;
-        public CardView card;
 
         public ViewHolder4(View itemView) {
             super(itemView);
@@ -239,7 +278,9 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             sub_head = itemView.findViewById(R.id.tv_recycler_item_2);
             desc = itemView.findViewById(R.id.tv_recycler_item_3);
             background = itemView.findViewById(R.id.background);
-            card = itemView.findViewById(R.id.card_4);
         }
     }
+
+
+
 }

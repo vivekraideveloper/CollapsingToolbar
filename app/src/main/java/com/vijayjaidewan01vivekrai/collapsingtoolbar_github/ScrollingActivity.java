@@ -1,6 +1,9 @@
 package com.vijayjaidewan01vivekrai.collapsingtoolbar_github;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.gesture.GestureLibraries;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -57,7 +60,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ScrollingActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class ScrollingActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,OnClickSet{
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
@@ -74,10 +77,11 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
     private NavigationView navigationView;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     EditText username,password;
-    RecyclerView.Adapter adapter;
-    int drawerValue = 1;
+    CardAdapter adapter;
+    int drawerValue = 2;
     int collapseValue = 1;
     int searchValue = 1;
+    String BASE_URL = "http://bydegreestest.agnitioworld.com/test/mobile_app.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,16 +97,14 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
         toolbar = findViewById(R.id.toolbar);
         mToolbar = findViewById(R.id.tool_bar);
         collapsingToolbarLayout = findViewById(R.id.toolbar_layout);
-        //layout = findViewById(R.id.layout_content);
-
-        //cardDataList = new ArrayList<>();
+        drawerLayout = findViewById(R.id.drawer_layout);
 
         ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
         if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED
                 || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
             // notify user you are online
-            String BASE_URL = "http://bydegreestest.agnitioworld.com/test/mobile_app.php";
+
             callHttp(BASE_URL);
         }
 
@@ -111,8 +113,13 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
             // notify user you are not online
 
             View view = findViewById(android.R.id.content);
-            Snackbar snackbar = Snackbar.make(view, "Please ensure stable internet connectivity!", 7000).setAction("Action", null);
+            Snackbar snackbar = Snackbar.make(view, "Please ensure stable internet connectivity!", 10000).setAction("Action", null);
             snackbar.show();
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            coordinatorLayout.setVisibility(View.GONE);
+// collapsingToolbarLayout.setVisibility(View.GONE);
+            mToolbar.setVisibility(View.GONE);
+//            toolbar.setVisibility(View.GONE);
 
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
@@ -122,9 +129,10 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
     }
 
 
-    public void callHttp (String BASE_URL){
+    public void callHttp (String URL){
+        BASE_URL = URL;
         ApiService apiService = ApiUtils.getAPIService();
-        apiService.results(BASE_URL).enqueue(new Callback<TestResults>() {
+        apiService.results(URL).enqueue(new Callback<TestResults>() {
 
             @Override
             public void onResponse(Call<TestResults> call, Response<TestResults> response) {
@@ -133,26 +141,27 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 
                         int drawerValue,collapseValue;
                         drawerValue = Integer.parseInt(response.body().getResults().getToolBar().getIs_back());
-                        //collapseValue = Integer.parseInt(response.body().getResults().getToolBar().getTop_image());
+                        collapseValue = Integer.parseInt(response.body().getResults().getToolBar().getTop_image());
 
-                        //Log.d("Collapse",""+collapseValue);
+                        Log.d("Collapse",""+collapseValue);
                         Log.d("Drawer",""+drawerValue);
 
                         Results results = response.body().getResults();
 
-                        setCollapse(2,results);
-                        setNavigation(1);
+                        setCollapse(collapseValue,results);
+                        setNavigation(drawerValue);
 
                         int viewType = Integer.parseInt(response.body().getResults().getView_type());
                         Log.d("View Type",""+ viewType);
-                        switch (3)
+                        switch (viewType)
                         {
                             case 1:
                             case 2:
                             case 3:
-                            case 4: adapter=new CardAdapter(response.body().getResults().getData(),ScrollingActivity.this,3);
+                            case 4: adapter=new CardAdapter(response.body().getResults().getData(),ScrollingActivity.this,viewType);
                                 recyclerView.setAdapter(adapter);
                                 adapter.notifyDataSetChanged();
+                                adapter.setClickListener(ScrollingActivity.this);
                                 break;
                             case 5: //add webview
                                 break;
@@ -258,6 +267,8 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 
     @Override
     public boolean onNavigationItemSelected (@NonNull MenuItem item){
+
+
         return false;
     }
 
@@ -286,7 +297,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                         @Override
                         public void run() {
                             swipeRefreshLayout.setRefreshing(false);
-
+                            callHttp(BASE_URL);
                         }
                     }, 3000);
 
@@ -315,7 +326,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                         @Override
                         public void run() {
                             swipeRefreshLayoutCoordinator.setRefreshing(false);
-                            //callHttp(results.get);
+                            callHttp(BASE_URL);
                         }
                     }, 3000);
                 }
@@ -339,7 +350,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
         Log.d("Columns","" + col);
         Log.d("Orientation",""+orientation);
 
-        setRecyclerView(2,orientation);
+        setRecyclerView(col,orientation);
         //setNavigation(drawerValue);
     }
 
@@ -372,6 +383,9 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
             toggle.syncState();
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            SetNavDrawer navDrawer = new SetNavDrawer(navigationView,ScrollingActivity.this);
+            navDrawer.getJSON();
+            //head.setBackground();
 
         } else {
             drawerLayout = findViewById(R.id.drawer_layout);
@@ -413,34 +427,14 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
         setNavigation(0);
     }
 
+    @Override
+    public void onClickFunction(String url) {
+        callHttp(url);
+        Log.i("IN Scrolling",url);
+    }
+
     public interface SetLayout{
         void setUrl(String url);
     }
 }
-
-
-    /*if (response.body().getResults().getView_type().equals("4")){
-                                recyclerView.setHasFixedSize(true);
-
-                                GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(),2);
-                                gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL); // set Horizontal Orientation
-                                recyclerView.setLayoutManager(gridLayoutManager);
-                                // set LayoutManager to RecyclerView
-                                //        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-                            }*/
-
-
-// Setting the recycler view
-//recyclerView.setHasFixedSize(true);
-
-//recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-//            for (int i = 0; i < 10; i++) {
-//                CardData cardData = new CardData("Heading", "Sub-Heading", "Description", 3);
-//                cardDataList.add(cardData);
-//            }
-
-//setRecyclerViewMargins();
-//        setAdapter(3);
 

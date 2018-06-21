@@ -3,45 +3,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="single"
+        android:id="@+id/group1">
         <item
-            android:id="@+id/home"
+            android:id="@+id/item1"
 
             android:title="Home" />
         <item
-            android:id="@+id/account"
+            android:id="@+id/item2"
 
             android:title="Account" />
 
         <item
-            android:id="@+id/aboutUs"
+            android:id="@+id/item3"
 
             android:title="About Us" />
         <item
-            android:id="@+id/help"
+            android:id="@+id/item4"
 
             android:title="Help" />
         <item
-            android:id="@+id/moreApps"
+            android:id="@+id/item5"
 
             android:title="More Apps" />
 
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Communicate"
+        android:id="@+id/main_item2">
         <menu>
             <item
-                android:id="@+id/contact"
+                android:id="@+id/main_item2_item1"
                 android:title="Contact us"
-
                 />
         </menu>
     </item>
 
-    <item android:title="Usage Policy">
+    <item android:title="Usage Policy"
+        android:id="@+id/main_item3">
         <menu>
             <item
-                android:id="@+id/terms"
+                android:id="@+id/main_item3_item1"
 
                 android:title="Terms of Use" />
 
