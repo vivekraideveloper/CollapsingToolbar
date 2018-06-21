@@ -1,9 +1,9 @@
 package com.vijayjaidewan01vivekrai.collapsingtoolbar_github;
 
-import android.content.BroadcastReceiver;
+import android.app.SearchManager;
+import android.app.SearchableInfo;
 import android.content.Context;
-import android.content.Intent;
-import android.gesture.GestureLibraries;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -13,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -36,6 +37,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
@@ -47,6 +49,7 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.SquaringDrawable;
 import com.squareup.picasso.Picasso;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters.CardAdapter;
+import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Data;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Login;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Results;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.TestResults;
@@ -85,6 +88,9 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
     int collapseValue = 1;
     int searchValue = 1;
     String BASE_URL = "http://bydegreestest.agnitioworld.com/test/mobile_app.php";
+    ArrayList<String> mArrayList;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +107,11 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         mToolbar = findViewById(R.id.tool_bar);
         collapsingToolbarLayout = findViewById(R.id.toolbar_layout);
         drawerLayout = findViewById(R.id.drawer_layout);
+        mArrayList = new ArrayList<>();
+
+        //layout = findViewById(R.id.layout_content);
+
+        //cardDataList = new ArrayList<>();
 
         ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -149,6 +160,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                         Log.d("Drawer", "" + drawerValue);
 
                         Results results = response.body().getResults();
+//                        filter(response.body().getResults().getData().get(posi).getText1());
 
                         setCollapse(collapseValue, results);
                         setNavigation(drawerValue);
@@ -162,6 +174,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                             case 4:
                                 adapter = new CardAdapter(response.body().getResults().getData(), ScrollingActivity.this, viewType);
                                 recyclerView.setAdapter(adapter);
+
                                 adapter.notifyDataSetChanged();
                                 adapter.setClickListener(ScrollingActivity.this);
                                 break;
@@ -183,6 +196,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
 
             @Override
             public void onFailure(Call<TestResults> call, Throwable t) {
+
 
             }
         });
@@ -212,17 +226,26 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         MenuInflater inflater = getMenuInflater();
 
         if (searchValue == 1) {
+            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
             inflater.inflate(R.menu.search_layout, menu);
             MenuItem item = menu.findItem(R.id.search_view);
             SearchView searchView = (SearchView) item.getActionView();
+            searchView.setIconified(false);
+            SearchableInfo searchableInfo = searchManager.getSearchableInfo(getComponentName());
+            searchView.setSearchableInfo(searchableInfo);
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                public static final String TAG = "TAG";
+
                 @Override
                 public boolean onQueryTextSubmit(String s) {
+                    Log.d(TAG, "onQueryTextSubmit: called:");
+
                     return false;
                 }
 
                 @Override
                 public boolean onQueryTextChange(String s) {
+
                     return false;
                 }
             });
