@@ -54,7 +54,7 @@ public class WebViewFragment extends Fragment {
 
 
         Bundle bundle = getArguments();
-        String url = bundle.getString("url");
+        String url = bundle.getString("url_key");
 
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
