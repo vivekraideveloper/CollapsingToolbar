@@ -57,6 +57,7 @@ import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiUtil
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -81,10 +82,11 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
     private CollapsingToolbarLayout collapsingToolbarLayout;
     EditText username,password;
     RecyclerView.Adapter adapter;
+    CardAdapter mCardAdapter;
     int drawerValue = 1;
     int collapseValue = 1;
     int searchValue = 1;
-    ArrayList<String> mArrayList;
+    List<Data> mArrayList;
 
 
 
@@ -103,6 +105,10 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
         mToolbar = findViewById(R.id.tool_bar);
         collapsingToolbarLayout = findViewById(R.id.toolbar_layout);
         mArrayList = new ArrayList<>();
+
+        for (Data i : mArrayList){
+            mArrayList.add(i);
+        }
 
         //layout = findViewById(R.id.layout_content);
 
@@ -155,7 +161,7 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
 
                         setCollapse(2,results);
                         setNavigation(1);
-
+mArrayList.addAll(response.body().getResults().getData());
                         int viewType = Integer.parseInt(response.body().getResults().getView_type());
                         Log.d("View Type",""+ viewType);
                         switch (3)
@@ -163,10 +169,9 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                             case 1:
                             case 2:
                             case 3:
-                            case 4: adapter=new CardAdapter(response.body().getResults().getData(), ScrollingActivity.this,3);
-                                recyclerView.setAdapter(adapter);
-
-                                adapter.notifyDataSetChanged();
+                            case 4: mCardAdapter=new CardAdapter(response.body().getResults().getData(),mArrayList, ScrollingActivity.this,3);
+                                recyclerView.setAdapter(mCardAdapter);
+                                mCardAdapter.notifyDataSetChanged();
                                 break;
                             case 5: //add webview
                                 break;
@@ -227,13 +232,13 @@ public class ScrollingActivity extends AppCompatActivity implements NavigationVi
                 @Override
                 public boolean onQueryTextSubmit(String s) {
                     Log.d(TAG, "onQueryTextSubmit: called:");
-
+                    mCardAdapter.getFilter().filter(s);
                     return false;
                 }
 
                 @Override
                 public boolean onQueryTextChange(String s) {
-
+                    mCardAdapter.getFilter().filter(s);
                     return false;
                 }
             });

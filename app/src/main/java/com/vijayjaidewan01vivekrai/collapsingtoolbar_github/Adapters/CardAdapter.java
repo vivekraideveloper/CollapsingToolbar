@@ -35,7 +35,7 @@ import java.util.List;
 public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable{
 
     private ArrayList<Data> cardData;
-   List<Data> filterData;
+    List<Data> filterData;
     private Context context;
     private int pos;
     //private static Bitmap image;
@@ -46,9 +46,9 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private int FOUR = 4;
     ScrollingActivity scrollingActivity = new ScrollingActivity();
 
-    public CardAdapter(ArrayList<Data> cardData, Context context, int position) {
+    public CardAdapter(ArrayList<Data> cardData,List<Data> list, Context context, int position) {
         this.cardData = cardData;
-        //this.filterData = list;
+        this.filterData = list;
         this.context = context;
         this.pos = position;
     }
@@ -57,7 +57,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     @Override
     public int getItemCount() {
-        return cardData.size();
+        return filterData.size();
     }
 
     @NonNull
@@ -190,6 +190,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                         // here we are looking for name or phone number match
                         if (i.getText1().toLowerCase().contains(charString.toLowerCase()) || i.getText2().contains(charString.toLowerCase())) {
                             filteredList.add(i);
+                            notifyDataSetChanged();
                         }
                     }
 
