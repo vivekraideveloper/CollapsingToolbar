@@ -61,6 +61,7 @@ import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiUtil
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -75,6 +76,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
     private Toolbar toolbar;
     private CoordinatorLayout coordinatorLayout;
     private AppBarLayout appBarLayout;
+    private View layout;
     private LinearLayout linearLayout;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -82,11 +84,14 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
     private View login;
     private NavigationView navigationView;
     private CollapsingToolbarLayout collapsingToolbarLayout;
-    CardAdapter adapter;
+    CardAdapter mCardAdapter;
     int drawerValue = 2;
     int searchValue = 1;
     String BASE_URL = "http://bydegreestest.agnitioworld.com/test/mobile_app.php";
     String backUrl;
+    List<Data> mArrayList;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +108,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         mToolbar = findViewById(R.id.tool_bar);
         collapsingToolbarLayout = findViewById(R.id.toolbar_layout);
         drawerLayout = findViewById(R.id.drawer_layout);
+        mArrayList = new ArrayList<>();
 
         //layout = findViewById(R.id.layout_content);
 
@@ -159,9 +165,11 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
 
                         Results results = response.body().getResults();
 //                        filter(response.body().getResults().getData().get(posi).getText1());
-                        backUrl = response.body().getResults().getToolBar().getBack_url();
                         setCollapse(collapseValue, results);
                         setNavigation(drawerValue);
+mArrayList.addAll(response.body().getResults().getData());
+                        backUrl = response.body().getResults().getToolBar().getBack_url();
+
 
                         int viewType = Integer.parseInt(response.body().getResults().getView_type());
                         Log.d("View Type", "" + viewType);
@@ -169,11 +177,11 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                             case 1:
                             case 2:
                             case 3:
-                            case 4:
-                                adapter = new CardAdapter(response.body().getResults().getData(), ScrollingActivity.this, viewType);
-                                recyclerView.setAdapter(adapter);
-                                adapter.notifyDataSetChanged();
-                                adapter.setClickListener(ScrollingActivity.this);
+                            case 4: mCardAdapter=new CardAdapter(response.body().getResults().getData(),mArrayList, ScrollingActivity.this,3);
+                                recyclerView.setAdapter(mCardAdapter);
+                                mCardAdapter.notifyDataSetChanged();
+                                mCardAdapter.setClickListener(ScrollingActivity.this);
+
                                 break;
                             case 5: //add webview
                                 break;
@@ -236,13 +244,13 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                 @Override
                 public boolean onQueryTextSubmit(String s) {
                     Log.d(TAG, "onQueryTextSubmit: called:");
-
+                    mCardAdapter.getFilter().filter(s);
                     return false;
                 }
 
                 @Override
                 public boolean onQueryTextChange(String s) {
-
+                    mCardAdapter.getFilter().filter(s);
                     return false;
                 }
             });
