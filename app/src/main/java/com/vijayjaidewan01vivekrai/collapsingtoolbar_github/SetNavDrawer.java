@@ -3,8 +3,10 @@ package com.vijayjaidewan01vivekrai.collapsingtoolbar_github;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v7.widget.AppCompatImageView;
@@ -23,12 +25,17 @@ import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.TestResults;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiService;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiUtils;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Handler;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.Url;
 
 public class SetNavDrawer {
 
@@ -87,7 +94,19 @@ public class SetNavDrawer {
 //                        } catch (ExecutionException e) {
 //                            e.printStackTrace();
 //                        }
-                        menu.add(0,(Menu.FIRST+i),Menu.NONE,items.getItem());
+                        String url = items.getIcon();
+                        Log.e("Nav Drawer","Yes");
+//                            URL u = new URL(url);
+//                        InputStream iStream = null;
+//                        try {
+//                            iStream = (InputStream) new URL(url).getContent();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                        Drawable drawable = Drawable.createFromStream(iStream,"icon");
+
+//                            Drawable drawable = BitmapFactory.decodeStream((InputStream) u.getContent());
+//                            menu.add(0,(Menu.FIRST+i),Menu.NONE,items.getItem()).setIcon(R.drawable.ic_account_circle_black_24dp);
                         i++;
                     }
                     navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
