@@ -106,7 +106,7 @@ public class SetNavDrawer {
 //                        Drawable drawable = Drawable.createFromStream(iStream,"icon");
 
 //                            Drawable drawable = BitmapFactory.decodeStream((InputStream) u.getContent());
-//                            menu.add(0,(Menu.FIRST+i),Menu.NONE,items.getItem()).setIcon(R.drawable.ic_account_circle_black_24dp);
+                            menu.add(0,(Menu.FIRST+i),Menu.NONE,items.getItem()).setIcon(R.drawable.ic_account_circle_black_24dp);
                         i++;
                     }
                     navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {

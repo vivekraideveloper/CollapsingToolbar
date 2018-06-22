@@ -299,7 +299,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         });
     }
 
-    private void setCollapse(int collapseValue, final Results results) {
+    private void setCollapse(int collapseValue,Results results) {
 
         if (collapseValue == 1) {
             recyclerView = findViewById(R.id.recyclerViewLinear);
@@ -348,7 +348,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         }
 
         swipeRefreshLayout.setProgressBackgroundColorSchemeColor(Color.WHITE);
-        swipeRefreshLayout.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
+        swipeRefreshLayout.setColorSchemeColors(Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -390,7 +390,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         }
     }
 
-    private void setNavigation(final int drawerValue) {
+    private void setNavigation(int drawerValue) {
         if (drawerValue == 0) {
             backUrl = null;
             drawerLayout = findViewById(R.id.drawer_layout);

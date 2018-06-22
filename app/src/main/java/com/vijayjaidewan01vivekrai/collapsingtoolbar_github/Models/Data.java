@@ -16,6 +16,12 @@ public class Data {
     String text_subheader_color;
     @SerializedName("text_description_color")
     String text_description_color;
+    @SerializedName("text_header_size")
+    String text_header_size;
+    @SerializedName("text_subheader_size")
+    String text_subheader_size;
+    @SerializedName("text_description_size")
+    String text_description_size;
     @SerializedName("bg_color")
     String bg_color;
     @SerializedName("id")
@@ -65,6 +71,17 @@ public class Data {
         this.bg_color = bg_color;
     }
 
+    public void setText_header_size(String text_header_size) {
+        this.text_header_size = text_header_size;
+    }
+
+    public void setText_subheader_size(String tex_subheader_size) {
+        this.text_subheader_size = tex_subheader_size;
+    }
+
+    public void setText_description_size(String text_description_size) {
+        this.text_description_size = text_description_size;
+    }
 
     public String getText1() {
         return text1;
@@ -104,5 +121,17 @@ public class Data {
 
     public String getBg_color() {
         return bg_color;
+    }
+
+    public String getText_header_size() {
+        return text_header_size;
+    }
+
+    public String getText_subheader_size() {
+        return text_subheader_size;
+    }
+
+    public String getText_description_size() {
+        return text_description_size;
     }
 }

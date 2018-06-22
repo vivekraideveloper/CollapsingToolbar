@@ -143,9 +143,9 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //            ((ViewHolder3) holder).sub_head.setTextColor(Color.parseColor(cardData.get(position).getText_subheader_color()));
 //            ((ViewHolder3) holder).sub_head.setTextSize(TypedValue.COMPLEX_UNIT_SP,Float.parseFloat(cardData.get(position).getText_subheader_size()));
 
-//            ((ViewHolder3) holder).desc.setText(cardData.get(position).getText3());
+            ((ViewHolder3) holder).desc.setText(cardData.get(position).getText3());
 //            ((ViewHolder3) holder).desc.setTextColor(Color.parseColor(cardData.get(position).getText_description_color()));
-//            ((ViewHolder3) holder).desc.setTextSize(TypedValue.COMPLEX_UNIT_SP,Float.parseFloat(cardData.get(position).getText_description_size()));
+            ((ViewHolder3) holder).desc.setTextSize(TypedValue.COMPLEX_UNIT_SP,Float.parseFloat(cardData.get(position).getText_description_size()));
 
 //            ((ViewHolder3) holder).card.setCardBackgroundColor(Color.parseColor(cardData.get(position).getBg_color()));
 
