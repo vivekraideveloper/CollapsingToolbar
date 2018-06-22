@@ -75,7 +75,6 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
     private Toolbar toolbar;
     private CoordinatorLayout coordinatorLayout;
     private AppBarLayout appBarLayout;
-    private View layout;
     private LinearLayout linearLayout;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -83,7 +82,6 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
     private View login;
     private NavigationView navigationView;
     private CollapsingToolbarLayout collapsingToolbarLayout;
-    EditText username, password;
     CardAdapter adapter;
     int drawerValue = 2;
     int searchValue = 1;
