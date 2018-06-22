@@ -22,6 +22,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -40,6 +41,7 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -47,7 +49,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.SquaringDrawable;
-import com.squareup.picasso.Picasso;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters.CardAdapter;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Data;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Login;
@@ -85,12 +86,9 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
     EditText username, password;
     CardAdapter adapter;
     int drawerValue = 2;
-    int collapseValue = 1;
     int searchValue = 1;
     String BASE_URL = "http://bydegreestest.agnitioworld.com/test/mobile_app.php";
-    ArrayList<String> mArrayList;
-
-
+    String backUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +105,6 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         mToolbar = findViewById(R.id.tool_bar);
         collapsingToolbarLayout = findViewById(R.id.toolbar_layout);
         drawerLayout = findViewById(R.id.drawer_layout);
-        mArrayList = new ArrayList<>();
 
         //layout = findViewById(R.id.layout_content);
 
@@ -118,9 +115,9 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED
                 || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
             // notify user you are online
-
             callHttp(BASE_URL);
-        } else if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
+        }
+        else if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
                 || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
             // notify user you are not online
 
@@ -140,17 +137,20 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         }
     }
 
-
     public void callHttp(String URL) {
         BASE_URL = URL;
         ApiService apiService = ApiUtils.getAPIService();
+        // ADD A PROGRESS BAR TO BE SHOWN TO THE USER BEFORE THE DATA IS LOADED
+        final ContentLoadingProgressBar progressBar = findViewById(R.id.progressBar);
+        progressBar.show();
         apiService.results(URL).enqueue(new Callback<TestResults>() {
 
             @Override
             public void onResponse(Call<TestResults> call, Response<TestResults> response) {
                 if (response.isSuccessful()) {
                     if (response.body().getMsg().equals("success")) {
-
+                        progressBar.hide();
+                        //DISAPPEAR THE PROGRESS BAR SHOWN EARLIER
                         int collapseValue;
                         drawerValue = Integer.parseInt(response.body().getResults().getToolBar().getIs_back());
 //                        drawerValue = 3;
@@ -161,7 +161,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
 
                         Results results = response.body().getResults();
 //                        filter(response.body().getResults().getData().get(posi).getText1());
-
+                        backUrl = response.body().getResults().getToolBar().getBack_url();
                         setCollapse(collapseValue, results);
                         setNavigation(drawerValue);
 
@@ -174,7 +174,6 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                             case 4:
                                 adapter = new CardAdapter(response.body().getResults().getData(), ScrollingActivity.this, viewType);
                                 recyclerView.setAdapter(adapter);
-
                                 adapter.notifyDataSetChanged();
                                 adapter.setClickListener(ScrollingActivity.this);
                                 break;
@@ -196,7 +195,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
 
             @Override
             public void onFailure(Call<TestResults> call, Throwable t) {
-
+                Log.e("Url error",t.getLocalizedMessage());
 
             }
         });
@@ -230,9 +229,9 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
             inflater.inflate(R.menu.search_layout, menu);
             MenuItem item = menu.findItem(R.id.search_view);
             SearchView searchView = (SearchView) item.getActionView();
-            searchView.setIconified(false);
-            SearchableInfo searchableInfo = searchManager.getSearchableInfo(getComponentName());
-            searchView.setSearchableInfo(searchableInfo);
+            searchView.setIconified(true);
+//            SearchableInfo searchableInfo = searchManager.getSearchableInfo(getComponentName());
+//            searchView.setSearchableInfo(searchableInfo);
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 public static final String TAG = "TAG";
 
@@ -355,7 +354,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                     .load(results.getToolBar().getTop_image_fg())
                     .asBitmap()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(new BitmapImageViewTarget(roundedImage){
+                    .into(new BitmapImageViewTarget(roundedImage) {
                         @Override
                         protected void setResource(Bitmap resource) {
                             super.setResource(resource);
@@ -403,6 +402,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
 
     private void setNavigation(final int drawerValue) {
         if (drawerValue == 0) {
+            backUrl = null;
             drawerLayout = findViewById(R.id.drawer_layout);
             toggle = new ActionBarDrawerToggle(ScrollingActivity.this, drawerLayout, R.string.open, R.string.close);
             drawerLayout.addDrawerListener(toggle);
@@ -426,7 +426,20 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
             drawerLayout = findViewById(R.id.drawer_layout);
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getApplicationContext(),backUrl,Toast.LENGTH_SHORT).show();
+                    callHttp(backUrl);
+                }
+            });
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getApplicationContext(),backUrl,Toast.LENGTH_SHORT).show();
+                    callHttp(backUrl);
+                }
+            });
         }
     }
 
@@ -454,6 +467,16 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         fragmentTransaction.commit();
 
         setNavigation(0);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(backUrl == null)
+            super.onBackPressed();
+        else {
+            Toast.makeText(getApplicationContext(), backUrl, Toast.LENGTH_SHORT).show();
+            callHttp(backUrl);
+        }
     }
 
     @Override

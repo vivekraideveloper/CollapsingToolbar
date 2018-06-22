@@ -90,6 +90,16 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((ViewHolder1) holder).desc.setText(cardData.get(position).getText3());
 //            ((ViewHolder1) holder).desc.setTextColor(Color.parseColor(cardData.get(position).getText_description_color()));
 
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if(onClickSetListener != null)
+                        onClickSetListener.onClickFunction(cardData.get(position).getUrl());
+                    Toast.makeText(context,cardData.get(position).getUrl(),Toast.LENGTH_SHORT).show();
+                    Log.i("URL in adapter",cardData.get(position).getUrl());
+                }
+            });
 //            ((ViewHolder1) holder).card.setCardBackgroundColor(Color.parseColor(cardData.get(position).getBg_color()));
         }
         if (holder instanceof ViewHolder2) {
@@ -118,7 +128,6 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     Log.i("URL in adapter",cardData.get(position).getUrl());
                 }
             });
-
         }
         if (holder instanceof ViewHolder3) {
             ((ViewHolder3) holder).head.setText(cardData.get(position).getText1());
@@ -183,18 +192,14 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     //context.sendBroadcast(i);
                 }
             });
-
             //((ViewHolder4)holder).iconImage.setImageBitmap(RetrofitClient.getImage(cardData.get(position).getImage()));
         }
-
     }
 
     private OnClickSet onClickSetListener;
     public void setClickListener(OnClickSet onClickSet){
         this.onClickSetListener = onClickSet;
     }
-
-
 
     @Override
     public int getItemViewType(int position) {
