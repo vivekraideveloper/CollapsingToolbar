@@ -38,6 +38,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -76,8 +77,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
     private Toolbar toolbar;
     private CoordinatorLayout coordinatorLayout;
     private AppBarLayout appBarLayout;
-    private View layout;
-    private LinearLayout linearLayout;
+    private LinearLayout linearLayout,mainLinear;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private SwipeRefreshLayout swipeRefreshLayoutCoordinator;
@@ -89,6 +89,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
     int searchValue = 1;
     String BASE_URL = "http://bydegreestest.agnitioworld.com/test/mobile_app.php";
     String backUrl;
+    ProgressBar progressBar;
     List<Data> mArrayList;
 
 
@@ -98,6 +99,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scrolling);
 
+        mainLinear = findViewById(R.id.main_linear);
         linearLayout = findViewById(R.id.linear_layout);
         appBarLayout = findViewById(R.id.app_bar);
         coordinatorLayout = findViewById(R.id.coordinator_layout);
@@ -109,6 +111,8 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         collapsingToolbarLayout = findViewById(R.id.toolbar_layout);
         drawerLayout = findViewById(R.id.drawer_layout);
         mArrayList = new ArrayList<>();
+        progressBar = findViewById(R.id.progressBar);
+
 
         //layout = findViewById(R.id.layout_content);
 
@@ -119,7 +123,10 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED
                 || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
             // notify user you are online
+            //requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+            setProgressBarIndeterminate(true);
             callHttp(BASE_URL);
+            setProgressBarIndeterminate(false);
         }
         else if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
                 || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
@@ -145,15 +152,19 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         BASE_URL = URL;
         ApiService apiService = ApiUtils.getAPIService();
         // ADD A PROGRESS BAR TO BE SHOWN TO THE USER BEFORE THE DATA IS LOADED
-        final ContentLoadingProgressBar progressBar = findViewById(R.id.progressBar);
-        progressBar.show();
+        mainLinear.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+        progressBar.findFocus();
+        //progressBar.setProgressBa;
         apiService.results(URL).enqueue(new Callback<TestResults>() {
 
             @Override
             public void onResponse(Call<TestResults> call, Response<TestResults> response) {
                 if (response.isSuccessful()) {
                     if (response.body().getMsg().equals("success")) {
-                        progressBar.hide();
+                        mainLinear.setVisibility(View.VISIBLE);
+                        progressBar.clearFocus();
+                        progressBar.setVisibility(View.GONE);
                         //DISAPPEAR THE PROGRESS BAR SHOWN EARLIER
                         int collapseValue;
                         drawerValue = Integer.parseInt(response.body().getResults().getToolBar().getIs_back());
@@ -165,6 +176,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
 
                         Results results = response.body().getResults();
 //                        filter(response.body().getResults().getData().get(posi).getText1());
+                        backUrl = response.body().getResults().getToolBar().getBack_url();
                         setCollapse(collapseValue, results);
                         setNavigation(drawerValue);
 mArrayList.addAll(response.body().getResults().getData());
@@ -173,7 +185,7 @@ mArrayList.addAll(response.body().getResults().getData());
 
                         int viewType = Integer.parseInt(response.body().getResults().getView_type());
                         Log.d("View Type", "" + viewType);
-                        switch (5) {
+                        switch (viewType) {
                             case 1:
                             case 2:
                             case 3:
@@ -324,22 +336,6 @@ mArrayList.addAll(response.body().getResults().getData());
             coordinatorLayout.setVisibility(View.GONE);
             //linearLayout.setVisibility(View.VISIBLE);
             //layout.setVisibility(View.VISIBLE);
-
-            swipeRefreshLayout.setProgressBackgroundColorSchemeColor(Color.WHITE);
-            swipeRefreshLayout.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
-            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            swipeRefreshLayout.setRefreshing(false);
-                            callHttp(BASE_URL);
-                        }
-                    }, 3000);
-
-                }
-            });
         }
         if (collapseValue == 2) {
             recyclerView = findViewById(R.id.recycler_view);
@@ -354,20 +350,6 @@ mArrayList.addAll(response.body().getResults().getData());
             mToolbar.setVisibility(View.GONE);
 
             setRecyclerViewMargins();
-            swipeRefreshLayoutCoordinator.setProgressBackgroundColorSchemeColor(Color.WHITE);
-            swipeRefreshLayoutCoordinator.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
-            swipeRefreshLayoutCoordinator.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            swipeRefreshLayoutCoordinator.setRefreshing(false);
-                            callHttp(BASE_URL);
-                        }
-                    }, 3000);
-                }
-            });
             //layout.setVisibility(View.GONE);
             RoundedImage roundedImage = findViewById(R.id.rounded_image);
             Glide.with(this)
@@ -387,6 +369,16 @@ mArrayList.addAll(response.body().getResults().getData());
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(background);
         }
+
+        swipeRefreshLayout.setProgressBackgroundColorSchemeColor(Color.WHITE);
+        swipeRefreshLayout.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                callHttp(BASE_URL);
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
 
         int col = Integer.parseInt(results.getGrid_columns());
         int orientation = Integer.parseInt(results.getGrid_orientation());
@@ -437,11 +429,9 @@ mArrayList.addAll(response.body().getResults().getData());
                     navDrawer.getJSON();
                     drawerLayout.closeDrawers();
                     navDrawer.setClickListener(ScrollingActivity.this);
-
                 }
-            }, 250);
+            }, 200);
             //head.setBackground();
-
         } else {
             drawerLayout = findViewById(R.id.drawer_layout);
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
@@ -470,19 +460,6 @@ mArrayList.addAll(response.body().getResults().getData());
         fragmentTransaction.add(R.id.frame, fragment);
         Bundle bundle = new Bundle();
         bundle.putSerializable("Login", login);
-//            bundle.putString("Activity_bg_color",login.getActivity_bg_color());
-//            bundle.putString("Background_image",login.getBackground_image());
-//            bundle.putString("Button_bg_color",login.getButton_bg_color());
-//            bundle.putString("Button_text",login.getButton_text());
-//            bundle.putString("Button_text_color",login.getButton_text_color());
-//            bundle.putString("Card_bg_color",login.getCard_bg_color());
-//            bundle.putString("Edit_text_bg",login.getEdit_text_bg());
-//            bundle.putString("Input_box1",login.getInput_box1());
-//            bundle.putString("Input_box2",login.getInput_box2());
-//            bundle.putString("Login_url",login.getLogin_url());
-//            bundle.putString("Profile_image",login.getProfile_image());
-//            bundle.putString("Alpha",login.getAlpha());
-
         fragment.setArguments(bundle);
         fragmentTransaction.commit();
 
