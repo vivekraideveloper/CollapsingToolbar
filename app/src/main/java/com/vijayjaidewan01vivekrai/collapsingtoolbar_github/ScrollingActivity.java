@@ -62,6 +62,7 @@ import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiUtil
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -83,12 +84,16 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
     private View login;
     private NavigationView navigationView;
     private CollapsingToolbarLayout collapsingToolbarLayout;
-    CardAdapter adapter;
+    CardAdapter mCardAdapter;
     int drawerValue = 2;
     int searchValue = 1;
     String BASE_URL = "http://bydegreestest.agnitioworld.com/test/mobile_app.php";
     String backUrl;
     ProgressBar progressBar;
+    List<Data> mArrayList;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +110,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         mToolbar = findViewById(R.id.tool_bar);
         collapsingToolbarLayout = findViewById(R.id.toolbar_layout);
         drawerLayout = findViewById(R.id.drawer_layout);
+        mArrayList = new ArrayList<>();
         progressBar = findViewById(R.id.progressBar);
 
 
@@ -173,6 +179,9 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                         backUrl = response.body().getResults().getToolBar().getBack_url();
                         setCollapse(collapseValue, results);
                         setNavigation(drawerValue);
+mArrayList.addAll(response.body().getResults().getData());
+                        backUrl = response.body().getResults().getToolBar().getBack_url();
+
 
                         int viewType = Integer.parseInt(response.body().getResults().getView_type());
                         Log.d("View Type", "" + viewType);
@@ -180,13 +189,21 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                             case 1:
                             case 2:
                             case 3:
-                            case 4:
-                                adapter = new CardAdapter(response.body().getResults().getData(), ScrollingActivity.this, viewType);
-                                recyclerView.setAdapter(adapter);
-                                adapter.notifyDataSetChanged();
-                                adapter.setClickListener(ScrollingActivity.this);
+                            case 4: mCardAdapter=new CardAdapter(response.body().getResults().getData(),mArrayList, ScrollingActivity.this,viewType);
+                                recyclerView.setAdapter(mCardAdapter);
+                                mCardAdapter.notifyDataSetChanged();
+                                mCardAdapter.setClickListener(ScrollingActivity.this);
+
                                 break;
                             case 5: //add webview
+                                WebViewFragment webViewFragment = new WebViewFragment();
+                                Bundle bundle = new Bundle();
+                                bundle.putString("url_key", response.body().getResults().getWeb_view_url());
+                                webViewFragment.setArguments(bundle);
+                                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                                ft.replace(R.id.drawer_layout, webViewFragment);
+                                ft.addToBackStack("");
+                                ft.commit();
                                 break;
                             case 6:
                                 setLogin(response.body().getResults().getLogin());
@@ -234,26 +251,32 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         MenuInflater inflater = getMenuInflater();
 
         if (searchValue == 1) {
-            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
             inflater.inflate(R.menu.search_layout, menu);
             MenuItem item = menu.findItem(R.id.search_view);
-            SearchView searchView = (SearchView) item.getActionView();
+            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+            SearchView searchView = (SearchView) menu.findItem(R.id.search_view).getActionView();
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+            searchView.setMaxWidth(Integer.MAX_VALUE);
+//            searchView.setIconifiedByDefault(false);
+//            searchView.requestFocusFromTouch();
+            searchView.setIconifiedByDefault(true);
+            searchView.setFocusable(true);
             searchView.setIconified(true);
-//            SearchableInfo searchableInfo = searchManager.getSearchableInfo(getComponentName());
-//            searchView.setSearchableInfo(searchableInfo);
+            searchView.requestFocusFromTouch();
+            searchView.onActionViewExpanded();
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 public static final String TAG = "TAG";
 
                 @Override
                 public boolean onQueryTextSubmit(String s) {
                     Log.d(TAG, "onQueryTextSubmit: called:");
-
+                    mCardAdapter.getFilter().filter(s);
                     return false;
                 }
 
                 @Override
                 public boolean onQueryTextChange(String s) {
-
+                    mCardAdapter.getFilter().filter(s);
                     return false;
                 }
             });
@@ -348,7 +371,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         }
 
         swipeRefreshLayout.setProgressBackgroundColorSchemeColor(Color.WHITE);
-        swipeRefreshLayout.setColorSchemeColors(Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
+        swipeRefreshLayout.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -356,7 +379,6 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-
 
         int col = Integer.parseInt(results.getGrid_columns());
         int orientation = Integer.parseInt(results.getGrid_orientation());

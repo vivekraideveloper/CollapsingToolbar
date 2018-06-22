@@ -23,6 +23,8 @@ public class Results {
         String url;
     @SerializedName("nav_drawer")
         NavDrawer navDrawer;
+    @SerializedName("web_view_url")
+    String web_view_url;
 
     public void setNavDrawer(NavDrawer navDrawer) {
         this.navDrawer = navDrawer;
@@ -95,6 +97,14 @@ public class Results {
 
     public String getUrl() {
         return url;
+    }
+
+    public String getWeb_view_url() {
+        return web_view_url;
+    }
+
+    public void setWeb_view_url(String web_view_url) {
+        this.web_view_url = web_view_url;
     }
 }
 

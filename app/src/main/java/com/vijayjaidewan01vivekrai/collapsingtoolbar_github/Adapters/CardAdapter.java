@@ -18,6 +18,7 @@ import android.view.PointerIcon;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -32,9 +33,12 @@ import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.R;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.ScrollingActivity;
 
 import java.util.ArrayList;
-public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+import java.util.List;
+
+public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable{
 
     private ArrayList<Data> cardData;
+    List<Data> filterData;
     private Context context;
     private int pos;
     private int ONE = 1;
@@ -42,15 +46,18 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private int THREE = 3;
     private int FOUR = 4;
 
-    public CardAdapter(ArrayList<Data> cardData, Context context, int position) {
+    public CardAdapter(ArrayList<Data> cardData,List<Data> list, Context context, int position) {
         this.cardData = cardData;
+        this.filterData = list;
         this.context = context;
         this.pos = position;
     }
 
+
+
     @Override
     public int getItemCount() {
-        return cardData.size();
+        return filterData.size();
     }
 
     @NonNull
@@ -145,7 +152,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             ((ViewHolder3) holder).desc.setText(cardData.get(position).getText3());
 //            ((ViewHolder3) holder).desc.setTextColor(Color.parseColor(cardData.get(position).getText_description_color()));
-            ((ViewHolder3) holder).desc.setTextSize(TypedValue.COMPLEX_UNIT_SP,Float.parseFloat(cardData.get(position).getText_description_size()));
+//            ((ViewHolder3) holder).desc.setTextSize(TypedValue.COMPLEX_UNIT_SP,Float.parseFloat(cardData.get(position).getText_description_size()));
 
 //            ((ViewHolder3) holder).card.setCardBackgroundColor(Color.parseColor(cardData.get(position).getBg_color()));
 
@@ -230,6 +237,42 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             default:
                 return Integer.parseInt(null);
         }
+    }
+
+    @Override
+    public Filter getFilter() {
+
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    filterData = cardData;
+                } else {
+                    List<Data> filteredList = new ArrayList<>();
+                    for (Data i: cardData) {
+                        // name match condition. this might differ depending on your requirement
+                        // here we are looking for name or phone number match
+                        if (i.getText1().toLowerCase().contains(charString.toLowerCase()) || i.getText2().contains(charString.toLowerCase())) {
+                            filteredList.add(i);
+                            notifyDataSetChanged();
+                        }
+                    }
+
+                    filterData = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = filterData;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                filterData = (ArrayList<Data>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
     public class ViewHolder1 extends RecyclerView.ViewHolder {
