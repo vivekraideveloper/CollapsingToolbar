@@ -90,7 +90,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         if (holder instanceof ViewHolder1) {
             ((ViewHolder1) holder).head.setText(cardData.get(position).getText1());
 //            ((ViewHolder1) holder).head.setTextColor(Color.parseColor(cardData.get(position).getText_header_color()));
-//            ((ViewHolder1) holder).head.setTextSize(TypedValue.COMPLEX_UNIT_SP,Float.parseFloat(cardData.get(position).getText_header_size()));
+            ((ViewHolder1) holder).head.setTextSize(TypedValue.COMPLEX_UNIT_SP,Float.parseFloat(cardData.get(position).getText_header_size()));
 
             ((ViewHolder1) holder).sub_head.setText(cardData.get(position).getText2());
 //            ((ViewHolder1) holder).sub_head.setTextColor(Color.parseColor(cardData.get(position).getText_subheader_color()));
@@ -115,7 +115,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         if (holder instanceof ViewHolder2) {
             ((ViewHolder2) holder).head.setText(cardData.get(position).getText1());
 //            ((ViewHolder2) holder).head.setTextColor(Color.parseColor(cardData.get(position).getText_header_color()));
-//            ((ViewHolder2) holder).head.setTextSize(TypedValue.COMPLEX_UNIT_SP,Float.parseFloat(cardData.get(position).getText_header_size()));
+            ((ViewHolder2) holder).head.setTextSize(TypedValue.COMPLEX_UNIT_SP,Float.parseFloat(cardData.get(position).getText_header_size()));
 
             ((ViewHolder2) holder).sub_head.setText(cardData.get(position).getText2());
 //            ((ViewHolder2) holder).sub_head.setTextColor(Color.parseColor(cardData.get(position).getText_subheader_color()));
@@ -144,7 +144,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         if (holder instanceof ViewHolder3) {
             ((ViewHolder3) holder).head.setText(cardData.get(position).getText1());
 //            ((ViewHolder3) holder).head.setTextColor(Color.parseColor(cardData.get(position).getText_header_color()));
-//            ((ViewHolder3) holder).head.setTextSize(TypedValue.COMPLEX_UNIT_SP,Float.parseFloat(cardData.get(position).getText_header_size()));
+            ((ViewHolder3) holder).head.setTextSize(TypedValue.COMPLEX_UNIT_SP,Float.parseFloat(cardData.get(position).getText_header_size()));
 
             ((ViewHolder3) holder).sub_head.setText(cardData.get(position).getText2());
 //            ((ViewHolder3) holder).sub_head.setTextColor(Color.parseColor(cardData.get(position).getText_subheader_color()));
@@ -177,7 +177,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         if (holder instanceof ViewHolder4) {
             ((ViewHolder4) holder).head.setText(cardData.get(position).getText1());
 //            ((ViewHolder4) holder).head.setTextColor(Color.parseColor(cardData.get(position).getText_header_color()));
-//            ((ViewHolder4) holder).head.setTextSize(TypedValue.COMPLEX_UNIT_SP,Float.parseFloat(cardData.get(position).getText_header_size()));
+            ((ViewHolder4) holder).head.setTextSize(TypedValue.COMPLEX_UNIT_SP,Float.parseFloat(cardData.get(position).getText_header_size()));
 
             ((ViewHolder4) holder).sub_head.setText(cardData.get(position).getText2());
 //            ((ViewHolder4) holder).sub_head.setTextColor(Color.parseColor(cardData.get(position).getText_subheader_color()));

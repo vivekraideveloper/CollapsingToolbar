@@ -162,6 +162,8 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
             public void onResponse(Call<TestResults> call, Response<TestResults> response) {
                 if (response.isSuccessful()) {
                     if (response.body().getMsg().equals("success")) {
+                        mArrayList.clear();
+
                         mainLinear.setVisibility(View.VISIBLE);
                         progressBar.clearFocus();
                         progressBar.setVisibility(View.GONE);
@@ -176,12 +178,15 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
 
                         Results results = response.body().getResults();
 //                        filter(response.body().getResults().getData().get(posi).getText1());
-                        backUrl = response.body().getResults().getToolBar().getBack_url();
+
+                        if(drawerValue == 0)
+                            backUrl = null;
+                        else if(drawerValue == 1)
+                            backUrl = response.body().getResults().getToolBar().getBack_url();
+
                         setCollapse(collapseValue, results);
                         setNavigation(drawerValue);
-mArrayList.addAll(response.body().getResults().getData());
-                        backUrl = response.body().getResults().getToolBar().getBack_url();
-
+                        mArrayList.addAll(response.body().getResults().getData());
 
                         int viewType = Integer.parseInt(response.body().getResults().getView_type());
                         Log.d("View Type", "" + viewType);
@@ -257,13 +262,11 @@ mArrayList.addAll(response.body().getResults().getData());
             SearchView searchView = (SearchView) menu.findItem(R.id.search_view).getActionView();
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
             searchView.setMaxWidth(Integer.MAX_VALUE);
-//            searchView.setIconifiedByDefault(false);
+//            searchView.setIconifiedByDefault(true);
+//            searchView.setFocusable(true);
+//            searchView.setIconified(true);
 //            searchView.requestFocusFromTouch();
-            searchView.setIconifiedByDefault(true);
-            searchView.setFocusable(true);
-            searchView.setIconified(true);
-            searchView.requestFocusFromTouch();
-            searchView.onActionViewExpanded();
+//            searchView.onActionViewExpanded();
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 public static final String TAG = "TAG";
 
@@ -281,7 +284,6 @@ mArrayList.addAll(response.body().getResults().getData());
                 }
             });
         }
-
         return true;
     }
 
@@ -336,6 +338,17 @@ mArrayList.addAll(response.body().getResults().getData());
             coordinatorLayout.setVisibility(View.GONE);
             //linearLayout.setVisibility(View.VISIBLE);
             //layout.setVisibility(View.VISIBLE);
+
+            swipeRefreshLayout.setProgressBackgroundColorSchemeColor(Color.WHITE);
+            swipeRefreshLayout.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    callHttp(BASE_URL);
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            });
+
         }
         if (collapseValue == 2) {
             recyclerView = findViewById(R.id.recycler_view);
@@ -368,17 +381,19 @@ mArrayList.addAll(response.body().getResults().getData());
                     .load(results.getToolBar().getTop_image_bg())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(background);
+            swipeRefreshLayoutCoordinator.setProgressBackgroundColorSchemeColor(Color.WHITE);
+            swipeRefreshLayoutCoordinator.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
+            swipeRefreshLayoutCoordinator.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    callHttp(BASE_URL);
+                    swipeRefreshLayoutCoordinator.setRefreshing(false);
+                }
+            });
+
+
         }
 
-        swipeRefreshLayout.setProgressBackgroundColorSchemeColor(Color.WHITE);
-        swipeRefreshLayout.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                callHttp(BASE_URL);
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
 
         int col = Integer.parseInt(results.getGrid_columns());
         int orientation = Integer.parseInt(results.getGrid_orientation());
@@ -436,6 +451,7 @@ mArrayList.addAll(response.body().getResults().getData());
             drawerLayout = findViewById(R.id.drawer_layout);
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            toggle.syncState();
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -450,6 +466,8 @@ mArrayList.addAll(response.body().getResults().getData());
                     callHttp(backUrl);
                 }
             });
+//            toolbar.setNavigationIcon(null);
+//            mToolbar.setNavigationIcon(null);
         }
     }
 

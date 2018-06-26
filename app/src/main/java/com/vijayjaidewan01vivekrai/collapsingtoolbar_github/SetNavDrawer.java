@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v7.widget.AppCompatImageView;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Menu_items;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.NavDrawer;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.TestResults;
@@ -32,6 +34,7 @@ import java.net.URL;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Handler;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -45,6 +48,7 @@ public class SetNavDrawer {
     Context context;
     NavDrawer navDrawer;
     Menu menu;
+    Bitmap bm;
     String url = "http://bydegreestest.agnitioworld.com/test/menu.php";
 
     public void setUrl(String url) {
@@ -94,19 +98,28 @@ public class SetNavDrawer {
 //                        } catch (ExecutionException e) {
 //                            e.printStackTrace();
 //                        }
-                        String url = items.getIcon();
                         Log.e("Nav Drawer","Yes");
-//                            URL u = new URL(url);
-//                        InputStream iStream = null;
+
+//                        Bitmap bm = null;
+//                        ApiService apiService1 = ApiUtils.getAPIService();
+//                        Call call1 = apiService1.results(url);
 //                        try {
-//                            iStream = (InputStream) new URL(url).getContent();
+//                            Response<ResponseBody> response1 = call1.execute();
+//                            bm = BitmapFactory.decodeStream(response1.body().byteStream());
 //                        } catch (IOException e) {
 //                            e.printStackTrace();
 //                        }
-//                        Drawable drawable = Drawable.createFromStream(iStream,"icon");
 
+                        /*InputStream iStream = null;
+                        try {
+                            iStream = (InputStream) new URL(url).getContent();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Drawable drawable = Drawable.createFromStream(iStream,"icon");*/
 //                            Drawable drawable = BitmapFactory.decodeStream((InputStream) u.getContent());
-                            menu.add(0,(Menu.FIRST+i),Menu.NONE,items.getItem()).setIcon(R.drawable.ic_account_circle_black_24dp);
+                        Drawable drawable = new BitmapDrawable(context.getResources(),downloadImage(items.getIcon()));
+                        menu.add(0,(Menu.FIRST+i),Menu.NONE,items.getItem()).setIcon(drawable);
                         i++;
                     }
                     navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -144,6 +157,29 @@ public class SetNavDrawer {
         this.onClickSetListener = onClickSet;
     }
 
+    public Bitmap downloadImage(final String url)
+    {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    bm = Glide.with(context)
+                            .load(url)
+                            .asBitmap()
+                            .into(50,50)
+                            .get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    Log.e("Exception",e.getLocalizedMessage());
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                    Log.e("Exception",e.getLocalizedMessage());
+                }
+            }
+        });
+        thread.start();
+        return bm;
+    }
 }
 
 //    NavigationView view = findViewById(R.id.nav_view);
