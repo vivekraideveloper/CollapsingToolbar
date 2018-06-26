@@ -25,7 +25,7 @@ public class Data {
     @SerializedName("bg_color")
     String bg_color;
     @SerializedName("id")
-    String id;
+    int id;
     @SerializedName("image")
     String image;
     @SerializedName("url")
@@ -43,7 +43,7 @@ public class Data {
         this.text3 = text3;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -95,7 +95,7 @@ public class Data {
         return text3;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
