@@ -25,12 +25,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.Resource;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Data;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.OnClickSet;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.R;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.ScrollingActivity;
 
 import java.util.ArrayList;
 import java.util.List;

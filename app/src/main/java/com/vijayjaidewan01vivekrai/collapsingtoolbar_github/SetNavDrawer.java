@@ -13,10 +13,14 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v7.widget.AppCompatImageView;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +33,8 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
+import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters.CardAdapter;
+import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters.NavDrawerCardAdapter;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Menu_items;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.NavDrawer;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.TestResults;
@@ -50,16 +56,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SetNavDrawer {
+public class SetNavDrawer implements OnClickSet {
 
-    NavigationView navigationView;
+    LinearLayout navigationView;
     AppCompatImageView navHeaderImage;
     TextView navHeaderText;
     Context context;
     NavDrawer navDrawer;
     Menu menu;
-    Menu_items items;
-    int i;
+    RecyclerView recyclerView;
     Bitmap bitmap;
     String url = "http://bydegreestest.agnitioworld.com/test/menu.php";
 
@@ -67,26 +72,27 @@ public class SetNavDrawer {
         this.url = url;
     }
 
-    public SetNavDrawer(NavigationView view, Context context) {
+    public SetNavDrawer(LinearLayout view, Context context) {
         navigationView = view;
         this.context = context;
     }
 
     public void getJSON() {
+        recyclerView = navigationView.findViewById(R.id.recycler_view_nav);
         navHeaderImage = navigationView.findViewById(R.id.nav_header_image);
         navHeaderText = navigationView.findViewById(R.id.nav_header_text);
-        menu = navigationView.getMenu();
-        menu.clear();
+//        menu = navigationView.getMenu();
+//        menu.clear();
 
         //navigationView = view.findViewById(R.id.nav_view);
-        Log.d("Header Count", "" + navigationView.getHeaderCount());
+//        Log.d("Header Count", "" + navigationView.getHeaderCount());
         ApiService apiService = ApiUtils.getAPIService();
         apiService.results(url).enqueue(new Callback<TestResults>() {
             @Override
             public void onResponse(Call<TestResults> call, Response<TestResults> response) {
                 if (response.isSuccessful()) {
                     navDrawer = response.body().getResults().getNavDrawer();
-                    new DownloadImage().execute();
+//                    new DownloadImage().execute();
                     bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.grey);
                     Glide.with(context)
                             .load(navDrawer.getHeader_layout().getImage())
@@ -110,15 +116,21 @@ public class SetNavDrawer {
                                     Log.d("On Resource", "alh");
                                 }
                             });
+                    recyclerView.setHasFixedSize(true);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(context));
                     navHeaderText.setText(navDrawer.getHeader_layout().getText());
-//                    menu.add("Menu");
+                    NavDrawerCardAdapter cardAdapter = new NavDrawerCardAdapter(navDrawer.getMenu_items(),context);
+                    recyclerView.setAdapter(cardAdapter);
+                    cardAdapter.notifyDataSetChanged();
+
+//                      menu.add("Menu");
 
 //                    Log.d("Menu item 1",""+menu.getItem(0));
 
 //                      ArrayList<Bitmap> bm = downloadImage();
 
 
-                    navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                   /* navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                         @Override
                         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                             Log.d("Clicked item", "" + (item.getItemId()));
@@ -132,7 +144,7 @@ public class SetNavDrawer {
                             return true;
                         }
                     });
-
+*/
                     navigationView.setBackgroundColor(Color.parseColor(navDrawer.getNav_drawer_bg_color()));
 //                    NavigationView.OnNavigationItemSelectedListener clickListener = new ScrollingActivity();
 //                    clickListener.onNavigationItemSelected(navigationView.getMenu().getItem());
@@ -154,6 +166,12 @@ public class SetNavDrawer {
         this.onClickSetListener = onClickSet;
     }
 
+    @Override
+    public void onClickFunction(String url) {
+
+    }
+}
+
     /*public ArrayList<Bitmap> downloadImage()
     {
         final ArrayList <Bitmap> bm= new ArrayList<>();
@@ -171,7 +189,7 @@ public class SetNavDrawer {
         return bm;
     }*/
 
-    class DownloadImage extends AsyncTask<Void, Void, Void> {
+    /*class DownloadImage extends AsyncTask<Void, Void, Void> {
         ArrayList<Bitmap> bm = new ArrayList<>();
 
         @Override
@@ -185,15 +203,16 @@ public class SetNavDrawer {
                     connection.connect();
                     InputStream input = connection.getInputStream();
                     bitmap = BitmapFactory.decodeStream(input);
-                    Matrix matrix = new Matrix();
-                    matrix.postScale(30,30);
-                    bitmap = Bitmap.createBitmap(bitmap,0,0,50,50,matrix,false);
+
+//                    Matrix matrix = new Matrix();
+//                    matrix.postScale(30,30);
+//                    bitmap = Bitmap.createBitmap(bitmap,0,0,50,50);
                     bm.add(bitmap);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-                        /*Glide.with(context)
+                        *//*Glide.with(context)
                                 .load(items.getIcon())
                                 .asBitmap()
                                 .into(new SimpleTarget<Bitmap>(50,50) {
@@ -202,7 +221,7 @@ public class SetNavDrawer {
                                      bitmap = resource;
                                      setbitmap();
                                     }
-                                });*/
+                                });*//*
             }
             return null;
         }
@@ -222,7 +241,7 @@ public class SetNavDrawer {
             }
         }
     }
-}
+}*/
 
 //                            .asBitmap()
 //                            .listener(new RequestListener<String, Bitmap>() {

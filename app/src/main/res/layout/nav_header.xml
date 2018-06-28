@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="160dp">
+    android:layout_height="match_parent">
 
     <android.support.v7.widget.AppCompatImageView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="160dp"
         android:id="@+id/nav_header_image"
         android:scaleType="fitXY"
         android:background="@color/colorPrimary"/>
@@ -16,8 +16,18 @@
         android:id="@+id/nav_header_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="49dp"
         android:text="Hello"
         android:textSize="50sp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/nav_header_image"
+        android:id="@+id/recycler_view_nav">
+
+    </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>

@@ -82,7 +82,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
     private SwipeRefreshLayout swipeRefreshLayout;
     private SwipeRefreshLayout swipeRefreshLayoutCoordinator;
     private View login;
-    private NavigationView navigationView;
+    private LinearLayout navigationView;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     CardAdapter mCardAdapter;
     int drawerValue = 2;
@@ -91,8 +91,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
     String backUrl;
     ProgressBar progressBar;
     List<Data> mArrayList;
-
-
+    DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +111,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         drawerLayout = findViewById(R.id.drawer_layout);
         mArrayList = new ArrayList<>();
         progressBar = findViewById(R.id.progressBar);
-
+        db = new DatabaseHelper(ScrollingActivity.this,"DataInfo",null,1);
 
         //layout = findViewById(R.id.layout_content);
 
@@ -164,10 +163,13 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                     if (response.body().getMsg().equals("success")) {
                         mArrayList.clear();
 
+                        //DISAPPEAR THE PROGRESS BAR SHOWN EARLIER
                         mainLinear.setVisibility(View.VISIBLE);
                         progressBar.clearFocus();
                         progressBar.setVisibility(View.GONE);
-                        //DISAPPEAR THE PROGRESS BAR SHOWN EARLIER
+
+                        db.saveToDatabase(response.body().getResults().getData());
+
                         int collapseValue;
                         drawerValue = Integer.parseInt(response.body().getResults().getToolBar().getIs_back());
 //                        drawerValue = 3;
@@ -262,10 +264,11 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
             SearchView searchView = (SearchView) menu.findItem(R.id.search_view).getActionView();
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
             searchView.setMaxWidth(Integer.MAX_VALUE);
+
 //            searchView.setIconifiedByDefault(true);
 //            searchView.setFocusable(true);
 //            searchView.setIconified(true);
-//            searchView.requestFocusFromTouch();
+            searchView.requestFocusFromTouch();
 //            searchView.onActionViewExpanded();
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 public static final String TAG = "TAG";
@@ -493,7 +496,9 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
             callHttp(backUrl);
         }
     }
+public interface callhttp{
 
+}
     @Override
     public void onClickFunction(String url) {
         callHttp(url);
