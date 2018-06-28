@@ -168,7 +168,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                         progressBar.clearFocus();
                         progressBar.setVisibility(View.GONE);
 
-                        db.saveToDatabase(response.body().getResults().getData());
+                        db.saveData(response.body().getResults().getData());
 
                         int collapseValue;
                         drawerValue = Integer.parseInt(response.body().getResults().getToolBar().getIs_back());

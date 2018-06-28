@@ -56,7 +56,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SetNavDrawer implements OnClickSet {
+public class SetNavDrawer {
 
     LinearLayout navigationView;
     AppCompatImageView navHeaderImage;
@@ -113,7 +113,7 @@ public class SetNavDrawer implements OnClickSet {
                                     //bitmap = resource;
 //                                    navHeaderImage.setBackground(new BitmapDrawable(context.getResources(),resource));
                                     navHeaderImage.setImageBitmap(resource);
-                                    Log.d("On Resource", "alh");
+//                                    Log.d("On Resource", "alh");
                                 }
                             });
                     recyclerView.setHasFixedSize(true);
@@ -122,6 +122,7 @@ public class SetNavDrawer implements OnClickSet {
                     NavDrawerCardAdapter cardAdapter = new NavDrawerCardAdapter(navDrawer.getMenu_items(),context);
                     recyclerView.setAdapter(cardAdapter);
                     cardAdapter.notifyDataSetChanged();
+                    cardAdapter.setClickListener((OnClickSet) context);
 
 //                      menu.add("Menu");
 
@@ -166,10 +167,6 @@ public class SetNavDrawer implements OnClickSet {
         this.onClickSetListener = onClickSet;
     }
 
-    @Override
-    public void onClickFunction(String url) {
-
-    }
 }
 
     /*public ArrayList<Bitmap> downloadImage()

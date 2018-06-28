@@ -1,8 +1,6 @@
 package com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient;
 
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.TestResults;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.User;
-
 import java.util.HashMap;
 
 import okhttp3.ResponseBody;
