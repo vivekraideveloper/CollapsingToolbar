@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Menu_items;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.OnClickSet;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.R;
@@ -40,6 +41,7 @@ public class NavDrawerCardAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         Glide.with(context)
                 .load(items.get(position).getIcon())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(((ViewHolder)holder).iconImage);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

@@ -11,7 +11,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -50,7 +52,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.bumptech.glide.request.target.SquaringDrawable;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters.CardAdapter;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Data;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Login;
@@ -60,9 +61,9 @@ import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.ToolBar;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiService;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiUtils;
 
-import java.lang.reflect.Array;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -93,6 +94,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
     ProgressBar progressBar;
     List<Data> mArrayList;
     DatabaseHelper db;
+
 //    LruCache<String,Bitmap> mMemoryCache;
 
     @Override
@@ -113,10 +115,12 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         drawerLayout = findViewById(R.id.drawer_layout);
         mArrayList = new ArrayList<>();
         progressBar = findViewById(R.id.progressBar);
+        db=new DatabaseHelper(ScrollingActivity.this,"Information",null,1);
 
         //layout = findViewById(R.id.layout_content);
 
         //cardDataList = new ArrayList<>();
+
 
         ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -124,6 +128,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                 || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
             // notify user you are online
             //requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
             setProgressBarIndeterminate(true);
             callHttp(BASE_URL);
             setProgressBarIndeterminate(false);
@@ -131,7 +136,13 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                 || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
             // notify user you are not online
 
-            View view = findViewById(android.R.id.content);
+            ArrayList<Data> data = db.readData();
+            mArrayList.addAll(data);
+            ToolBar toolBar = db.readToolbar();
+            Results results = db.readResults();
+
+
+            /*View view = findViewById(android.R.id.content);
             Snackbar snackbar = Snackbar.make(view, "Please ensure stable internet connectivity!", 10000).setAction("Action", null);
             snackbar.show();
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
@@ -143,7 +154,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.drawer_layout, new Offline_fragment());
-            ft.commit();
+            ft.commit();*/
         }
     }
 
@@ -169,7 +180,6 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                         progressBar.setVisibility(View.GONE);
 
                         //Saving values to the database
-                        db=new DatabaseHelper(ScrollingActivity.this,"Information",null,1);
                         db.saveData(response.body().getResults().getData());
                         db.saveToolbar(response.body().getResults().getToolBar());
 //                        db.saveView(response.body().getResults());
@@ -536,5 +546,6 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
     public interface SetLayout {
         void setUrl(String url);
     }
+
 }
 

@@ -107,6 +107,7 @@ public class SetNavDrawer {
                     Glide.with(context)
                             .load(navDrawer.getHeader_layout().getImage())
                             .asBitmap()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .into(new SimpleTarget<Bitmap>(200, 200) {
                                 @Override
                                 public void onLoadStarted(Drawable placeholder) {
@@ -120,11 +121,7 @@ public class SetNavDrawer {
 
                                 @Override
                                 public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                    //bitmap = resource;
-//                                    navHeaderImage.setBackground(new BitmapDrawable(context.getResources(),resource));
                                     navHeaderImage.setImageBitmap(resource);
-//                                    addBitmapToMemoryCache("navHeaderImage",resource);
-//                                    Log.d("On Resource", "alh");
                                 }
                             });
                     recyclerView.setHasFixedSize(true);

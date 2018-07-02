@@ -11,6 +11,7 @@ import android.view.Menu;
 
 import com.bumptech.glide.request.target.SquaringDrawable;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Data;
+import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Menu_header;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Menu_items;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Results;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.ToolBar;
@@ -20,8 +21,6 @@ import java.util.ArrayList;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String LOG = "DatabaseHelper";
-    private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "Information";
 
     //TABLE DETAILS FOR DATA
     private static final String TABLE_DATA = "dataInfo";
@@ -37,6 +36,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_TEXT3_COLOR = "text_3_color";
     private static final String BACKGROUND = "background";
     private static final String URL = "url";
+    private static final String IMAGE = "image";
 
     //TABLE DETAILS FOR NAVIGATION DRAWER DATA
     private static final String TABLE_NAV = "NavDrawerData";
@@ -58,6 +58,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_COLLAPSED_TITLE_COLOR = "collapsed_title_color";
     private static final String KEY_IS_BACK = "is_back";
     private static final String KEY_BACK_URL = "back_url";
+    private static final String KEY_BACK_IMAGE = "top_image_bg";
+    private static final String KEY_FRONT_IMAGE = "top_image_fg";
+    private static final String KEY_TOP = "top_image";
+
     //Parameter to store the Title of Navigation Drawer
 
     public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -71,46 +75,51 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DATA);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAV);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_VIEW);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TOOLBAR);
-        db.execSQL("DROP TABLE IF EXISTS NavHeadTitle ");
-
         //CREATE TABLE FOR DATA INFO
         db.execSQL("CREATE TABLE " + TABLE_DATA + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     KEY_TEXT1 + " TEXT," + KEY_TEXT1_SIZE + " TEXT," + KEY_TEXT1_COLOR + " TEXT," +
                     KEY_TEXT2 + " TEXT," + KEY_TEXT2_SIZE + " TEXT," + KEY_TEXT2_COLOR + " TEXT," +
                     KEY_TEXT3 + " TEXT," + KEY_TEXT3_SIZE + " TEXT," + KEY_TEXT3_COLOR + " TEXT," +
-                    BACKGROUND + " TEXT," + URL + " TEXT)");
+                    BACKGROUND + " TEXT," + IMAGE + " TEXT," + URL + " TEXT)");
 
         //CREATE TABLE FOR NAVGITION DRAWER ITEMS
         db.execSQL("CREATE TABLE " + TABLE_NAV + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                KEY_TEXT1 + " TEXT," + KEY_TEXT1_COLOR + " TEXT," + URL + " TEXT)" );
+                KEY_TEXT1 + " TEXT," + KEY_TEXT1_COLOR + " TEXT," + IMAGE + " TEXT," + URL + " TEXT)" );
 
         //CREATE TABLE FOR STORING THE VARIOUS COMPONENTS OF VIEW TYPE
         db.execSQL("CREATE TABLE " + TABLE_VIEW + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    KEY_TYPE + " INTEGER," + KEY_COL + " INTEGER," + KEY_ORIENTATION + " INTEGER," +
-                    KEY_ISSEARCH + " INTEGER," + KEY_NAV_HEADER + " TEXT)");
+                    KEY_TYPE + " INTEGER," + KEY_COL + " INTEGER," + KEY_ORIENTATION + " INTEGER," + KEY_ISSEARCH + " INTEGER)");
 
         //CREATE TABLE FOR STORING VARIOUS COMPONENTS OF TOOLBAR
         db.execSQL("CREATE TABLE " + TABLE_TOOLBAR + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     KEY_EXTENDED_TITLE + " TEXT," + KEY_EXTENDED_TITLE_COLOR + " TEXT," +
                     KEY_COLLAPSED_TITLE + " TEXT," + KEY_COLLAPSED_TITLE_COLOR + " TEXT," +
-                    KEY_TOOLBAR_BG + " TEXT," + KEY_IS_BACK + " INTEGER," + KEY_BACK_URL + " TEXT)");
+                    KEY_TOOLBAR_BG + " TEXT," + KEY_IS_BACK + " INTEGER," + KEY_BACK_IMAGE + " TEXT," +
+                    KEY_FRONT_IMAGE + " TEXT," + KEY_TOP + " INTEGER," +KEY_BACK_URL + " TEXT)");
 
-        db.execSQL("CREATE TABLE NavHeadTitle (" + KEY_NAV_HEADER + " TEXT)");
+        db.execSQL("CREATE TABLE NavHead (" + IMAGE + " TEXT," + KEY_NAV_HEADER + " TEXT)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DATA);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAV);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_VIEW);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TOOLBAR);
+        db.execSQL("DROP TABLE IF EXISTS NavHead ");
 
         onCreate(db);
     }
 
+//    public void dropTable()
+//    {
+//        SQLiteDatabase db = getWritableDatabase();
+//
+//    }
+
     public void saveData(ArrayList<Data> data) {
-        SQLiteDatabase db = this.getWritableDatabase();
-//        onUpgrade(db, 1, 2);
+        SQLiteDatabase db = getWritableDatabase();
+        onUpgrade(db, db.getVersion(), db.getVersion() + 1);
         for (Data d : data) {
             ContentValues cv = new ContentValues();
             cv.put(KEY_TEXT1, d.getText1());
@@ -123,6 +132,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cv.put(KEY_TEXT3_SIZE, d.getText_description_size());
             cv.put(KEY_TEXT3_COLOR, d.getText_description_color());
             cv.put(BACKGROUND, d.getBg_color());
+            cv.put(IMAGE,d.getImage());
             cv.put(URL, d.getUrl());
             long rowID = db.insert(TABLE_DATA, null, cv);
             Log.i("DATA:Row ID ", "" + rowID);
@@ -132,12 +142,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void saveMenu(ArrayList<Menu_items> menu)
     {
         SQLiteDatabase db = getWritableDatabase();
-//        onUpgrade(db, 1, 2);
+        onUpgrade(db, db.getVersion(), db.getVersion() + 1);
         for (Menu_items d : menu)
         {
             ContentValues cv = new ContentValues();
             cv.put(KEY_TEXT1,d.getItem());
             cv.put(KEY_TEXT1_COLOR,d.getText_color());
+            cv.put(IMAGE,d.getIcon());
             cv.put(URL,d.getUrl());
             long rowID = db.insert(TABLE_NAV,null,cv);
             Log.i("NAV:Row ID",""+rowID);
@@ -146,6 +157,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void saveToolbar(ToolBar toolBar){
         SQLiteDatabase db = getWritableDatabase();
+        onUpgrade(db, db.getVersion(), db.getVersion() + 1);
 
         ContentValues cv = new ContentValues();
         cv.put(KEY_EXTENDED_TITLE,toolBar.getExtended_top_title());
@@ -154,6 +166,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(KEY_COLLAPSED_TITLE_COLOR,toolBar.getCollapsed_top_title_color());
         cv.put(KEY_TOOLBAR_BG,toolBar.getToolbar_bg());
         cv.put(KEY_IS_BACK,Integer.parseInt(toolBar.getIs_back()));
+        cv.put(KEY_TOP,Integer.parseInt(toolBar.getTop_image()));
+        cv.put(KEY_BACK_IMAGE,toolBar.getTop_image_bg());
+        cv.put(KEY_FRONT_IMAGE,toolBar.getTop_image_fg());
         cv.put(KEY_BACK_URL,toolBar.getBack_url());
         long rowID = db.insert(TABLE_TOOLBAR,null,cv);
         Log.i("TOOLBAR:Row ID",""+rowID);
@@ -162,24 +177,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void saveView(Results results)
     {
         SQLiteDatabase db = getWritableDatabase();
+        onUpgrade(db, db.getVersion(), db.getVersion() + 1);
 
         ContentValues cv = new ContentValues();
         cv.put(KEY_TYPE,Integer.parseInt(results.getView_type()));
         cv.put(KEY_COL,Integer.parseInt(results.getGrid_columns()));
         cv.put(KEY_ORIENTATION,Integer.parseInt(results.getGrid_orientation()));
         cv.put(KEY_ISSEARCH,Integer.parseInt(results.getIs_search()));
-//        cv.put(KEY_NAV_HEADER,results.getNavDrawer().getHeader_layout().getText());
         long rowID = db.insert(TABLE_VIEW,null,cv);
         Log.i("VIEW:Row ID",""+rowID);
     }
 
-    public void saveHeaderTitle(String title)
+    public void saveHeaderTitle(Menu_header header)
     {
         SQLiteDatabase db = getWritableDatabase();
+        onUpgrade(db, db.getVersion(), db.getVersion() + 1);
 
         ContentValues cv = new ContentValues();
-        cv.put(KEY_NAV_HEADER,title);
-        long rowID = db.insert("NavHeadTitle",null,cv);
+        cv.put(KEY_NAV_HEADER,header.getText());
+        cv.put(IMAGE,header.getImage());
+        long rowID = db.insert("NavHead",null,cv);
         Log.i("Title:Row ID", ""+rowID);
     }
 
@@ -204,8 +221,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 d.setText3(cursor.getString(cursor.getColumnIndex(KEY_TEXT3)));
                 d.setText_description_size(cursor.getString(cursor.getColumnIndex(KEY_TEXT3_SIZE)));
                 d.setText_description_color(cursor.getString(cursor.getColumnIndex(KEY_TEXT3_COLOR)));
+                d.setImage(cursor.getString(cursor.getColumnIndex(IMAGE)));
                 d.setUrl(cursor.getString(cursor.getColumnIndex(URL)));
-
                 data.add(d);
             }while (cursor.moveToNext());
         }
@@ -229,7 +246,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 menu.setItem(cursor.getString(cursor.getColumnIndex(KEY_TEXT1)));
                 menu.setText_color(cursor.getString(cursor.getColumnIndex(KEY_TEXT1_COLOR)));
                 menu.setUrl(cursor.getString(cursor.getColumnIndex(URL)));
-
+                menu.setIcon(cursor.getString(cursor.getColumnIndex(IMAGE)));
                 menu_items.add(menu);
             }while (cursor.moveToNext());
         }
@@ -255,6 +272,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             toolBar.setExtended_top_title_color(cursor.getString(cursor.getColumnIndex(KEY_EXTENDED_TITLE_COLOR)));
             toolBar.setIs_back(String.valueOf(cursor.getInt(cursor.getColumnIndex(KEY_IS_BACK))));
             toolBar.setToolbar_bg(cursor.getString(cursor.getColumnIndex(KEY_TOOLBAR_BG)));
+            toolBar.setTop_image_bg(cursor.getString(cursor.getColumnIndex(KEY_BACK_IMAGE)));
+            toolBar.setTop_image_fg(cursor.getString(cursor.getColumnIndex(KEY_FRONT_IMAGE)));
+            toolBar.setTop_image(String.valueOf(cursor.getInt(cursor.getColumnIndex(KEY_TOP))));
         }
         db.close();
 
@@ -275,27 +295,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             results.setGrid_columns(String.valueOf(cursor.getInt(cursor.getColumnIndex(KEY_COL))));
             results.setGrid_orientation(String.valueOf(cursor.getInt(cursor.getColumnIndex(KEY_ORIENTATION))));
             results.setIs_search(String.valueOf(cursor.getInt(cursor.getColumnIndex(KEY_ISSEARCH))));
-//            results.getNavDrawer().getHeader_layout().setText(cursor.getString(cursor.getColumnIndex(KEY_NAV_HEADER)));
         }
         db.close();
 
         return results;
     }
 
-    public String readTitle()
+    public Menu_header readTitle()
     {
         SQLiteDatabase db = getReadableDatabase();
-        String title = "";
+        Menu_header header = new Menu_header();
 
-        String selectQuery = "SELECT * FROM NavHeadTitle";
+        String selectQuery = "SELECT * FROM NavHead";
         Cursor cursor = db.rawQuery(selectQuery,null);
 
         if (cursor.moveToFirst())
         {
-            title = cursor.getString(cursor.getColumnIndex(KEY_NAV_HEADER));
+            header.setText(cursor.getString(cursor.getColumnIndex(KEY_NAV_HEADER)));
+            header.setImage(cursor.getString(cursor.getColumnIndex(IMAGE)));
         }
         db.close();
 
-        return title;
+        return header;
     }
 }

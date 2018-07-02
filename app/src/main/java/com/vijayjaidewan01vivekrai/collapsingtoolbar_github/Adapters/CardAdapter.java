@@ -2,6 +2,7 @@ package com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Data;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.OnClickSet;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.R;
@@ -126,6 +128,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
             Glide.with(context)
                     .load(cardData.get(position).getImage())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(((ViewHolder2) holder).iconImage);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -155,6 +158,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
             Glide.with(context)
                     .load(cardData.get(position).getImage())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(((ViewHolder3) holder).iconImage);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -187,6 +191,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 //            ((ViewHolder4) holder).card.setCardBackgroundColor(Color.parseColor(cardData.get(position).getBg_color()));
             Glide.with(context)
                     .load(cardData.get(position).getImage())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(((ViewHolder4) holder).background);
 
             //View.OnClickListener listener = new ScrollingActivity();
