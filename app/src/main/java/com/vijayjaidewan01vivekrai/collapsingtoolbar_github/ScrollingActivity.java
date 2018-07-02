@@ -34,6 +34,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
@@ -77,7 +78,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
     private Toolbar toolbar;
     private CoordinatorLayout coordinatorLayout;
     private AppBarLayout appBarLayout;
-    private LinearLayout linearLayout,mainLinear;
+    private LinearLayout linearLayout, mainLinear;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private SwipeRefreshLayout swipeRefreshLayoutCoordinator;
@@ -92,6 +93,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
     ProgressBar progressBar;
     List<Data> mArrayList;
     DatabaseHelper db;
+//    LruCache<String,Bitmap> mMemoryCache;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +113,6 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         drawerLayout = findViewById(R.id.drawer_layout);
         mArrayList = new ArrayList<>();
         progressBar = findViewById(R.id.progressBar);
-        db = new DatabaseHelper(ScrollingActivity.this,"DataInfo",null,1);
 
         //layout = findViewById(R.id.layout_content);
 
@@ -126,8 +127,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
             setProgressBarIndeterminate(true);
             callHttp(BASE_URL);
             setProgressBarIndeterminate(false);
-        }
-        else if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
+        } else if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
                 || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
             // notify user you are not online
 
@@ -168,7 +168,11 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                         progressBar.clearFocus();
                         progressBar.setVisibility(View.GONE);
 
+                        //Saving values to the database
+                        db=new DatabaseHelper(ScrollingActivity.this,"Information",null,1);
                         db.saveData(response.body().getResults().getData());
+                        db.saveToolbar(response.body().getResults().getToolBar());
+//                        db.saveView(response.body().getResults());
 
                         int collapseValue;
                         drawerValue = Integer.parseInt(response.body().getResults().getToolBar().getIs_back());
@@ -181,9 +185,9 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                         Results results = response.body().getResults();
 //                        filter(response.body().getResults().getData().get(posi).getText1());
 
-                        if(drawerValue == 0)
+                        if (drawerValue == 0)
                             backUrl = null;
-                        else if(drawerValue == 1)
+                        else if (drawerValue == 1)
                             backUrl = response.body().getResults().getToolBar().getBack_url();
 
                         setCollapse(collapseValue, results);
@@ -196,23 +200,16 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                             case 1:
                             case 2:
                             case 3:
-                            case 4: mCardAdapter=new CardAdapter(response.body().getResults().getData(),mArrayList, ScrollingActivity.this,viewType);
+                            case 4:
+                                mCardAdapter = new CardAdapter(response.body().getResults().getData(), mArrayList, ScrollingActivity.this, viewType);
                                 recyclerView.setAdapter(mCardAdapter);
                                 mCardAdapter.notifyDataSetChanged();
                                 mCardAdapter.setClickListener(ScrollingActivity.this);
-
                                 break;
-                            case 5: //add webview
-                                WebViewFragment webViewFragment = new WebViewFragment();
-                                Bundle bundle = new Bundle();
-                                bundle.putString("url_key", response.body().getResults().getWeb_view_url());
-                                webViewFragment.setArguments(bundle);
-                                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                                ft.replace(R.id.drawer_layout, webViewFragment);
-                                ft.addToBackStack("");
-                                ft.commit();
+                            case 5: //webview
+                                webView(response.body().getResults().getWeb_view_url());
                                 break;
-                            case 6:
+                            case 6: //Login Fragment
                                 setLogin(response.body().getResults().getLogin());
                                 break;
                             default:
@@ -228,11 +225,22 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
 
             @Override
             public void onFailure(Call<TestResults> call, Throwable t) {
-                Log.e("Url error",t.getLocalizedMessage());
-
+                Log.e("Url error", t.getLocalizedMessage());
             }
         });
     }
+
+    public void webView(String url) {
+        WebViewFragment webViewFragment = new WebViewFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("url_key", url);
+        webViewFragment.setArguments(bundle);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.drawer_layout, webViewFragment);
+        ft.addToBackStack("");
+        ft.commit();
+    }
+
 //
 //    public void setAdapter()
 //    {
@@ -248,7 +256,6 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
 //        recyclerView.setAdapter(adapter);
 //        adapter.notifyDataSetChanged();
 //    }
-
 
     //Search Bar controlled by searchValue = 0(Not Present), 1(Present)
     @Override
@@ -327,7 +334,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         });
     }
 
-    private void setCollapse(int collapseValue,Results results) {
+    private void setCollapse(int collapseValue, Results results) {
 
         if (collapseValue == 1) {
             recyclerView = findViewById(R.id.recyclerViewLinear);
@@ -368,6 +375,14 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
             setRecyclerViewMargins();
             //layout.setVisibility(View.GONE);
             RoundedImage roundedImage = findViewById(R.id.rounded_image);
+//            int memoryMax = (int) (Runtime.getRuntime().maxMemory());
+            /*mMemoryCache = new LruCache<String, Bitmap>(memoryMax/8){
+                @Override
+                protected int sizeOf(String key, Bitmap value) {
+                    return value.getByteCount()/1024;
+                }
+            };
+            */
             Glide.with(this)
                     .load(results.getToolBar().getTop_image_fg())
                     .asBitmap()
@@ -376,14 +391,23 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                         @Override
                         protected void setResource(Bitmap resource) {
                             super.setResource(resource);
+//                            addBitmapToMemoryCache("top_image_fg",resource);
                         }
                     });
 
             AppCompatImageView background = findViewById(R.id.backImage);
             Glide.with(ScrollingActivity.this)
                     .load(results.getToolBar().getTop_image_bg())
+                    .asBitmap()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(background);
+                    .into(new BitmapImageViewTarget(background)
+                    {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            super.setResource(resource);
+//                            addBitmapToMemoryCache("top_image_bg",resource);
+                        }
+                    });
             swipeRefreshLayoutCoordinator.setProgressBackgroundColorSchemeColor(Color.WHITE);
             swipeRefreshLayoutCoordinator.setColorSchemeColors(Color.MAGENTA, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE);
             swipeRefreshLayoutCoordinator.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -393,10 +417,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                     swipeRefreshLayoutCoordinator.setRefreshing(false);
                 }
             });
-
-
         }
-
 
         int col = Integer.parseInt(results.getGrid_columns());
         int orientation = Integer.parseInt(results.getGrid_orientation());
@@ -429,7 +450,16 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
             recyclerView.setLayoutManager(gridLayoutManager); // set LayoutManager to RecyclerView
         }
     }
-
+/*
+    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+        if (getBitmapFromMemCache(key) == null) {
+            mMemoryCache.put(key, bitmap);
+        }
+    }
+    public Bitmap getBitmapFromMemCache(String key) {
+        return mMemoryCache.get(key);
+    }
+*/
     private void setNavigation(int drawerValue) {
         if (drawerValue == 0) {
             backUrl = null;
@@ -443,7 +473,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    SetNavDrawer navDrawer = new SetNavDrawer(navigationView, ScrollingActivity.this);
+                    SetNavDrawer navDrawer = new SetNavDrawer(navigationView, ScrollingActivity.this,db);
                     navDrawer.getJSON();
                     drawerLayout.closeDrawers();
                     navDrawer.setClickListener(ScrollingActivity.this);
@@ -458,14 +488,14 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(),backUrl,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), backUrl, Toast.LENGTH_SHORT).show();
                     callHttp(backUrl);
                 }
             });
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(),backUrl,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), backUrl, Toast.LENGTH_SHORT).show();
                     callHttp(backUrl);
                 }
             });
@@ -489,16 +519,14 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
 
     @Override
     public void onBackPressed() {
-        if(backUrl == null)
+        if (backUrl == null)
             super.onBackPressed();
         else {
             Toast.makeText(getApplicationContext(), backUrl, Toast.LENGTH_SHORT).show();
             callHttp(backUrl);
         }
     }
-public interface callhttp{
 
-}
     @Override
     public void onClickFunction(String url) {
         callHttp(url);

@@ -3,6 +3,7 @@ package com.vijayjaidewan01vivekrai.collapsingtoolbar_github;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -17,6 +18,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +37,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters.CardAdapter;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters.NavDrawerCardAdapter;
+import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Data;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Menu_items;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.NavDrawer;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.TestResults;
@@ -66,15 +69,19 @@ public class SetNavDrawer {
     Menu menu;
     RecyclerView recyclerView;
     Bitmap bitmap;
+    DatabaseHelper db;
+//    LruCache<String,Bitmap> mMemoryCache;
     String url = "http://bydegreestest.agnitioworld.com/test/menu.php";
 
     public void setUrl(String url) {
         this.url = url;
     }
 
-    public SetNavDrawer(LinearLayout view, Context context) {
+    public SetNavDrawer(LinearLayout view, Context context, DatabaseHelper db) {
         navigationView = view;
         this.context = context;
+        this.db = db;
+//        this.mMemoryCache = mMemoryCache;
     }
 
     public void getJSON() {
@@ -93,6 +100,9 @@ public class SetNavDrawer {
                 if (response.isSuccessful()) {
                     navDrawer = response.body().getResults().getNavDrawer();
 //                    new DownloadImage().execute();
+//                    DatabaseHelper databaseHelper = new DatabaseHelper(context,"Toolbar",null,1);
+                    db.saveMenu(navDrawer.getMenu_items());
+                    db.saveHeaderTitle(navDrawer.getHeader_layout().getText());
                     bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.grey);
                     Glide.with(context)
                             .load(navDrawer.getHeader_layout().getImage())
@@ -113,6 +123,7 @@ public class SetNavDrawer {
                                     //bitmap = resource;
 //                                    navHeaderImage.setBackground(new BitmapDrawable(context.getResources(),resource));
                                     navHeaderImage.setImageBitmap(resource);
+//                                    addBitmapToMemoryCache("navHeaderImage",resource);
 //                                    Log.d("On Resource", "alh");
                                 }
                             });
@@ -168,6 +179,17 @@ public class SetNavDrawer {
     }
 
 }
+
+/*  public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+        if (getBitmapFromMemCache(key) == null) {
+            mMemoryCache.put(key, bitmap);
+        }
+    }
+
+    public Bitmap getBitmapFromMemCache(String key) {
+        return mMemoryCache.get(key);
+    }
+*/
 
     /*public ArrayList<Bitmap> downloadImage()
     {

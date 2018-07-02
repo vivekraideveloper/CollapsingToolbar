@@ -7,15 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class Offline_fragment extends Fragment {
 
 
     public Offline_fragment() {
-        // Required empty public constructor
     }
 
 

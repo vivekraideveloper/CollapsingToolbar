@@ -17,9 +17,6 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class WebViewFragment extends Fragment {
 
     private WebView webView;

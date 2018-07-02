@@ -18,7 +18,7 @@ public class Data {
     String text_description_color;
     @SerializedName("text_header_size")
     String text_header_size;
-    @SerializedName("text_subheader_size")
+    @SerializedName("tex_subheader_size")
     String text_subheader_size;
     @SerializedName("text_description_size")
     String text_description_size;
