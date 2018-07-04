@@ -10,6 +10,8 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -70,7 +72,7 @@ public class SetNavDrawer {
     RecyclerView recyclerView;
     Bitmap bitmap;
     DatabaseHelper db;
-//    LruCache<String,Bitmap> mMemoryCache;
+    //    LruCache<String,Bitmap> mMemoryCache;
     String url = "http://bydegreestest.agnitioworld.com/test/menu.php";
 
     public void setUrl(String url) {
@@ -81,6 +83,7 @@ public class SetNavDrawer {
         navigationView = view;
         this.context = context;
         this.db = db;
+        navDrawer = new NavDrawer();
 //        this.mMemoryCache = mMemoryCache;
     }
 
@@ -88,49 +91,27 @@ public class SetNavDrawer {
         recyclerView = navigationView.findViewById(R.id.recycler_view_nav);
         navHeaderImage = navigationView.findViewById(R.id.nav_header_image);
         navHeaderText = navigationView.findViewById(R.id.nav_header_text);
+        ConnectivityManager conMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 //        menu = navigationView.getMenu();
 //        menu.clear();
+        if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED
+                || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            // notify user you are online
+            //requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
-        //navigationView = view.findViewById(R.id.nav_view);
+            //navigationView = view.findViewById(R.id.nav_view);
 //        Log.d("Header Count", "" + navigationView.getHeaderCount());
-        ApiService apiService = ApiUtils.getAPIService();
-        apiService.results(url).enqueue(new Callback<TestResults>() {
-            @Override
-            public void onResponse(Call<TestResults> call, Response<TestResults> response) {
-                if (response.isSuccessful()) {
-                    navDrawer = response.body().getResults().getNavDrawer();
+            ApiService apiService = ApiUtils.getAPIService();
+            apiService.results(url).enqueue(new Callback<TestResults>() {
+                @Override
+                public void onResponse(Call<TestResults> call, Response<TestResults> response) {
+                    if (response.isSuccessful()) {
+                        navDrawer = response.body().getResults().getNavDrawer();
 //                    new DownloadImage().execute();
 //                    DatabaseHelper databaseHelper = new DatabaseHelper(context,"Toolbar",null,1);
-                    db.saveMenu(navDrawer.getMenu_items());
-                    db.saveHeaderTitle(navDrawer.getHeader_layout().getText());
-                    bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.grey);
-                    Glide.with(context)
-                            .load(navDrawer.getHeader_layout().getImage())
-                            .asBitmap()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .into(new SimpleTarget<Bitmap>(200, 200) {
-                                @Override
-                                public void onLoadStarted(Drawable placeholder) {
-                                    super.onLoadStarted(placeholder);
-                                }
-
-                                @Override
-                                public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                                    super.onLoadFailed(e, errorDrawable);
-                                }
-
-                                @Override
-                                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                    navHeaderImage.setImageBitmap(resource);
-                                }
-                            });
-                    recyclerView.setHasFixedSize(true);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                    navHeaderText.setText(navDrawer.getHeader_layout().getText());
-                    NavDrawerCardAdapter cardAdapter = new NavDrawerCardAdapter(navDrawer.getMenu_items(),context);
-                    recyclerView.setAdapter(cardAdapter);
-                    cardAdapter.notifyDataSetChanged();
-                    cardAdapter.setClickListener((OnClickSet) context);
+                        db.saveMenu(navDrawer.getMenu_items());
+                        db.saveHeaderTitle(navDrawer.getHeader_layout());
+                        setDrawer();
 
 //                      menu.add("Menu");
 
@@ -154,22 +135,62 @@ public class SetNavDrawer {
                         }
                     });
 */
-                    navigationView.setBackgroundColor(Color.parseColor(navDrawer.getNav_drawer_bg_color()));
 //                    NavigationView.OnNavigationItemSelectedListener clickListener = new ScrollingActivity();
 //                    clickListener.onNavigationItemSelected(navigationView.getMenu().getItem());
-                    //menu.add(R.id.group1,R.id.item1,Menu.NONE,response.body().getResults().getNavDrawer().getMenu_items().get())
+                        //menu.add(R.id.group1,R.id.item1,Menu.NONE,response.body().getResults().getNavDrawer().getMenu_items().get())
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<TestResults> call, Throwable t) {
-                Log.e("URL error", t.getLocalizedMessage());
+                @Override
+                public void onFailure(Call<TestResults> call, Throwable t) {
+                    Log.e("URL error", t.getLocalizedMessage());
 
-            }
-        });
+                }
+            });
+        }
+     else if(conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() ==NetworkInfo.State.DISCONNECTED
+                ||conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() ==NetworkInfo.State.DISCONNECTED){
+        navDrawer.setMenu_items(db.readMenu());
+        navDrawer.setHeader_layout(db.readTitle());
+        setDrawer();
     }
 
-    private OnClickSet onClickSetListener;
+}
+
+public void setDrawer()
+{
+    Glide.with(context)
+            .load(navDrawer.getHeader_layout().getImage())
+            .asBitmap()
+            .placeholder(R.drawable.grey)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .into(new SimpleTarget<Bitmap>(200, 200) {
+                @Override
+                public void onLoadStarted(Drawable placeholder) {
+                    super.onLoadStarted(placeholder);
+                }
+
+                @Override
+                public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                    super.onLoadFailed(e, errorDrawable);
+                }
+
+                @Override
+                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                    navHeaderImage.setImageBitmap(resource);
+                }
+            });
+    recyclerView.setHasFixedSize(true);
+    recyclerView.setLayoutManager(new LinearLayoutManager(context));
+    navHeaderText.setText(navDrawer.getHeader_layout().getText());
+    NavDrawerCardAdapter cardAdapter = new NavDrawerCardAdapter(navDrawer.getMenu_items(), context);
+    recyclerView.setAdapter(cardAdapter);
+    cardAdapter.notifyDataSetChanged();
+    cardAdapter.setClickListener((OnClickSet) context);
+
+//    navigationView.setBackgroundColor(Color.parseColor(navDrawer.getNav_drawer_bg_color()));
+}
+        private OnClickSet onClickSetListener;
 
     public void setClickListener(OnClickSet onClickSet) {
         this.onClickSetListener = onClickSet;

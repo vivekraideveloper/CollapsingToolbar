@@ -129,33 +129,73 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
             // notify user you are online
             //requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
+           /* Results results = db.readResults();
+            results.setData(db.readData());
+            mArrayList.addAll(results.getData());
+            results.setToolBar(db.readToolbar());
+*/
             setProgressBarIndeterminate(true);
             callHttp(BASE_URL);
             setProgressBarIndeterminate(false);
+
         } else if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
                 || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
             // notify user you are not online
 
-            ArrayList<Data> data = db.readData();
-            mArrayList.addAll(data);
-            ToolBar toolBar = db.readToolbar();
             Results results = db.readResults();
+            results.setData(db.readData());
+            mArrayList.addAll(results.getData());
+            results.setToolBar(db.readToolbar());
 
 
-            /*View view = findViewById(android.R.id.content);
-            Snackbar snackbar = Snackbar.make(view, "Please ensure stable internet connectivity!", 10000).setAction("Action", null);
-            snackbar.show();
-            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            coordinatorLayout.setVisibility(View.GONE);
+            drawerValue = Integer.parseInt(results.getToolBar().getIs_back());
+            if (drawerValue == 0)
+                backUrl = null;
+            else if (drawerValue == 1)
+                backUrl = results.getToolBar().getBack_url();
+
+            setCollapse(Integer.parseInt(results.getToolBar().getTop_image()),results);
+            setNavigation(drawerValue);
+
+            int viewType = Integer.parseInt(results.getView_type());
+            Log.d("View Type", "" + viewType);
+            switch (viewType) {
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                    mCardAdapter = new CardAdapter(results.getData(), mArrayList, ScrollingActivity.this, viewType);
+                    recyclerView.setAdapter(mCardAdapter);
+                    mCardAdapter.notifyDataSetChanged();
+                    mCardAdapter.setClickListener(ScrollingActivity.this);
+                    break;
+                case 5: //webview
+                case 6: //Login Fragment
+                    offlineFragment();
+//                    setLogin(response.body().getResults().getLogin());
+                    break;
+                default:
+                    Log.e("View Type", "Wrong view Type value - " + viewType);
+            }
+
+        }
+    }
+
+    public void offlineFragment()
+    {
+        View view = findViewById(android.R.id.content);
+        Snackbar snackbar = Snackbar.make(view, "Please ensure stable internet connectivity!", 10000).setAction("Action", null);
+        snackbar.show();
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        coordinatorLayout.setVisibility(View.GONE);
 // collapsingToolbarLayout.setVisibility(View.GONE);
-            mToolbar.setVisibility(View.GONE);
+        mToolbar.setVisibility(View.GONE);
 //            toolbar.setVisibility(View.GONE);
 
-            FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.drawer_layout, new Offline_fragment());
-            ft.commit();*/
-        }
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.drawer_layout, new Offline_fragment());
+        ft.commit();
     }
 
     public void callHttp(String URL) {
@@ -401,7 +441,6 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                         @Override
                         protected void setResource(Bitmap resource) {
                             super.setResource(resource);
-//                            addBitmapToMemoryCache("top_image_fg",resource);
                         }
                     });
 
@@ -415,7 +454,6 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                         @Override
                         protected void setResource(Bitmap resource) {
                             super.setResource(resource);
-//                            addBitmapToMemoryCache("top_image_bg",resource);
                         }
                     });
             swipeRefreshLayoutCoordinator.setProgressBackgroundColorSchemeColor(Color.WHITE);

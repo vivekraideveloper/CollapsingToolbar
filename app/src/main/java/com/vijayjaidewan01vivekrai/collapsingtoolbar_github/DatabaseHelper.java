@@ -119,7 +119,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void saveData(ArrayList<Data> data) {
         SQLiteDatabase db = getWritableDatabase();
-        onUpgrade(db, db.getVersion(), db.getVersion() + 1);
+//        onUpgrade(db, db.getVersion(), db.getVersion() + 1);
         for (Data d : data) {
             ContentValues cv = new ContentValues();
             cv.put(KEY_TEXT1, d.getText1());
@@ -142,7 +142,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void saveMenu(ArrayList<Menu_items> menu)
     {
         SQLiteDatabase db = getWritableDatabase();
-        onUpgrade(db, db.getVersion(), db.getVersion() + 1);
+//        onUpgrade(db, db.getVersion(), db.getVersion() + 1);
         for (Menu_items d : menu)
         {
             ContentValues cv = new ContentValues();
@@ -157,7 +157,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void saveToolbar(ToolBar toolBar){
         SQLiteDatabase db = getWritableDatabase();
-        onUpgrade(db, db.getVersion(), db.getVersion() + 1);
+//        onUpgrade(db, db.getVersion(), db.getVersion() + 1);
 
         ContentValues cv = new ContentValues();
         cv.put(KEY_EXTENDED_TITLE,toolBar.getExtended_top_title());
@@ -177,7 +177,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void saveView(Results results)
     {
         SQLiteDatabase db = getWritableDatabase();
-        onUpgrade(db, db.getVersion(), db.getVersion() + 1);
+//        onUpgrade(db, db.getVersion(), db.getVersion() + 1);
 
         ContentValues cv = new ContentValues();
         cv.put(KEY_TYPE,Integer.parseInt(results.getView_type()));
@@ -191,7 +191,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void saveHeaderTitle(Menu_header header)
     {
         SQLiteDatabase db = getWritableDatabase();
-        onUpgrade(db, db.getVersion(), db.getVersion() + 1);
+//        onUpgrade(db, db.getVersion(), db.getVersion() + 1);
 
         ContentValues cv = new ContentValues();
         cv.put(KEY_NAV_HEADER,header.getText());
@@ -289,7 +289,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String selectQuery = "SELECT * FROM " + TABLE_VIEW ;
         Cursor cursor = db.rawQuery(selectQuery,null);
 
-        if (cursor.moveToFirst())
+        cursor.moveToFirst();
+        if (cursor!=null)
         {
             results.setView_type(String.valueOf(cursor.getInt(cursor.getColumnIndex(KEY_TYPE))));
             results.setGrid_columns(String.valueOf(cursor.getInt(cursor.getColumnIndex(KEY_COL))));
