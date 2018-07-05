@@ -1,4 +1,4 @@
-package com.vijayjaidewan01vivekrai.collapsingtoolbar_github;
+package com.shreyanshjain.dynamic_app;
 
 
 import android.os.Bundle;
@@ -7,15 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.R;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class Offline_fragment extends Fragment {
 
 
     public Offline_fragment() {
-        // Required empty public constructor
     }
 
 

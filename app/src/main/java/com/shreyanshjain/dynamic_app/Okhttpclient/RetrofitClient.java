@@ -1,4 +1,4 @@
-package com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient;
+package com.shreyanshjain.dynamic_app.Okhttpclient;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -37,5 +37,4 @@ public class RetrofitClient {
         }
         return retrofit;
     }
-
 }

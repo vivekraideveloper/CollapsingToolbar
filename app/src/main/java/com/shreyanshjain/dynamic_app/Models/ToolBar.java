@@ -1,4 +1,4 @@
-package com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models;
+package com.shreyanshjain.dynamic_app.Models;
 
 import com.google.gson.annotations.SerializedName;
 

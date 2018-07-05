@@ -1,4 +1,4 @@
-package com.vijayjaidewan01vivekrai.collapsingtoolbar_github;
+package com.shreyanshjain.dynamic_app;
 
 import android.content.Context;
 import android.graphics.Bitmap;

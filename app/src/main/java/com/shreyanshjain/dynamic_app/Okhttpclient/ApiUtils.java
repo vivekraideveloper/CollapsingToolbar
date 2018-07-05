@@ -1,7 +1,5 @@
-package com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient;
+package com.shreyanshjain.dynamic_app.Okhttpclient;
 
-
-import java.net.URL;
 
 public class ApiUtils {
 

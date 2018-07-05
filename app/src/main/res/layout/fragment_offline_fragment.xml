@@ -3,10 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Offline_fragment">
-
-
-
+    tools:context="com.shreyanshjain.dynamic_app.Offline_fragment">
 
     <ImageView
         android:id="@+id/imageView"
@@ -17,7 +14,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/aussie_header" />
+        app:srcCompat="@drawable/grey" />
 
     <Button
         android:id="@+id/button"

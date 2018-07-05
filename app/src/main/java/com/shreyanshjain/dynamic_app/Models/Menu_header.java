@@ -1,10 +1,6 @@
-package com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models;
+package com.shreyanshjain.dynamic_app.Models;
 
 import com.google.gson.annotations.SerializedName;
-
-/**
- * Created by MR VIVEK RAI on 15-06-2018.
- */
 
 public class Menu_header {
 

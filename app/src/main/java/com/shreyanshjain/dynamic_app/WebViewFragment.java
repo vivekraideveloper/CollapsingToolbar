@@ -1,4 +1,4 @@
-package com.vijayjaidewan01vivekrai.collapsingtoolbar_github;
+package com.shreyanshjain.dynamic_app;
 
 
 import android.os.Bundle;
@@ -16,10 +16,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
+import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.R;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class WebViewFragment extends Fragment {
 
     private WebView webView;
@@ -54,7 +53,7 @@ public class WebViewFragment extends Fragment {
 
 
         Bundle bundle = getArguments();
-        String url = bundle.getString("url");
+        String url = bundle.getString("url_key");
 
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
