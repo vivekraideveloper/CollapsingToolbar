@@ -1,62 +1,30 @@
-package com.vijayjaidewan01vivekrai.collapsingtoolbar_github;
+package com.vijayjaidewan01vivekrai.dynamic_app;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
 import android.support.v7.widget.AppCompatImageView;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.LruCache;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters.CardAdapter;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters.NavDrawerCardAdapter;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Data;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Menu_items;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.NavDrawer;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.TestResults;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiService;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiUtils;
+import com.vijayjaidewan01vivekrai.dynamic_app.Adapters.NavDrawerCardAdapter;
+import com.vijayjaidewan01vivekrai.dynamic_app.Models.NavDrawer;
+import com.vijayjaidewan01vivekrai.dynamic_app.Models.TestResults;
+import com.vijayjaidewan01vivekrai.dynamic_app.Okhttpclient.ApiService;
+import com.vijayjaidewan01vivekrai.dynamic_app.Okhttpclient.ApiUtils;
+import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.R;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Handler;
-
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -72,7 +40,6 @@ public class SetNavDrawer {
     RecyclerView recyclerView;
     Bitmap bitmap;
     DatabaseHelper db;
-    //    LruCache<String,Bitmap> mMemoryCache;
     String url = "http://bydegreestest.agnitioworld.com/test/menu.php";
 
     public void setUrl(String url) {
@@ -84,7 +51,6 @@ public class SetNavDrawer {
         this.context = context;
         this.db = db;
         navDrawer = new NavDrawer();
-//        this.mMemoryCache = mMemoryCache;
     }
 
     public void getJSON() {
@@ -92,52 +58,19 @@ public class SetNavDrawer {
         navHeaderImage = navigationView.findViewById(R.id.nav_header_image);
         navHeaderText = navigationView.findViewById(R.id.nav_header_text);
         ConnectivityManager conMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-//        menu = navigationView.getMenu();
-//        menu.clear();
         if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED
                 || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-            // notify user you are online
-            //requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-
-            //navigationView = view.findViewById(R.id.nav_view);
-//        Log.d("Header Count", "" + navigationView.getHeaderCount());
             ApiService apiService = ApiUtils.getAPIService();
             apiService.results(url).enqueue(new Callback<TestResults>() {
                 @Override
                 public void onResponse(Call<TestResults> call, Response<TestResults> response) {
                     if (response.isSuccessful()) {
                         navDrawer = response.body().getResults().getNavDrawer();
-//                    new DownloadImage().execute();
-//                    DatabaseHelper databaseHelper = new DatabaseHelper(context,"Toolbar",null,1);
+                        db.drop();
                         db.saveMenu(navDrawer.getMenu_items());
                         db.saveHeaderTitle(navDrawer.getHeader_layout());
+                        navigationView.setBackgroundColor(Color.parseColor(navDrawer.getNav_drawer_bg_color()));
                         setDrawer();
-
-//                      menu.add("Menu");
-
-//                    Log.d("Menu item 1",""+menu.getItem(0));
-
-//                      ArrayList<Bitmap> bm = downloadImage();
-
-
-                   /* navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-                        @Override
-                        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                            Log.d("Clicked item", "" + (item.getItemId()));
-//                            item.setCheckable(true);
-                            item.setChecked(true);
-//                            item.setEnabled(true);
-                            if (onClickSetListener != null)
-                                onClickSetListener.onClickFunction(navDrawer.getMenu_items().get(item.getItemId() - 1).getUrl());
-                            //context.startActivity(new Intent(context,ScrollingActivity.class));
-                            //Toast.makeText(context,item.getTitle() + " : " + navDrawer.getMenu_items().get(item.getItemId()).getUrl(),Toast.LENGTH_SHORT).show();
-                            return true;
-                        }
-                    });
-*/
-//                    NavigationView.OnNavigationItemSelectedListener clickListener = new ScrollingActivity();
-//                    clickListener.onNavigationItemSelected(navigationView.getMenu().getItem());
-                        //menu.add(R.id.group1,R.id.item1,Menu.NONE,response.body().getResults().getNavDrawer().getMenu_items().get())
                     }
                 }
 
@@ -180,6 +113,7 @@ public void setDrawer()
                     navHeaderImage.setImageBitmap(resource);
                 }
             });
+
     recyclerView.setHasFixedSize(true);
     recyclerView.setLayoutManager(new LinearLayoutManager(context));
     navHeaderText.setText(navDrawer.getHeader_layout().getText());
@@ -190,13 +124,50 @@ public void setDrawer()
 
 //    navigationView.setBackgroundColor(Color.parseColor(navDrawer.getNav_drawer_bg_color()));
 }
-        private OnClickSet onClickSetListener;
+    private OnClickSet onClickSetListener;
 
     public void setClickListener(OnClickSet onClickSet) {
         this.onClickSetListener = onClickSet;
     }
-
 }
+
+//                    new DownloadImage().execute();
+//                    DatabaseHelper databaseHelper = new DatabaseHelper(context,"Toolbar",null,1);
+
+// notify user you are online
+//requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
+//navigationView = view.findViewById(R.id.nav_view);
+//        Log.d("Header Count", "" + navigationView.getHeaderCount());
+
+//                      menu.add("Menu");
+
+//                    Log.d("Menu item 1",""+menu.getItem(0));
+
+//                      ArrayList<Bitmap> bm = downloadImage();
+
+                   /* navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                        @Override
+                        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                            Log.d("Clicked item", "" + (item.getItemId()));
+//                            item.setCheckable(true);
+                            item.setChecked(true);
+//                            item.setEnabled(true);
+                            if (onClickSetListener != null)
+                                onClickSetListener.onClickFunction(navDrawer.getMenu_items().get(item.getItemId() - 1).getUrl());
+                            //context.startActivity(new Intent(context,ScrollingActivity.class));
+                            //Toast.makeText(context,item.getTitle() + " : " + navDrawer.getMenu_items().get(item.getItemId()).getUrl(),Toast.LENGTH_SHORT).show();
+                            return true;
+                        }
+                    });
+*/
+//                    NavigationView.OnNavigationItemSelectedListener clickListener = new ScrollingActivity();
+//                    clickListener.onNavigationItemSelected(navigationView.getMenu().getItem());
+//menu.add(R.id.group1,R.id.item1,Menu.NONE,response.body().getResults().getNavDrawer().getMenu_items().get())
+
+//        menu = navigationView.getMenu();
+//        menu.clear();
+
 
 /*  public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
         if (getBitmapFromMemCache(key) == null) {

@@ -1,4 +1,4 @@
-package com.vijayjaidewan01vivekrai.collapsingtoolbar_github;
+package com.vijayjaidewan01vivekrai.dynamic_app;
 
 
 import android.os.Bundle;
@@ -15,6 +15,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+
+import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.R;
 
 
 public class WebViewFragment extends Fragment {

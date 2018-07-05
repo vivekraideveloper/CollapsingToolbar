@@ -3,10 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Offline_fragment">
-
-
-
+    tools:context="com.vijayjaidewan01vivekrai.dynamic_app.Offline_fragment">
 
     <ImageView
         android:id="@+id/imageView"

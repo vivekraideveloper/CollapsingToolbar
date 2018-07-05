@@ -22,8 +22,7 @@
             android:layout_height="200dp"
             android:layout_alignParentTop="true"
             android:adjustViewBounds="true"
-            android:scaleType="fitXY"
-            android:background="@drawable/ic_account_circle_black_24dp"/>
+            android:scaleType="fitXY" />
 
         <TextView
             android:id="@+id/tv_recycler_item_1"

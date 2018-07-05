@@ -1,4 +1,4 @@
-package com.vijayjaidewan01vivekrai.collapsingtoolbar_github;
+package com.vijayjaidewan01vivekrai.dynamic_app;
 
 public interface OnClickSet {
 

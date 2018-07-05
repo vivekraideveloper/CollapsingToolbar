@@ -1,10 +1,9 @@
-package com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Adapters;
+package com.vijayjaidewan01vivekrai.dynamic_app.Adapters;
 
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +12,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Menu_items;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.OnClickSet;
+import com.vijayjaidewan01vivekrai.dynamic_app.Models.Menu_items;
+import com.vijayjaidewan01vivekrai.dynamic_app.OnClickSet;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.R;
 
 import java.util.ArrayList;
@@ -58,6 +57,7 @@ public class NavDrawerCardAdapter extends RecyclerView.Adapter<RecyclerView.View
     private OnClickSet onClickSetListener;
     public void setClickListener(OnClickSet onClickSet){
         this.onClickSetListener = onClickSet;
+
     }
 
 

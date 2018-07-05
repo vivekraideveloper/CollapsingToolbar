@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.vijayjaidewan01vivekrai.collapsingtoolbar_github.ScrollingActivity">
+    tools:context="com.vijayjaidewan01vivekrai.collapsingtoolbar_github.com.vijayjaidewan01vivekrai.dynamic_app.ScrollingActivity">
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

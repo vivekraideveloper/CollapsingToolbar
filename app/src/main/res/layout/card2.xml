@@ -9,7 +9,7 @@
     android:layout_marginStart="@dimen/card_margin_horizontal_big_activity"
     android:layout_marginTop="@dimen/card_margin_vertical_big_activity"
     android:background="#FFFFFF"
-    android:foreground="?android:selectableItemBackground"
+    android:foreground="?android:attr/selectableItemBackground"
     card_view:cardCornerRadius="@dimen/card_recycler_corner_radius"
     card_view:cardElevation="@dimen/card_recycler_elevation"
     style="@style/Widget.AppCompat.Light.ActionBar">
@@ -22,7 +22,6 @@
         <android.support.v7.widget.AppCompatImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/ic_person_black_24dp"
             android:id="@+id/icon_image"
             android:layout_centerVertical="true"
             android:layout_marginStart="5dp"

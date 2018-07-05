@@ -1,4 +1,4 @@
-package com.vijayjaidewan01vivekrai.collapsingtoolbar_github;
+package com.vijayjaidewan01vivekrai.dynamic_app;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,14 +7,12 @@ import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.view.Menu;
 
-import com.bumptech.glide.request.target.SquaringDrawable;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Data;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Menu_header;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Menu_items;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Results;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.ToolBar;
+import com.vijayjaidewan01vivekrai.dynamic_app.Models.Data;
+import com.vijayjaidewan01vivekrai.dynamic_app.Models.Menu_header;
+import com.vijayjaidewan01vivekrai.dynamic_app.Models.Menu_items;
+import com.vijayjaidewan01vivekrai.dynamic_app.Models.Results;
+import com.vijayjaidewan01vivekrai.dynamic_app.Models.ToolBar;
 
 import java.util.ArrayList;
 
@@ -61,11 +59,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_BACK_IMAGE = "top_image_bg";
     private static final String KEY_FRONT_IMAGE = "top_image_fg";
     private static final String KEY_TOP = "top_image";
+    private static final int DBversion = 1;
 
     //Parameter to store the Title of Navigation Drawer
 
     public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
+        super(context, name, factory, DBversion+1);
     }
 
     public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
@@ -102,6 +101,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DATA);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAV);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_VIEW);
@@ -111,14 +111,53 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-//    public void dropTable()
-//    {
-//        SQLiteDatabase db = getWritableDatabase();
-//
-//    }
+    public void dropTable()
+    {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DATA);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_VIEW);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TOOLBAR);
+
+        //CREATE TABLE FOR DATA INFO
+        db.execSQL("CREATE TABLE " + TABLE_DATA + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                KEY_TEXT1 + " TEXT," + KEY_TEXT1_SIZE + " TEXT," + KEY_TEXT1_COLOR + " TEXT," +
+                KEY_TEXT2 + " TEXT," + KEY_TEXT2_SIZE + " TEXT," + KEY_TEXT2_COLOR + " TEXT," +
+                KEY_TEXT3 + " TEXT," + KEY_TEXT3_SIZE + " TEXT," + KEY_TEXT3_COLOR + " TEXT," +
+                BACKGROUND + " TEXT," + IMAGE + " TEXT," + URL + " TEXT)");
+
+        //CREATE TABLE FOR STORING THE VARIOUS COMPONENTS OF VIEW TYPE
+        db.execSQL("CREATE TABLE " + TABLE_VIEW + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                KEY_TYPE + " INTEGER," + KEY_COL + " INTEGER," + KEY_ORIENTATION + " INTEGER," + KEY_ISSEARCH + " INTEGER)");
+
+        //CREATE TABLE FOR STORING VARIOUS COMPONENTS OF TOOLBAR
+        db.execSQL("CREATE TABLE " + TABLE_TOOLBAR + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                KEY_EXTENDED_TITLE + " TEXT," + KEY_EXTENDED_TITLE_COLOR + " TEXT," +
+                KEY_COLLAPSED_TITLE + " TEXT," + KEY_COLLAPSED_TITLE_COLOR + " TEXT," +
+                KEY_TOOLBAR_BG + " TEXT," + KEY_IS_BACK + " INTEGER," + KEY_BACK_IMAGE + " TEXT," +
+                KEY_FRONT_IMAGE + " TEXT," + KEY_TOP + " INTEGER," +KEY_BACK_URL + " TEXT)");
+
+
+    }
+
+    public void drop()
+    {
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAV);
+        db.execSQL("DROP TABLE IF EXISTS NavHead ");
+
+        //CREATE TABLE FOR NAVGITION DRAWER ITEMS
+        db.execSQL("CREATE TABLE " + TABLE_NAV + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                KEY_TEXT1 + " TEXT," + KEY_TEXT1_COLOR + " TEXT," + IMAGE + " TEXT," + URL + " TEXT)" );
+
+        db.execSQL("CREATE TABLE NavHead (" + IMAGE + " TEXT," + KEY_NAV_HEADER + " TEXT)");
+
+    }
+
 
     public void saveData(ArrayList<Data> data) {
         SQLiteDatabase db = getWritableDatabase();
+//        dropTable();
 //        onUpgrade(db, db.getVersion(), db.getVersion() + 1);
         for (Data d : data) {
             ContentValues cv = new ContentValues();
@@ -142,6 +181,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void saveMenu(ArrayList<Menu_items> menu)
     {
         SQLiteDatabase db = getWritableDatabase();
+//        dropTable();
 //        onUpgrade(db, db.getVersion(), db.getVersion() + 1);
         for (Menu_items d : menu)
         {
@@ -157,6 +197,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void saveToolbar(ToolBar toolBar){
         SQLiteDatabase db = getWritableDatabase();
+//        dropTable();
 //        onUpgrade(db, db.getVersion(), db.getVersion() + 1);
 
         ContentValues cv = new ContentValues();
@@ -177,6 +218,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void saveView(Results results)
     {
         SQLiteDatabase db = getWritableDatabase();
+//        dropTable();
 //        onUpgrade(db, db.getVersion(), db.getVersion() + 1);
 
         ContentValues cv = new ContentValues();
@@ -191,6 +233,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void saveHeaderTitle(Menu_header header)
     {
         SQLiteDatabase db = getWritableDatabase();
+//        dropTable();
 //        onUpgrade(db, db.getVersion(), db.getVersion() + 1);
 
         ContentValues cv = new ContentValues();
@@ -288,6 +331,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String selectQuery = "SELECT * FROM " + TABLE_VIEW ;
         Cursor cursor = db.rawQuery(selectQuery,null);
+
 
         cursor.moveToFirst();
         if (cursor!=null)

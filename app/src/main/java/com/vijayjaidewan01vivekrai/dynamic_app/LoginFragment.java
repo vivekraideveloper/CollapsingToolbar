@@ -1,4 +1,4 @@
-package com.vijayjaidewan01vivekrai.collapsingtoolbar_github;
+package com.vijayjaidewan01vivekrai.dynamic_app;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,12 +16,12 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.Login;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Models.TestResults;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiService;
-import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.Okhttpclient.ApiUtils;
+import com.vijayjaidewan01vivekrai.dynamic_app.Models.Login;
+import com.vijayjaidewan01vivekrai.dynamic_app.Models.TestResults;
+import com.vijayjaidewan01vivekrai.dynamic_app.Okhttpclient.ApiService;
+import com.vijayjaidewan01vivekrai.dynamic_app.Okhttpclient.ApiUtils;
+import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.R;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import retrofit2.Call;
