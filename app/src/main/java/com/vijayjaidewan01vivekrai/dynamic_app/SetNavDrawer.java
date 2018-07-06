@@ -36,9 +36,7 @@ public class SetNavDrawer {
     TextView navHeaderText;
     Context context;
     NavDrawer navDrawer;
-    Menu menu;
     RecyclerView recyclerView;
-    Bitmap bitmap;
     DatabaseHelper db;
     String url = "http://bydegreestest.agnitioworld.com/test/menu.php";
 
@@ -66,9 +64,9 @@ public class SetNavDrawer {
                 public void onResponse(Call<TestResults> call, Response<TestResults> response) {
                     if (response.isSuccessful()) {
                         navDrawer = response.body().getResults().getNavDrawer();
-                        db.drop();
-                        db.saveMenu(navDrawer.getMenu_items());
-                        db.saveHeaderTitle(navDrawer.getHeader_layout());
+//                        db.drop();
+//                        db.saveMenu(navDrawer.getMenu_items());
+//                        db.saveHeaderTitle(navDrawer.getHeader_layout());
                         navigationView.setBackgroundColor(Color.parseColor(navDrawer.getNav_drawer_bg_color()));
                         setDrawer();
                     }
@@ -77,14 +75,13 @@ public class SetNavDrawer {
                 @Override
                 public void onFailure(Call<TestResults> call, Throwable t) {
                     Log.e("URL error", t.getLocalizedMessage());
-
                 }
             });
         }
      else if(conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() ==NetworkInfo.State.DISCONNECTED
                 ||conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() ==NetworkInfo.State.DISCONNECTED){
-        navDrawer.setMenu_items(db.readMenu());
-        navDrawer.setHeader_layout(db.readTitle());
+//        navDrawer.setMenu_items(db.readMenu());
+//        navDrawer.setHeader_layout(db.readTitle());
         setDrawer();
     }
 

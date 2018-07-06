@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.vijayjaidewan01vivekrai.dynamic_app.DatabaseHelper;
 import com.vijayjaidewan01vivekrai.dynamic_app.Models.Menu_items;
 import com.vijayjaidewan01vivekrai.dynamic_app.OnClickSet;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.R;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 public class NavDrawerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
    private ArrayList<Menu_items> items;
    private Context context;
+   DatabaseHelper db;
 
     public NavDrawerCardAdapter(ArrayList<Menu_items> items, Context context) {
         this.items = items;
@@ -46,9 +48,10 @@ public class NavDrawerCardAdapter extends RecyclerView.Adapter<RecyclerView.View
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (onClickSetListener != null)
-                    onClickSetListener.onClickFunction(items.get(position).getUrl());
-                Toast.makeText(context, items.get(position).getUrl(), Toast.LENGTH_SHORT).show();
+                if (onClickSetListener != null) {
+                    db = new DatabaseHelper(context,items.get(position).getUrl(),null,1);
+                    onClickSetListener.onClickFunction(items.get(position).getUrl(), db);
+                }Toast.makeText(context, items.get(position).getUrl(), Toast.LENGTH_SHORT).show();
 //                Log.i("URL in adapter", items.get(position).getUrl());
             }
         });
@@ -59,7 +62,6 @@ public class NavDrawerCardAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.onClickSetListener = onClickSet;
 
     }
-
 
     @Override
     public int getItemCount() {

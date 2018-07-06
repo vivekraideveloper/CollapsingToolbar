@@ -64,12 +64,12 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
     private LinearLayout linearLayout, mainLinear;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private SwipeRefreshLayout swipeRefreshLayoutCoordinator;
-    private View login;
+    //    private SwipeRefreshLayout swipeRefreshLayoutCoordinator;
+//    private View login;
     private LinearLayout navigationView;
-    private CollapsingToolbarLayout collapsingToolbarLayout;
+    //    private CollapsingToolbarLayout collapsingToolbarLayout;
     CardAdapter mCardAdapter;
-    int drawerValue = 2;
+    //    int drawerValue = 2;
     int searchValue = 1;
     String BASE_URL = "http://bydegreestest.agnitioworld.com/test/mobile_app.php";
     String backUrl;
@@ -94,82 +94,43 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
         mToolbar = findViewById(R.id.tool_bar);
-        collapsingToolbarLayout = findViewById(R.id.toolbar_layout);
+//        collapsingToolbarLayout = findViewById(R.id.toolbar_layout);
         drawerLayout = findViewById(R.id.drawer_layout);
         mArrayList = new ArrayList<>();
         progressBar = findViewById(R.id.progressBar);
 
-        db=new DatabaseHelper(ScrollingActivity.this,"Information",null,1);
+        db = new DatabaseHelper(ScrollingActivity.this, "Information", null, 1);
 
         //layout = findViewById(R.id.layout_content);
 
         //cardDataList = new ArrayList<>();
-
-
-        conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED
-                || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+        if (isNetworkAvailable()) {
             // notify user you are online
             //requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-
-           /* Results results = db.readResults();
-            results.setData(db.readData());
-            mArrayList.addAll(results.getData());
-            results.setToolBar(db.readToolbar());
-*/
             setProgressBarIndeterminate(true);
-            callHttp(BASE_URL);
+            callHttp(BASE_URL, db);
             setProgressBarIndeterminate(false);
 
-        } else if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
-                || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
-            // notify user you are not online
-
+        } else {
             mainLinear.setVisibility(View.VISIBLE);
             progressBar.clearFocus();
             progressBar.setVisibility(View.GONE);
 
-            Results results = db.readResults();
-            results.setData(db.readData());
-            mArrayList.addAll(results.getData());
-            results.setToolBar(db.readToolbar());
+//            Results results = setValues(db);
 
-            drawerValue = Integer.parseInt(results.getToolBar().getIs_back());
-            if (drawerValue == 0)
-                backUrl = null;
-            else if (drawerValue == 1)
-                backUrl = results.getToolBar().getBack_url();
-
-            setCollapse(Integer.parseInt(results.getToolBar().getTop_image()),results);
-            setNavigation(drawerValue);
-
-            int viewType = Integer.parseInt(results.getView_type());
-            Log.d("View Type", "" + viewType);
-            switch (viewType) {
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                    mCardAdapter = new CardAdapter(results.getData(), mArrayList, ScrollingActivity.this, viewType);
-                    recyclerView.setAdapter(mCardAdapter);
-                    mCardAdapter.notifyDataSetChanged();
-                    mCardAdapter.setClickListener(ScrollingActivity.this);
-                    break;
-                case 5: //webview
-                case 6: //Login Fragment
-                    offlineFragment();
-//                    setLogin(response.body().getResults().getLogin());
-                    break;
-                default:
-                    Log.e("View Type", "Wrong view Type value - " + viewType);
-            }
-
+//            setView(results);
         }
     }
 
-    public void offlineFragment()
-    {
+ /*   public Results setValues(DatabaseHelper databaseHelper) {
+        Results results = databaseHelper.readResults();
+        results.setData(databaseHelper.readData());
+        mArrayList.addAll(results.getData());
+        results.setToolBar(databaseHelper.readToolbar());
+        return results;
+    }
+*/
+    public void offlineFragment() {
         View view = findViewById(android.R.id.content);
         Snackbar snackbar = Snackbar.make(view, "Please ensure stable internet connectivity!", 10000).setAction("Action", null);
         snackbar.show();
@@ -184,18 +145,20 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         ft.commit();
     }
 
-    public void callHttp(String URL) {
+    public void callHttp(String URL, DatabaseHelper databaseHelper) {
         BASE_URL = URL;
-
-        if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED
-                || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-
+        if (isNetworkAvailable()) {
+            if (databaseHelper != null) {
+                db = databaseHelper;
+            }
             ApiService apiService = ApiUtils.getAPIService();
+
             // ADD A PROGRESS BAR TO BE SHOWN TO THE USER BEFORE THE DATA IS LOADED
             mainLinear.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
             progressBar.findFocus();
             //progressBar.setProgressBa;
+
             apiService.results(URL).enqueue(new Callback<TestResults>() {
                 @Override
                 public void onResponse(Call<TestResults> call, Response<TestResults> response) {
@@ -208,68 +171,92 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                             progressBar.clearFocus();
                             progressBar.setVisibility(View.GONE);
 
-                            //Saving values to the database
-                            db.dropTable();
-                            db.saveData(response.body().getResults().getData());
-                            db.saveToolbar(response.body().getResults().getToolBar());
-                            db.saveView(response.body().getResults());
-
-                            int collapseValue;
-                            drawerValue = Integer.parseInt(response.body().getResults().getToolBar().getIs_back());
-//                        drawerValue = 1;
-                            collapseValue = Integer.parseInt(response.body().getResults().getToolBar().getTop_image());
-
-                            Log.d("Collapse", "" + collapseValue);
-                            Log.d("Drawer", "" + drawerValue);
-
                             Results results = response.body().getResults();
+                            //Saving values to the database
+//                            db.dropTable();
+//                            db.saveData(results.getData());
+//                            db.saveToolbar(results.getToolBar());
+//                            db.saveView(results);
 
-                            if (drawerValue == 0)
-                                backUrl = null;
-                            else if (drawerValue == 1)
-                                backUrl = response.body().getResults().getToolBar().getBack_url();
-
-                            setCollapse(collapseValue, results);
-                            setNavigation(drawerValue);
-                            mArrayList.addAll(response.body().getResults().getData());
-
-                            int viewType = Integer.parseInt(response.body().getResults().getView_type());
-                            Log.d("View Type", "" + viewType);
-                            switch (viewType) {
-                                case 1:
-                                case 2:
-                                case 3:
-                                case 4:
-                                    mCardAdapter = new CardAdapter(response.body().getResults().getData(), mArrayList, ScrollingActivity.this, viewType);
-                                    recyclerView.setAdapter(mCardAdapter);
-                                    mCardAdapter.notifyDataSetChanged();
-                                    mCardAdapter.setClickListener(ScrollingActivity.this);
-                                    break;
-                                case 5: //webview
-                                    webView(response.body().getResults().getWeb_view_url());
-                                    break;
-                                case 6: //Login Fragment
-                                    setLogin(response.body().getResults().getLogin());
-                                    break;
-                                default:
-                                    Log.e("View Type", "Wrong view Type value - " + viewType);
-                            }
+                            setView(results);
                         } else {
                             Toast.makeText(ScrollingActivity.this, response.body().getMsg(), Toast.LENGTH_SHORT)
                                     .show();
                         }
                     }
                 }
+
                 @Override
                 public void onFailure(Call<TestResults> call, Throwable t) {
                     Log.e("Url error", t.getLocalizedMessage());
                 }
             });
-        }
-        else if (conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.DISCONNECTED
-                || conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.DISCONNECTED) {
+        } else {
+            if (databaseHelper != null) {
+//                Results results = setValues(databaseHelper);
+//                setView(results);
+            } else {
                 offlineFragment();
+            }
         }
+    }
+
+    void setView(Results results) {
+        int collapseValue;
+        int drawerValue = Integer.parseInt(results.getToolBar().getIs_back());
+//                        drawerValue = 1;
+        collapseValue = Integer.parseInt(results.getToolBar().getTop_image());
+
+        Log.d("Collapse", "" + collapseValue);
+        Log.d("Drawer", "" + drawerValue);
+
+        if (drawerValue == 0)
+            backUrl = null;
+        else if (drawerValue == 1)
+            backUrl = results.getToolBar().getBack_url();
+
+        setCollapse(collapseValue, results);
+        setNavigation(drawerValue);
+        mArrayList.addAll(results.getData());
+
+        int viewType = Integer.parseInt(results.getView_type());
+        Log.d("View Type", "" + viewType);
+        switch (viewType) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                mCardAdapter = new CardAdapter(results.getData(), mArrayList, ScrollingActivity.this, viewType);
+                recyclerView.setAdapter(mCardAdapter);
+                mCardAdapter.notifyDataSetChanged();
+                mCardAdapter.setClickListener(ScrollingActivity.this);
+                break;
+            case 5: //webview
+                if (isNetworkAvailable())
+                    webView(results.getWeb_view_url());
+                else
+                    offlineFragment();
+                break;
+            case 6: //Login Fragment
+                if (isNetworkAvailable())
+                    setLogin(results.getLogin());
+                else
+                    offlineFragment();
+                break;
+            default:
+                Log.e("View Type", "Wrong view Type value - " + viewType);
+        }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager manager = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+        boolean isAvailable = false;
+        if (networkInfo != null && networkInfo.isConnected()) {
+            isAvailable = true;
+        }
+        return isAvailable;
     }
 
     public void webView(String url) {
@@ -298,63 +285,6 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
 //        recyclerView.setAdapter(adapter);
 //        adapter.notifyDataSetChanged();
 //    }
-
-    //Search Bar controlled by searchValue = 0(Not Present), 1(Present)
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.menu_scrolling, menu);
-        MenuInflater inflater = getMenuInflater();
-
-        if (searchValue == 1) {
-            inflater.inflate(R.menu.search_layout, menu);
-            MenuItem item = menu.findItem(R.id.search_view);
-            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-            searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search_view));
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            searchView.setMaxWidth(Integer.MAX_VALUE);
-
-//            searchView.setIconifiedByDefault(true);
-//            searchView.setFocusable(true);
-//            searchView.setIconified(true);
-//            searchView.requestFocusFromTouch();
-//            searchView.onActionViewExpanded();
-            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                public static final String TAG = "TAG";
-
-                @Override
-                public boolean onQueryTextSubmit(String s) {
-                    Log.d(TAG, "onQueryTextSubmit: called:");
-                    mCardAdapter.getFilter().filter(s);
-                    return false;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String s) {
-                    mCardAdapter.getFilter().filter(s);
-                    return false;
-                }
-            });
-        }
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        if (drawerValue == 0) {
-            if (toggle.onOptionsItemSelected(item)) {
-                return true;
-            }
-        }
-
-        int id = item.getItemId();
-
-        return super.onOptionsItemSelected(item);
-    }
 
     private void setCollapse(int collapseValue, Results results) {
 
@@ -404,8 +334,7 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                     .load(results.getToolBar().getTop_image_bg())
                     .asBitmap()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(new BitmapImageViewTarget(background)
-                    {
+                    .into(new BitmapImageViewTarget(background) {
                         @Override
                         protected void setResource(Bitmap resource) {
                             super.setResource(resource);
@@ -428,11 +357,10 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                callHttp(BASE_URL);
+                callHttp(BASE_URL, db);
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-
 
         int col = Integer.parseInt(results.getGrid_columns());
         int orientation = Integer.parseInt(results.getGrid_orientation());
@@ -485,16 +413,6 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         });
     }
 
-    /*
-    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
-        if (getBitmapFromMemCache(key) == null) {
-            mMemoryCache.put(key, bitmap);
-        }
-    }
-    public Bitmap getBitmapFromMemCache(String key) {
-        return mMemoryCache.get(key);
-    }
-*/
     private void setNavigation(int drawerValue) {
         if (drawerValue == 0) {
             backUrl = null;
@@ -508,12 +426,12 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    SetNavDrawer navDrawer = new SetNavDrawer(navigationView, ScrollingActivity.this,db);
+                    SetNavDrawer navDrawer = new SetNavDrawer(navigationView, ScrollingActivity.this, db);
                     navDrawer.getJSON();
                     drawerLayout.closeDrawers();
                     navDrawer.setClickListener(ScrollingActivity.this);
                 }
-            },200);
+            }, 100);
             //head.setBackground();
         } else {
             drawerLayout = findViewById(R.id.drawer_layout);
@@ -524,14 +442,14 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(getApplicationContext(), backUrl, Toast.LENGTH_SHORT).show();
-                    callHttp(backUrl);
+                    callHttp(backUrl, db);
                 }
             });
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(getApplicationContext(), backUrl, Toast.LENGTH_SHORT).show();
-                    callHttp(backUrl);
+                    callHttp(backUrl, db);
                 }
             });
 //            toolbar.setNavigationIcon(null);
@@ -557,27 +475,81 @@ public class ScrollingActivity extends AppCompatActivity implements OnClickSet {
         if (!searchView.isIconified()) {
             searchView.setIconified(true);
             return;
-        }
-        else {
+        } else {
             if (backUrl == null)
                 super.onBackPressed();
             else {
                 Toast.makeText(getApplicationContext(), backUrl, Toast.LENGTH_SHORT).show();
-                callHttp(backUrl);
+                callHttp(backUrl, db);
             }
         }
     }
 
     @Override
-    public void onClickFunction(String url) {
+    public void onClickFunction(String url, DatabaseHelper databaseHelper) {
         drawerLayout.closeDrawers();
-        callHttp(url);
+        callHttp(url, databaseHelper);
         Log.i("IN Scrolling", url);
     }
 
-    public interface SetLayout {
-        void setUrl(String url);
+    //Search Bar controlled by searchValue = 0(Not Present), 1(Present)
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        //getMenuInflater().inflate(R.menu.menu_scrolling, menu);
+        MenuInflater inflater = getMenuInflater();
+
+        if (searchValue == 1) {
+            inflater.inflate(R.menu.search_layout, menu);
+//            MenuItem item = menu.findItem(R.id.search_view);
+            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+            searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search_view));
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+            searchView.setMaxWidth(Integer.MAX_VALUE);
+
+//            searchView.setIconifiedByDefault(true);
+//            searchView.setFocusable(true);
+//            searchView.setIconified(true);
+//            searchView.requestFocusFromTouch();
+//            searchView.onActionViewExpanded();
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                public static final String TAG = "TAG";
+
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    Log.d(TAG, "onQueryTextSubmit: called:");
+                    mCardAdapter.getFilter().filter(s);
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    mCardAdapter.getFilter().filter(s);
+                    return false;
+                }
+            });
+        }
+        return true;
     }
 
-}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
 
+        //  if (drawerValue == 0) {
+        if (toggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+//        }
+
+        int id = item.getItemId();
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public interface SetLayout {
+        void setUrl(String url, DatabaseHelper db);
+    }
+}

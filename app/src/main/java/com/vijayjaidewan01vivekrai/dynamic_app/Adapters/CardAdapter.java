@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.vijayjaidewan01vivekrai.dynamic_app.DatabaseHelper;
 import com.vijayjaidewan01vivekrai.dynamic_app.Models.Data;
 import com.vijayjaidewan01vivekrai.dynamic_app.OnClickSet;
 import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.R;
@@ -35,7 +36,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private int TWO = 2;
     private int THREE = 3;
     private int FOUR = 4;
-
+    DatabaseHelper db = null;
     public CardAdapter(ArrayList<Data> cardData,ArrayList<Data> list, Context context, int position) {
         this.cardData = cardData;
         this.filterData = list;
@@ -95,7 +96,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                 public void onClick(View v) {
 
                     if(onClickSetListener != null)
-                        onClickSetListener.onClickFunction(cardData.get(position).getUrl());
+                        onClickSetListener.onClickFunction(cardData.get(position).getUrl(),db);
                     Toast.makeText(context,cardData.get(position).getUrl(),Toast.LENGTH_SHORT).show();
                     Log.i("URL in adapter",cardData.get(position).getUrl());
                 }
@@ -127,7 +128,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                 @Override
                 public void onClick(View v) {
                     if(onClickSetListener != null)
-                        onClickSetListener.onClickFunction(cardData.get(position).getUrl());
+                        onClickSetListener.onClickFunction(cardData.get(position).getUrl(),db);
                     Toast.makeText(context,cardData.get(position).getUrl(),Toast.LENGTH_SHORT).show();
                     Log.i("URL in adapter",cardData.get(position).getUrl());
                 }
@@ -158,7 +159,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                 @Override
                 public void onClick(View v) {
                     if(onClickSetListener != null)
-                        onClickSetListener.onClickFunction(cardData.get(position).getUrl());
+                        onClickSetListener.onClickFunction(cardData.get(position).getUrl(),db);
                     Toast.makeText(context,cardData.get(position).getUrl(),Toast.LENGTH_SHORT).show();
                     Log.i("URL in adapter",cardData.get(position).getUrl());
                     //context.sendBroadcast(i);
@@ -195,7 +196,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
 //                    OnClickSet set =  new ScrollingActivity();
                     if(onClickSetListener != null)
-                    onClickSetListener.onClickFunction(cardData.get(position).getUrl());
+                    onClickSetListener.onClickFunction(cardData.get(position).getUrl(),db);
                     Toast.makeText(context,cardData.get(position).getUrl(),Toast.LENGTH_SHORT).show();
 //                    Intent i=new Intent(context,ScrollingActivity.class);
 //                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

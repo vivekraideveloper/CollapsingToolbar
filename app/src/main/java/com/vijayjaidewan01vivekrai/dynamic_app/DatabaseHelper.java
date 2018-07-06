@@ -23,6 +23,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //TABLE DETAILS FOR DATA
     private static final String TABLE_DATA = "dataInfo";
     private static final String KEY_ID = "id";
+
+
+    private static final int DBversion = 1;
+
+    //Parameter to store the Title of Navigation Drawer
+
+    public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+        super(context, name, factory, DBversion);
+    }
+
+    public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
+        super(context, name, factory, version, errorHandler);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+
+        //CREATE TABLE FOR DATA INFO
+        db.execSQL("CREATE TABLE " + TABLE_DATA + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT)");
+
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DATA);
+        onCreate(db);
+    }
+
+
+}
+
+
+/*
     private static final String KEY_TEXT1 = "text_1";
     private static final String KEY_TEXT2 = "text_2";
     private static final String KEY_TEXT3 = "text_3";
@@ -59,27 +93,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_BACK_IMAGE = "top_image_bg";
     private static final String KEY_FRONT_IMAGE = "top_image_fg";
     private static final String KEY_TOP = "top_image";
-    private static final int DBversion = 1;
 
-    //Parameter to store the Title of Navigation Drawer
-
-    public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, DBversion+1);
-    }
-
-    public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
-        super(context, name, factory, version, errorHandler);
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-
-        //CREATE TABLE FOR DATA INFO
-        db.execSQL("CREATE TABLE " + TABLE_DATA + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    KEY_TEXT1 + " TEXT," + KEY_TEXT1_SIZE + " TEXT," + KEY_TEXT1_COLOR + " TEXT," +
-                    KEY_TEXT2 + " TEXT," + KEY_TEXT2_SIZE + " TEXT," + KEY_TEXT2_COLOR + " TEXT," +
-                    KEY_TEXT3 + " TEXT," + KEY_TEXT3_SIZE + " TEXT," + KEY_TEXT3_COLOR + " TEXT," +
-                    BACKGROUND + " TEXT," + IMAGE + " TEXT," + URL + " TEXT)");
 
         //CREATE TABLE FOR NAVGITION DRAWER ITEMS
         db.execSQL("CREATE TABLE " + TABLE_NAV + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -97,19 +111,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     KEY_FRONT_IMAGE + " TEXT," + KEY_TOP + " INTEGER," +KEY_BACK_URL + " TEXT)");
 
         db.execSQL("CREATE TABLE NavHead (" + IMAGE + " TEXT," + KEY_NAV_HEADER + " TEXT)");
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DATA);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAV);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_VIEW);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TOOLBAR);
-        db.execSQL("DROP TABLE IF EXISTS NavHead ");
-
-        onCreate(db);
-    }
 
     public void dropTable()
     {
@@ -363,4 +364,4 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return header;
     }
-}
+    */
