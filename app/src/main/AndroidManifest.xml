@@ -16,7 +16,6 @@
             android:name="com.vijayjaidewan01vivekrai.dynamic_app.ScrollingActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName="com.vijayjaidewan01vivekrai.dynamic_app.ScrollingActivity"
             android:finishOnTaskLaunch="true">
 
             <intent-filter>

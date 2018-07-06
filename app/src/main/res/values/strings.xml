@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CollapsingToolbar</string>
+    <string name="app_name">DynamicApp</string>
     <string name="title">Agnitio</string>
     <string name="action_settings">Settings</string>
     <string name="open">Open</string>
