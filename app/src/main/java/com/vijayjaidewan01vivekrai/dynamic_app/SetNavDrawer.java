@@ -18,8 +18,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.google.gson.Gson;
 import com.vijayjaidewan01vivekrai.dynamic_app.Adapters.NavDrawerCardAdapter;
 import com.vijayjaidewan01vivekrai.dynamic_app.Models.NavDrawer;
+import com.vijayjaidewan01vivekrai.dynamic_app.Models.TableRecord;
 import com.vijayjaidewan01vivekrai.dynamic_app.Models.TestResults;
 import com.vijayjaidewan01vivekrai.dynamic_app.Okhttpclient.ApiService;
 import com.vijayjaidewan01vivekrai.dynamic_app.Okhttpclient.ApiUtils;
@@ -63,11 +65,11 @@ public class SetNavDrawer {
                 @Override
                 public void onResponse(Call<TestResults> call, Response<TestResults> response) {
                     if (response.isSuccessful()) {
+                        TableRecord record = new TableRecord(url);
+                        record.setData(new Gson().toJson(response.body()));
+                        db.addRecord(record);
                         navDrawer = response.body().getResults().getNavDrawer();
-//                        db.drop();
-//                        db.saveMenu(navDrawer.getMenu_items());
-//                        db.saveHeaderTitle(navDrawer.getHeader_layout());
-                        navigationView.setBackgroundColor(Color.parseColor(navDrawer.getNav_drawer_bg_color()));
+//                        navigationView.setBackgroundColor(Color.parseColor(navDrawer.getNav_drawer_bg_color()));
                         setDrawer();
                     }
                 }
@@ -78,49 +80,51 @@ public class SetNavDrawer {
                 }
             });
         }
-     else if(conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() ==NetworkInfo.State.DISCONNECTED
+        else if(conMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() ==NetworkInfo.State.DISCONNECTED
                 ||conMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() ==NetworkInfo.State.DISCONNECTED){
-//        navDrawer.setMenu_items(db.readMenu());
-//        navDrawer.setHeader_layout(db.readTitle());
-        setDrawer();
+            TableRecord record = new TableRecord(url);
+            db.getRecord(record);
+            TestResults results = new Gson().fromJson(record.getData(),TestResults.class);
+            navDrawer = results.getResults().getNavDrawer();
+//            navigationView.setBackgroundColor(Color.parseColor(navDrawer.getNav_drawer_bg_color()));
+            setDrawer();
+        }
     }
 
-}
+    public void setDrawer()
+    {
+        Glide.with(context)
+                .load(navDrawer.getHeader_layout().getImage())
+                .asBitmap()
+                .placeholder(R.drawable.grey)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(new SimpleTarget<Bitmap>(200, 200) {
+                    @Override
+                    public void onLoadStarted(Drawable placeholder) {
+                        super.onLoadStarted(placeholder);
+                    }
 
-public void setDrawer()
-{
-    Glide.with(context)
-            .load(navDrawer.getHeader_layout().getImage())
-            .asBitmap()
-            .placeholder(R.drawable.grey)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .into(new SimpleTarget<Bitmap>(200, 200) {
-                @Override
-                public void onLoadStarted(Drawable placeholder) {
-                    super.onLoadStarted(placeholder);
-                }
+                    @Override
+                    public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                        super.onLoadFailed(e, errorDrawable);
+                    }
 
-                @Override
-                public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                    super.onLoadFailed(e, errorDrawable);
-                }
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        navHeaderImage.setImageBitmap(resource);
+                    }
+                });
 
-                @Override
-                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                    navHeaderImage.setImageBitmap(resource);
-                }
-            });
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        navHeaderText.setText(navDrawer.getHeader_layout().getText());
+        NavDrawerCardAdapter cardAdapter = new NavDrawerCardAdapter(navDrawer.getMenu_items(), context);
+        recyclerView.setAdapter(cardAdapter);
+        cardAdapter.notifyDataSetChanged();
+        cardAdapter.setClickListener((OnClickSet) context);
 
-    recyclerView.setHasFixedSize(true);
-    recyclerView.setLayoutManager(new LinearLayoutManager(context));
-    navHeaderText.setText(navDrawer.getHeader_layout().getText());
-    NavDrawerCardAdapter cardAdapter = new NavDrawerCardAdapter(navDrawer.getMenu_items(), context);
-    recyclerView.setAdapter(cardAdapter);
-    cardAdapter.notifyDataSetChanged();
-    cardAdapter.setClickListener((OnClickSet) context);
-
-//    navigationView.setBackgroundColor(Color.parseColor(navDrawer.getNav_drawer_bg_color()));
-}
+        navigationView.setBackgroundColor(Color.parseColor(navDrawer.getNav_drawer_bg_color()));
+    }
     private OnClickSet onClickSetListener;
 
     public void setClickListener(OnClickSet onClickSet) {
