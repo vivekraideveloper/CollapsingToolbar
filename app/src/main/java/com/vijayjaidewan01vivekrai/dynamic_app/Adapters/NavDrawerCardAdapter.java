@@ -20,9 +20,8 @@ import com.vijayjaidewan01vivekrai.collapsingtoolbar_github.R;
 import java.util.ArrayList;
 
 public class NavDrawerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-   private ArrayList<Menu_items> items;
-   private Context context;
-   DatabaseHelper db;
+    private ArrayList<Menu_items> items;
+    private Context context;
 
     public NavDrawerCardAdapter(ArrayList<Menu_items> items, Context context) {
         this.items = items;
@@ -33,7 +32,7 @@ public class NavDrawerCardAdapter extends RecyclerView.Adapter<RecyclerView.View
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.nav_drawer_card,parent,false);
         return new ViewHolder(v);
-        }
+    }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
@@ -49,8 +48,8 @@ public class NavDrawerCardAdapter extends RecyclerView.Adapter<RecyclerView.View
             @Override
             public void onClick(View v) {
                 if (onClickSetListener != null) {
-                    db = new DatabaseHelper(context,items.get(position).getUrl(),null,1);
-                    onClickSetListener.onClickFunction(items.get(position).getUrl(), db);
+//                    db = new DatabaseHelper(context,items.get(position).getUrl(),null,1);
+                    onClickSetListener.onClickFunction(items.get(position).getUrl());
                 }Toast.makeText(context, items.get(position).getUrl(), Toast.LENGTH_SHORT).show();
 //                Log.i("URL in adapter", items.get(position).getUrl());
             }

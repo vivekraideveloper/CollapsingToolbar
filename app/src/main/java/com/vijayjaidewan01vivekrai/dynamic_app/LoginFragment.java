@@ -37,7 +37,6 @@ public class LoginFragment extends Fragment implements ScrollingActivity.SetLayo
     AppCompatImageView imageView,backImage;
     String url;
     Login login;
-    DatabaseHelper db = null;
 
     @Nullable
     @Override
@@ -53,7 +52,6 @@ public class LoginFragment extends Fragment implements ScrollingActivity.SetLayo
         button = view.findViewById(R.id.login_button);
         backImage = view.findViewById(R.id.loginBackImage);
         login = (Login)getArguments().getSerializable("Login");
-
 
         username.setHint(login.getInput_box1());
         password.setHint(login.getInput_box2());
@@ -101,8 +99,8 @@ public class LoginFragment extends Fragment implements ScrollingActivity.SetLayo
     }
 
     @Override
-    public void setUrl(String url, DatabaseHelper db) {
-        ((ScrollingActivity)getActivity()).callHttp(url,db);
+    public void setUrl(String url) {
+        ((ScrollingActivity)getActivity()).callHttp(url);
     }
 
     class UserLoginTask extends AsyncTask<Void, Void, Boolean >
@@ -134,7 +132,7 @@ public class LoginFragment extends Fragment implements ScrollingActivity.SetLayo
                 public void onResponse(Call<TestResults> call, Response<TestResults> response) {
                     Log.i("IN response","yes");
                     Toast.makeText(getContext(),response.body().getCode(),Toast.LENGTH_LONG).show();
-                    setUrl(response.body().getResults().getUrl(),db);
+                    setUrl(response.body().getResults().getUrl());
                 }
 
                 @Override
